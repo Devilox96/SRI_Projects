@@ -1,23 +1,18 @@
 #include <iostream>
 #include <vector>
 //-----------------------------//
+#include <QApplication>
+//-----------------------------//
+#include "MainWindow.h"
+//-----------------------------//
 #include "Include/dMath/dMath.h"
 #include "Include/Calculation/Calculation.h"
 //-----------------------------//
-int main() {
-//    Calculation Method(50, 50);
+int main(int argc, char** argv) {
+    QApplication App(argc, argv);
 
-    dVectorND <int> Test1({1, 2, 3, 4, 5});
-    dVectorND <int> Test2({1, 2, 3, 4, 5});
-    dVectorND <int> Test3({1, 6, 3, 4, 5});
+    MainWindow Window;
+    Window.show();
 
-    std::cout << (Test1 == Test2) << std::endl;
-    std::cout << (Test1 == Test3) << std::endl;
-
-    Test1 = Test3;
-
-    std::cout << (Test1 == Test2) << std::endl;
-    std::cout << (Test1 == Test3) << std::endl;
-
-    return 0;
+    return QApplication::exec();
 }
