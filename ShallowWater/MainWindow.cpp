@@ -83,18 +83,18 @@ void MainWindow::InitSurface() {
 
     auto Container = QWidget::createWindowContainer(surface);
 
-    auto PlotFrame = new QFrame;
-    PlotFrame -> setFrameShape(QFrame::Shape::Box);
-    PlotFrame -> setFrameShadow(QFrame::Shadow::Raised);
-    PlotFrame -> setLineWidth(0);
-    PlotFrame -> setMidLineWidth(1);
+    auto SurfaceFrame = new QFrame;
+    SurfaceFrame -> setFrameShape(QFrame::Shape::Box);
+    SurfaceFrame -> setFrameShadow(QFrame::Shadow::Raised);
+    SurfaceFrame -> setLineWidth(0);
+    SurfaceFrame -> setMidLineWidth(1);
 
     auto PlotLayout = new QGridLayout;
     PlotLayout -> setMargin(0);
-    PlotFrame -> setLayout(PlotLayout);
+    SurfaceFrame -> setLayout(PlotLayout);
 
     Container -> setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     PlotLayout -> addWidget(Container);
 
-    MainLayout -> addWidget(PlotFrame, 0, 2, 7, 1);
+    MainLayout -> addWidget(SurfaceFrame, 0, 2, 7, 1);
 }

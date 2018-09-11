@@ -45,6 +45,10 @@ private:
 
     //----------//
 
+
+
+    //----------//
+
     void InitMain();
     void InitValidators();
     void InitControl();
