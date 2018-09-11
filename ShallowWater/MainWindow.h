@@ -11,8 +11,10 @@
 #include <QtDataVisualization>
 #include <QSpacerItem>
 #include <QFrame>
+#include <QObject>
 //-----------------------------//
 class MainWindow : public QMainWindow {
+    Q_OBJECT
 public:
     explicit MainWindow(QWidget* ParentP = nullptr);
     ~MainWindow() override = default;
@@ -53,6 +55,9 @@ private:
     void InitValidators();
     void InitControl();
     void InitSurface();
+    void InitConnections();
+private slots:
+    void EnableCalculateButtonSlot();
 };
 //-----------------------------//
 #endif

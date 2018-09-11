@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget*) {
     InitValidators();
     InitControl();
     InitSurface();
+    InitConnections();
 }
 //-----------------------------//
 void MainWindow::InitMain() {
@@ -15,8 +16,8 @@ void MainWindow::InitMain() {
     MainWidget -> setLayout(MainLayout);
 }
 void MainWindow::InitValidators() {
-    IntValidator = new QRegExpValidator(QRegExp("[1-9][0-9]*"));
-    DoubleValidator = new QRegExpValidator(QRegExp("[0-9]+(\\.[0-9]+)?"));
+    IntValidator = new QRegExpValidator(QRegExp("[1-9][0-9]{0,4}"));
+    DoubleValidator = new QRegExpValidator(QRegExp("[0-1](\\.[0-9]{1,8})?"));
 }
 void MainWindow::InitControl() {
     xGridLabel = new QLabel("Grid size X:");
@@ -68,7 +69,7 @@ void MainWindow::InitSurface() {
     using namespace QtDataVisualization;
 
     auto surface = new Q3DSurface;
-    surface -> setFlags(surface -> flags() ^ Qt::FramelessWindowHint);
+    surface -> setFlags(Qt::FramelessWindowHint);
     auto data = new QSurfaceDataArray;
     QSurfaceDataRow *dataRow1 = new QSurfaceDataRow;
     auto dataRow2 = new QSurfaceDataRow;
@@ -81,8 +82,6 @@ void MainWindow::InitSurface() {
     series->dataProxy()->resetArray(data);
     surface -> addSeries(series);
 
-    auto Container = QWidget::createWindowContainer(surface);
-
     auto SurfaceFrame = new QFrame;
     SurfaceFrame -> setFrameShape(QFrame::Shape::Box);
     SurfaceFrame -> setFrameShadow(QFrame::Shadow::Raised);
@@ -93,8 +92,30 @@ void MainWindow::InitSurface() {
     PlotLayout -> setMargin(0);
     SurfaceFrame -> setLayout(PlotLayout);
 
+    auto Container = QWidget::createWindowContainer(surface);
+    Container -> setMinimumSize(400, 400);
     Container -> setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     PlotLayout -> addWidget(Container);
 
     MainLayout -> addWidget(SurfaceFrame, 0, 2, 7, 1);
+}
+void MainWindow::InitConnections() {
+    connect(xGridLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
+    connect(yGridLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
+
+    connect(TimeStepLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
+    connect(xStepLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
+    connect(yStepLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
+}
+//-----------------------------//
+void MainWindow::EnableCalculateButtonSlot() {
+    if (TimeStepLine -> text().toDouble()   == 0.0      ||
+        xStepLine -> text().toDouble()      == 0.0      ||
+        yStepLine -> text().toDouble()      == 0.0      ||
+        xGridLine -> text().toInt()         < 10        ||
+        yGridLine -> text().toInt()         < 10) {
+        CalculateButton -> setDisabled(true);
+    } else {
+        CalculateButton -> setEnabled(true);
+    }
 }
