@@ -7,6 +7,7 @@
 #include <cmath>
 //-----------------------------//
 #include "../dMath/Core/dVectors.h"
+#include "../dMath/NumerCalc/dLaxFriedrichs.h"
 //-----------------------------//
 class Calculation {
 public:
@@ -14,6 +15,7 @@ public:
     ~Calculation() = default;
 
     void GetSolution(uint xPosP, uint yPosP, dVectorND <double>& TargetVectorP);
+    void Solve(uint yPosP);
 private:
     double g = 1;
     double B_0 = 0;
@@ -23,17 +25,15 @@ private:
     uint xGridNum;
     uint yGridNum;
 
-    uint8_t ActiveGrid = 1;
+    bool ActiveGrid = false;
 
-    std::vector <std::vector <dVectorND <double>>> GridFirst;
-    std::vector <std::vector <dVectorND <double>>> GridSecond;
+    std::vector <std::vector <dVectorND <double>>> Grid[2];
 
     std::vector <double> f;
 
-    dVectorND <double> X;
-    dVectorND <double> Y;
-    dVectorND <double> F;
-    dVectorND <double> R;
+    //----------//
+
+    dLaxFriedrichs* Solver;
 
     //----------//
 
@@ -41,10 +41,10 @@ private:
 
     //----------//
 
-    void CalcX(const dVectorND <double>& SolutionP);
-    void CalcY(const dVectorND <double>& SolutionP);
-    void CalcF(const dVectorND <double>& SolutionP);
-    void CalcR(uint yPosP, const dVectorND <double>& SolutionP);
+    dVectorND <double> CalcX(const dVectorND <double>& SolutionP);
+    dVectorND <double> CalcY(const dVectorND <double>& SolutionP);
+    dVectorND <double> CalcF(const dVectorND <double>& SolutionP);
+    dVectorND <double> CalcR(uint yPosP, const dVectorND <double>& SolutionP);
 };
 //-----------------------------//
 #endif

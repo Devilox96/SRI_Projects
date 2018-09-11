@@ -4,6 +4,7 @@
 #include "dVectors.h"
 //-----------------------------//
 class dLaxFriedrichs {
+public:
     dLaxFriedrichs() = default;
     ~dLaxFriedrichs() = default;
 

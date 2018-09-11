@@ -4,56 +4,158 @@ Calculation::Calculation(uint xGridNumP, uint yGridNumP) {
     xGridNum = xGridNumP;
     yGridNum = yGridNumP;
 
-    X.Resize(6);
-    Y.Resize(6);
-    F.Resize(6);
-    R.Resize(6);
-
     InitGrid();
+
+    Solver = new dLaxFriedrichs;
 }
 //-----------------------------//
 void Calculation::GetSolution(uint xPosP, uint yPosP, dVectorND <double>& TargetVectorP) {
-    if (ActiveGrid == 1) {
-        TargetVectorP[0] = GridFirst[xPosP][yPosP][0];
-        TargetVectorP[1] = GridFirst[xPosP][yPosP][1] / GridFirst[xPosP][yPosP][0];
-        TargetVectorP[2] = GridFirst[xPosP][yPosP][2] / GridFirst[xPosP][yPosP][0];
-        TargetVectorP[3] = GridFirst[xPosP][yPosP][3] / GridFirst[xPosP][yPosP][0];
-        TargetVectorP[4] = GridFirst[xPosP][yPosP][4] / GridFirst[xPosP][yPosP][0];
-        TargetVectorP[5] = GridFirst[xPosP][yPosP][5];
-    } else {
-        TargetVectorP[0] = GridSecond[xPosP][yPosP][0];
-        TargetVectorP[1] = GridSecond[xPosP][yPosP][1] / GridSecond[xPosP][yPosP][0];
-        TargetVectorP[2] = GridSecond[xPosP][yPosP][2] / GridSecond[xPosP][yPosP][0];
-        TargetVectorP[3] = GridSecond[xPosP][yPosP][3] / GridSecond[xPosP][yPosP][0];
-        TargetVectorP[4] = GridSecond[xPosP][yPosP][4] / GridSecond[xPosP][yPosP][0];
-        TargetVectorP[5] = GridSecond[xPosP][yPosP][5];
+    TargetVectorP[0] = Grid[ActiveGrid][xPosP][yPosP][0];
+    TargetVectorP[1] = Grid[ActiveGrid][xPosP][yPosP][1] / Grid[ActiveGrid][xPosP][yPosP][0];
+    TargetVectorP[2] = Grid[ActiveGrid][xPosP][yPosP][2] / Grid[ActiveGrid][xPosP][yPosP][0];
+    TargetVectorP[3] = Grid[ActiveGrid][xPosP][yPosP][3] / Grid[ActiveGrid][xPosP][yPosP][0];
+    TargetVectorP[4] = Grid[ActiveGrid][xPosP][yPosP][4] / Grid[ActiveGrid][xPosP][yPosP][0];
+    TargetVectorP[5] = Grid[ActiveGrid][xPosP][yPosP][5];
+}
+void Calculation::Solve(uint yPosP) {
+    for (uint i = 1; i < xGridNum - 1; i++) {
+        for (uint j = 1; j < yGridNum - 1; j++) {
+            Grid[!ActiveGrid][i][j] = Solver -> Solve(
+                    Grid[ActiveGrid][i][j],
+                    CalcX(Grid[ActiveGrid][i + 1][j]),
+                    CalcX(Grid[ActiveGrid][i - 1][j]),
+                    CalcY(Grid[ActiveGrid][i][j + 1]),
+                    CalcY(Grid[ActiveGrid][i][j - 1]),
+                    CalcF(Grid[ActiveGrid][i][j]),
+                    CalcR(yPosP, Grid[ActiveGrid][i][j]),
+                    0.005,
+                    0.1,
+                    0.1);
+        }
     }
+
+    for (uint i = 1; i < xGridNum - 1; i++) {
+        Grid[!ActiveGrid][i][0] = Solver -> Solve(
+                Grid[ActiveGrid][i][0],
+                CalcX(Grid[ActiveGrid][i + 1][0]),
+                CalcX(Grid[ActiveGrid][i - 1][0]),
+                CalcY(Grid[ActiveGrid][i][1]),
+                CalcY(Grid[ActiveGrid][i][yGridNum - 1]),
+                CalcF(Grid[ActiveGrid][i][0]),
+                CalcR(yPosP, Grid[ActiveGrid][i][0]),
+                0.005,
+                0.1,
+                0.1);
+        Grid[!ActiveGrid][i][yGridNum - 1] = Solver -> Solve(
+                Grid[ActiveGrid][i][yGridNum - 1],
+                CalcX(Grid[ActiveGrid][i + 1][yGridNum - 1]),
+                CalcX(Grid[ActiveGrid][i - 1][yGridNum - 1]),
+                CalcY(Grid[ActiveGrid][i][0]),
+                CalcY(Grid[ActiveGrid][i][yGridNum - 2]),
+                CalcF(Grid[ActiveGrid][i][yGridNum - 1]),
+                CalcR(yPosP, Grid[ActiveGrid][i][yGridNum - 1]),
+                0.005,
+                0.1,
+                0.1);
+    }
+
+    for (uint j = 1; j < yGridNum - 1; j++) {
+        Grid[!ActiveGrid][0][j] = Solver -> Solve(
+                Grid[ActiveGrid][0][j],
+                CalcX(Grid[ActiveGrid][1][j]),
+                CalcX(Grid[ActiveGrid][xGridNum - 1][j]),
+                CalcY(Grid[ActiveGrid][0][j + 1]),
+                CalcY(Grid[ActiveGrid][0][j - 1]),
+                CalcF(Grid[ActiveGrid][0][j]),
+                CalcR(yPosP, Grid[ActiveGrid][0][j]),
+                0.005,
+                0.1,
+                0.1);
+        Grid[!ActiveGrid][xGridNum - 1][j] = Solver -> Solve(
+                Grid[ActiveGrid][xGridNum - 1][j],
+                CalcX(Grid[ActiveGrid][0][j]),
+                CalcX(Grid[ActiveGrid][xGridNum - 2][j]),
+                CalcY(Grid[ActiveGrid][xGridNum - 1][j + 1]),
+                CalcY(Grid[ActiveGrid][xGridNum - 1][j - 1]),
+                CalcF(Grid[ActiveGrid][xGridNum - 1][j]),
+                CalcR(yPosP, Grid[ActiveGrid][xGridNum - 1][j]),
+                0.005,
+                0.1,
+                0.1);
+    }
+
+    Grid[!ActiveGrid][0][0] = Solver -> Solve(
+            Grid[ActiveGrid][0][0],
+            CalcX(Grid[ActiveGrid][1][0]),
+            CalcX(Grid[ActiveGrid][xGridNum - 1][0]),
+            CalcY(Grid[ActiveGrid][0][1]),
+            CalcY(Grid[ActiveGrid][0][yGridNum - 1]),
+            CalcF(Grid[ActiveGrid][0][0]),
+            CalcR(yPosP, Grid[ActiveGrid][0][0]),
+            0.005,
+            0.1,
+            0.1);
+    Grid[!ActiveGrid][0][yGridNum - 1] = Solver -> Solve(
+            Grid[ActiveGrid][0][yGridNum - 1],
+            CalcX(Grid[ActiveGrid][1][yGridNum - 1]),
+            CalcX(Grid[ActiveGrid][xGridNum - 1][yGridNum - 1]),
+            CalcY(Grid[ActiveGrid][0][0]),
+            CalcY(Grid[ActiveGrid][0][yGridNum - 2]),
+            CalcF(Grid[ActiveGrid][0][yGridNum - 1]),
+            CalcR(yPosP, Grid[ActiveGrid][0][yGridNum - 1]),
+            0.005,
+            0.1,
+            0.1);
+    Grid[!ActiveGrid][xGridNum - 1][0] = Solver -> Solve(
+            Grid[ActiveGrid][xGridNum - 1][0],
+            CalcX(Grid[ActiveGrid][0][0]),
+            CalcX(Grid[ActiveGrid][xGridNum - 2][0]),
+            CalcY(Grid[ActiveGrid][xGridNum - 1][1]),
+            CalcY(Grid[ActiveGrid][xGridNum - 1][yGridNum - 1]),
+            CalcF(Grid[ActiveGrid][xGridNum - 1][0]),
+            CalcR(yPosP, Grid[ActiveGrid][xGridNum - 1][0]),
+            0.005,
+            0.1,
+            0.1);
+    Grid[!ActiveGrid][xGridNum - 1][yGridNum - 1] = Solver -> Solve(
+            Grid[ActiveGrid][xGridNum - 1][yGridNum - 1],
+            CalcX(Grid[ActiveGrid][0][yGridNum - 1]),
+            CalcX(Grid[ActiveGrid][xGridNum - 2][yGridNum - 1]),
+            CalcY(Grid[ActiveGrid][xGridNum - 1][0]),
+            CalcY(Grid[ActiveGrid][xGridNum - 1][yGridNum - 2]),
+            CalcF(Grid[ActiveGrid][xGridNum - 1][yGridNum - 1]),
+            CalcR(yPosP, Grid[ActiveGrid][xGridNum - 1][yGridNum - 1]),
+            0.005,
+            0.1,
+            0.1);
+
+    ActiveGrid = !ActiveGrid;
 }
 //-----------------------------//
 void Calculation::InitGrid() {
-    GridFirst.resize(yGridNum);
-    GridSecond.resize(yGridNum);
+    Grid[0].resize(yGridNum);
+    Grid[1].resize(yGridNum);
 
     for (uint i = 0; i < yGridNum; i++) {
-        GridFirst[i].resize(xGridNum, dVectorND <double>(6));
-        GridSecond[i].resize(xGridNum, dVectorND <double>(6));
+        Grid[0][i].resize(xGridNum, dVectorND <double>(6));
+        Grid[1][i].resize(xGridNum, dVectorND <double>(6));
     }
 
     for (uint j = 0; j < yGridNum; j++) {
         for (uint i = 0; i < xGridNum; i++) {
-            GridFirst[i][j][0] = 1;
-            GridFirst[i][j][1] = 0;
-            GridFirst[i][j][2] = 0;
-            GridFirst[i][j][3] = 0;
-            GridFirst[i][j][4] = 0;
-            GridFirst[i][j][5] = 0;
+            Grid[ActiveGrid][i][j][0] = 1;
+            Grid[ActiveGrid][i][j][1] = 0;
+            Grid[ActiveGrid][i][j][2] = 0;
+            Grid[ActiveGrid][i][j][3] = 0;
+            Grid[ActiveGrid][i][j][4] = 0;
+            Grid[ActiveGrid][i][j][5] = 0;
         }
     }
 
     f.resize(yGridNum, 0);
 }
 //-----------------------------//
-void Calculation::CalcX(const dVectorND <double>& SolutionP) {
+dVectorND <double> Calculation::CalcX(const dVectorND <double>& SolutionP) {
     //---SolutionP[0] - h-----//
     //---SolutionP[1] - v_x---//
     //---SolutionP[2] - v_y---//
@@ -61,14 +163,18 @@ void Calculation::CalcX(const dVectorND <double>& SolutionP) {
     //---SolutionP[4] - B_y---//
     //---SolutionP[5] - B_z---//
 
-    X[0] = SolutionP[0] * SolutionP[1];
-    X[1] = SolutionP[0] * (pow(SolutionP[1], 2.0) - pow(SolutionP[3], 2.0)) + g * pow(SolutionP[0], 2.0) / 2.0;
-    X[2] = SolutionP[0] * (SolutionP[1] * SolutionP[2] - SolutionP[3] * SolutionP[4]);
-    X[3] = 0.0;
-    X[4] = SolutionP[0] * (SolutionP[1] * SolutionP[4] - SolutionP[2] * SolutionP[3]);
-    X[5] = B_0 * SolutionP[1];
+    dVectorND <double> XL(6);
+
+    XL[0] = SolutionP[0] * SolutionP[1];
+    XL[1] = SolutionP[0] * (pow(SolutionP[1], 2.0) - pow(SolutionP[3], 2.0)) + g * pow(SolutionP[0], 2.0) / 2.0;
+    XL[2] = SolutionP[0] * (SolutionP[1] * SolutionP[2] - SolutionP[3] * SolutionP[4]);
+    XL[3] = 0.0;
+    XL[4] = SolutionP[0] * (SolutionP[1] * SolutionP[4] - SolutionP[2] * SolutionP[3]);
+    XL[5] = B_0 * SolutionP[1];
+
+    return XL;
 }
-void Calculation::CalcY(const dVectorND <double>& SolutionP) {
+dVectorND <double> Calculation::CalcY(const dVectorND <double>& SolutionP) {
     //---SolutionP[0] - h-----//
     //---SolutionP[1] - v_x---//
     //---SolutionP[2] - v_y---//
@@ -76,14 +182,18 @@ void Calculation::CalcY(const dVectorND <double>& SolutionP) {
     //---SolutionP[4] - B_y---//
     //---SolutionP[5] - B_z---//
 
-    Y[0] = SolutionP[0] * SolutionP[2];
-    Y[1] = SolutionP[0] * (SolutionP[1] * SolutionP[2] - SolutionP[3] * SolutionP[4]);
-    Y[2] = SolutionP[0] * (pow(SolutionP[2], 2.0) - pow(SolutionP[4], 2.0)) + g * pow(SolutionP[0], 2.0) / 2.0;
-    Y[3] = SolutionP[0] * (SolutionP[2] * SolutionP[3] - SolutionP[1] * SolutionP[4]);
-    Y[4] = 0.0;
-    Y[5] = B_0 * SolutionP[2];
+    dVectorND <double> YL(6);
+
+    YL[0] = SolutionP[0] * SolutionP[2];
+    YL[1] = SolutionP[0] * (SolutionP[1] * SolutionP[2] - SolutionP[3] * SolutionP[4]);
+    YL[2] = SolutionP[0] * (pow(SolutionP[2], 2.0) - pow(SolutionP[4], 2.0)) + g * pow(SolutionP[0], 2.0) / 2.0;
+    YL[3] = SolutionP[0] * (SolutionP[2] * SolutionP[3] - SolutionP[1] * SolutionP[4]);
+    YL[4] = 0.0;
+    YL[5] = B_0 * SolutionP[2];
+
+    return YL;
 }
-void Calculation::CalcF(const dVectorND <double>& SolutionP) {
+dVectorND <double> Calculation::CalcF(const dVectorND <double>& SolutionP) {
     //---SolutionP[0] - h-----//
     //---SolutionP[1] - v_x---//
     //---SolutionP[2] - v_y---//
@@ -91,14 +201,18 @@ void Calculation::CalcF(const dVectorND <double>& SolutionP) {
     //---SolutionP[4] - B_y---//
     //---SolutionP[5] - B_z---//
 
-    F[0] = 0.0;
-    F[1] = B_0 * SolutionP[3] - SolutionP[0] * SolutionP[2] * f_0;
-    F[2] = B_0 * SolutionP[4] + SolutionP[0] * SolutionP[1] * f_0;
-    F[3] = -B_0 * SolutionP[1];
-    F[4] = -B_0 * SolutionP[2];
-    F[5] = 0.0;
+    dVectorND <double> FL(6);
+
+    FL[0] = 0.0;
+    FL[1] = B_0 * SolutionP[3] - SolutionP[0] * SolutionP[2] * f_0;
+    FL[2] = B_0 * SolutionP[4] + SolutionP[0] * SolutionP[1] * f_0;
+    FL[3] = -B_0 * SolutionP[1];
+    FL[4] = -B_0 * SolutionP[2];
+    FL[5] = 0.0;
+
+    return FL;
 }
-void Calculation::CalcR(uint yPosP, const dVectorND <double>& SolutionP) {
+dVectorND <double> Calculation::CalcR(uint yPosP, const dVectorND <double>& SolutionP) {
     //---SolutionP[0] - h-----//
     //---SolutionP[1] - v_x---//
     //---SolutionP[2] - v_y---//
@@ -106,10 +220,14 @@ void Calculation::CalcR(uint yPosP, const dVectorND <double>& SolutionP) {
     //---SolutionP[4] - B_y---//
     //---SolutionP[5] - B_z---//
 
-    R[0] = 0.0;
-    R[1] = -SolutionP[0] * SolutionP[2] * beta * yPosP;
-    R[2] = SolutionP[0] * SolutionP[1] * beta * yPosP;
-    R[3] = 0.0;
-    R[4] = 0.0;
-    R[5] = 0.0;
+    dVectorND <double> RL(6);
+
+    RL[0] = 0.0;
+    RL[1] = -SolutionP[0] * SolutionP[2] * beta * yPosP;
+    RL[2] = SolutionP[0] * SolutionP[1] * beta * yPosP;
+    RL[3] = 0.0;
+    RL[4] = 0.0;
+    RL[5] = 0.0;
+
+    return RL;
 }
