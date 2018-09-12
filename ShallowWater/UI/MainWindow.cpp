@@ -68,6 +68,8 @@ void MainWindow::InitControl() {
 void MainWindow::InitSurface() {
     using namespace QtDataVisualization;
 
+    DisplayData = new QSurfaceDataArray;
+
     auto surface = new Q3DSurface;
     surface -> setFlags(Qt::FramelessWindowHint);
     auto data = new QSurfaceDataArray;
@@ -79,7 +81,7 @@ void MainWindow::InitSurface() {
     *data << dataRow1 << dataRow2;
 
     auto series = new QSurface3DSeries;
-    series->dataProxy()->resetArray(data);
+    series->dataProxy()->resetArray(DisplayData);
     surface -> addSeries(series);
 
     auto SurfaceFrame = new QFrame;
@@ -93,7 +95,7 @@ void MainWindow::InitSurface() {
     SurfaceFrame -> setLayout(PlotLayout);
 
     auto Container = QWidget::createWindowContainer(surface);
-    Container -> setMinimumSize(400, 400);
+    Container -> setMinimumSize(300, 300);
     Container -> setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     PlotLayout -> addWidget(Container);
 
@@ -106,6 +108,18 @@ void MainWindow::InitConnections() {
     connect(TimeStepLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
     connect(xStepLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
     connect(yStepLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
+}
+//-----------------------------//
+void MainWindow::GetDisplayDataSlot(const QVector <QVector <double>>& DataP) {
+    for (int i = 0; i < DataP.size(); i++) {
+        DisplayDataRows.push_back(new QtDataVisualization::QSurfaceDataRow);
+
+        for (int j = 0; j < DataP[0].size(); j++) {
+            *DisplayDataRows.back() << QVector3D(i, j, float(DataP[i][j]));
+        }
+
+        *DisplayData << DisplayDataRows.back();
+    }
 }
 //-----------------------------//
 void MainWindow::EnableCalculateButtonSlot() {

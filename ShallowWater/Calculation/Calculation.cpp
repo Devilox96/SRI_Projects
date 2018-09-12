@@ -131,6 +131,23 @@ void Calculation::Solve(uint yPosP) {
 
     ActiveGrid = !ActiveGrid;
 }
+void Calculation::DisplayData() {
+    QVector <QVector <double>> DataL;
+
+    DataL.resize(xGridNum);
+
+    for (auto& RowI : DataL) {
+        RowI.resize(yGridNum);
+    }
+
+    for (uint j = 0; j < yGridNum; j++) {
+        for (uint i = 0; i < xGridNum; i++) {
+            DataL[i][j] = Grid[ActiveGrid][i][j][0];
+        }
+    }
+
+    emit(SendDisplayDataSignal(DataL));
+}
 //-----------------------------//
 void Calculation::InitGrid() {
     Grid[0].resize(yGridNum);

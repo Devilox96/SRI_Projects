@@ -6,16 +6,21 @@
 #include <vector>
 #include <cmath>
 //-----------------------------//
-#include "../dMath/Core/dVectors.h"
-#include "../dMath/NumerCalc/dLaxFriedrichs.h"
+#include <QObject>
+#include <QVector>
 //-----------------------------//
-class Calculation {
+#include "Libs/dMath/Core/dVectors.h"
+#include "Libs/dMath/NumerCalc/dLaxFriedrichs.h"
+//-----------------------------//
+class Calculation : public QObject {
+    Q_OBJECT
 public:
     Calculation(uint xGridNumP, uint yGridNumP);
-    ~Calculation() = default;
+    ~Calculation() override = default;
 
     void GetSolution(uint xPosP, uint yPosP, dVectorND <double>& TargetVectorP);
     void Solve(uint yPosP);
+    void DisplayData();
 private:
     double g = 1;
     double B_0 = 0;
@@ -45,6 +50,8 @@ private:
     dVectorND <double> CalcY(const dVectorND <double>& SolutionP);
     dVectorND <double> CalcF(const dVectorND <double>& SolutionP);
     dVectorND <double> CalcR(uint yPosP, const dVectorND <double>& SolutionP);
+signals:
+    void SendDisplayDataSignal(const QVector <QVector <double>>& DataP);
 };
 //-----------------------------//
 #endif

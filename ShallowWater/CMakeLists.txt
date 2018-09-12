@@ -3,7 +3,7 @@ project(ShallowWater)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_subdirectory(Include/dMath)
+add_subdirectory(Libs/dMath)
 
 #---Qt---#
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -21,7 +21,7 @@ set(QtPackages
 
 add_executable(ShallowWater
         main.cpp
-        Include/Calculation/Calculation.cpp
-        MainWindow.cpp)
+        Calculation/Calculation.cpp
+        UI/MainWindow.cpp)
 
 target_link_libraries(ShallowWater dMathLib ${QtPackages})

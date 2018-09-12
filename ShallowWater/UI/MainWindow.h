@@ -12,6 +12,7 @@
 #include <QSpacerItem>
 #include <QFrame>
 #include <QObject>
+#include <QVector>
 //-----------------------------//
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -47,7 +48,8 @@ private:
 
     //----------//
 
-
+    QtDataVisualization::QSurfaceDataArray* DisplayData;
+    QVector <QtDataVisualization::QSurfaceDataRow*> DisplayDataRows;
 
     //----------//
 
@@ -56,6 +58,8 @@ private:
     void InitControl();
     void InitSurface();
     void InitConnections();
+public slots:
+    void GetDisplayDataSlot(const QVector <QVector <double>>& DataP);
 private slots:
     void EnableCalculateButtonSlot();
 };

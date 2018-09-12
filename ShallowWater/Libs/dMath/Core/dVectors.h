@@ -472,7 +472,7 @@ public:
             NumI *= NumP;
         }
     }
-    template <typename T> friend dVectorND <VecT> operator*(const dVectorND <VecT>& VectP, const T NumP);
+    template <typename T> friend dVectorND <VecT> operator*(const dVectorND <VecT>& VectP, T NumP);
     //---Multiplying---//
 
     //---Division---//
@@ -490,7 +490,7 @@ public:
             NumI /= NumP;
         }
     }
-    template <typename T> friend dVectorND <VecT> operator/(const dVectorND <VecT>& VectP, const T NumP);
+    template <typename T> friend dVectorND <VecT> operator/(const dVectorND <VecT>& VectP, T NumP);
     //---Division---//
 
     //---Equality---//
