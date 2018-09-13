@@ -22,7 +22,7 @@ public:
     void Solve(uint yPosP);
     void DisplayData();
 private:
-    double g = 1;
+    double g = 0.9;
     double B_0 = 0;
     double f_0 = 0;
     double beta = 0;

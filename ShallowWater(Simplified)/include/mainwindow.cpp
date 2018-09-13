@@ -7,6 +7,16 @@ void MainWindow :: Calc(unsigned int StepsP) {
 
     Grid[50][50].h = 12.0;
 
+    Grid[49][50].h = 11.9;
+    Grid[50][49].h = 11.9;
+    Grid[50][51].h = 11.9;
+    Grid[51][50].h = 11.9;
+
+    Grid[49][49].h = 11.7;
+    Grid[51][51].h = 11.7;
+    Grid[49][51].h = 11.7;
+    Grid[51][49].h = 11.7;
+
     std :: vector <std :: vector <Point>> TempGrid = Grid;
 
     for (unsigned int iter = 0; iter < StepsP; iter++) {

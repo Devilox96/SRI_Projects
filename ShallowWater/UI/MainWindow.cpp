@@ -72,7 +72,9 @@ void MainWindow::InitSurface() {
     Plot -> setFlags(Qt::FramelessWindowHint);
 
     DisplayData = new QSurfaceDataArray;
+
     DataSeries = new QSurface3DSeries;
+    DataSeries -> setDrawMode(QSurface3DSeries::DrawSurface);
 
     auto SurfaceFrame = new QFrame;
     SurfaceFrame -> setFrameShape(QFrame::Shape::Box);

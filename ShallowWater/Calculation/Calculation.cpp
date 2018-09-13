@@ -28,7 +28,7 @@ void Calculation::Solve(uint yPosP) {
                     CalcY(Grid[ActiveGrid][i][j - 1]),
                     CalcF(Grid[ActiveGrid][i][j]),
                     CalcR(yPosP, Grid[ActiveGrid][i][j]),
-                    0.005,
+                    0.0001,
                     0.1,
                     0.1);
         }
@@ -160,7 +160,7 @@ void Calculation::InitGrid() {
 
     for (uint j = 0; j < yGridNum; j++) {
         for (uint i = 0; i < xGridNum; i++) {
-            Grid[ActiveGrid][i][j][0] = 1;
+            Grid[ActiveGrid][i][j][0] = 10;
             Grid[ActiveGrid][i][j][1] = 0;
             Grid[ActiveGrid][i][j][2] = 0;
             Grid[ActiveGrid][i][j][3] = 0;
@@ -168,6 +168,18 @@ void Calculation::InitGrid() {
             Grid[ActiveGrid][i][j][5] = 0;
         }
     }
+
+    Grid[ActiveGrid][25][25][0] = 12.0;
+
+    Grid[ActiveGrid][24][25][0] = 11.9;
+    Grid[ActiveGrid][25][24][0] = 11.9;
+    Grid[ActiveGrid][25][26][0] = 11.9;
+    Grid[ActiveGrid][26][25][0] = 11.9;
+
+    Grid[ActiveGrid][24][24][0] = 11.7;
+    Grid[ActiveGrid][26][26][0] = 11.7;
+    Grid[ActiveGrid][24][26][0] = 11.7;
+    Grid[ActiveGrid][26][24][0] = 11.7;
 
     f.resize(yGridNum, 0);
 }

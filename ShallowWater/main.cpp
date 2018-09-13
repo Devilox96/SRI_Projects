@@ -17,7 +17,10 @@ int main(int argc, char** argv) {
 
     QObject::connect(&Calc, &Calculation::SendDisplayDataSignal, &Window, &MainWindow::GetDisplayDataSlot);
 
-    Calc.Solve(0);
+    for (int i = 0; i < 1000; i++) {
+        Calc.Solve(0);
+    }
+
     Calc.DisplayData();
 
     return QApplication::exec();
