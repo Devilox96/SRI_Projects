@@ -51,7 +51,7 @@ private:
     dVectorND <double> CalcF(const dVectorND <double>& SolutionP);
     dVectorND <double> CalcR(uint yPosP, const dVectorND <double>& SolutionP);
 signals:
-    void SendDisplayDataSignal(const QVector <QVector <double>>& DataP);
+    void SendDisplayDataSignal(const QVector <QVector <double>>& DataP, double xGridStepP, double yGridStepP);
 };
 //-----------------------------//
 #endif

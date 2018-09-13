@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 //-----------------------------//
+#include <iostream>
+//-----------------------------//
 #include <QMainWindow>
 #include <QWidget>
 #include <QLineEdit>
@@ -48,8 +50,11 @@ private:
 
     //----------//
 
+    QtDataVisualization::Q3DSurface* Plot;
+
     QtDataVisualization::QSurfaceDataArray* DisplayData;
     QVector <QtDataVisualization::QSurfaceDataRow*> DisplayDataRows;
+    QtDataVisualization::QSurface3DSeries* DataSeries;
 
     //----------//
 
@@ -59,7 +64,7 @@ private:
     void InitSurface();
     void InitConnections();
 public slots:
-    void GetDisplayDataSlot(const QVector <QVector <double>>& DataP);
+    void GetDisplayDataSlot(const QVector <QVector <double>>& DataP, double xGridStepP, double yGridStepP);
 private slots:
     void EnableCalculateButtonSlot();
 };

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(QtPath /opt/Qt/5.10.1/gcc_64/lib/cmake)
+set(QtPath /home/devilox/DeviloxDocuments/ProgTools/Qt/5.11.1/gcc_64/lib/cmake)
 set(QtPackages
         Qt5::Core
         Qt5::Widgets

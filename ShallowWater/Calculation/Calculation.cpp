@@ -146,7 +146,7 @@ void Calculation::DisplayData() {
         }
     }
 
-    emit(SendDisplayDataSignal(DataL));
+    emit(SendDisplayDataSignal(DataL, 0.1, 0.1));
 }
 //-----------------------------//
 void Calculation::InitGrid() {
