@@ -11,13 +11,14 @@ set(QtPath /opt/Qt/5.10.1/gcc_64/lib/cmake)
 set(QtPackages
         Qt5::Core
         Qt5::Widgets
-        Qt5::DataVisualization)
+        Qt5::DataVisualization
+        Qt5::Gui)
 
-find_package(Qt5 COMPONENTS Core Widgets DataVisualization PATHS ${QtPath} NO_DEFAULT_PATH)
+find_package(Qt5 COMPONENTS Core Widgets DataVisualization Gui PATHS ${QtPath} NO_DEFAULT_PATH)
 #---Qt---#
 
 add_executable(ShallowWater_Simplified_
         main.cpp
         include/dvectors.cpp
-        include/mainwindow.cpp)
+        include/mainwindow.cpp include/dLaxWendroff.cpp include/dLaxWendroff.h)
 target_link_libraries(ShallowWater_Simplified_ ${QtPackages})

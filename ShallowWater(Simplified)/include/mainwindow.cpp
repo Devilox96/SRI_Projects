@@ -76,8 +76,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     }
 
     auto series = new QSurface3DSeries;
-    series->setDrawMode(QSurface3DSeries::DrawSurface);
-    series->dataProxy()->resetArray(dataArray);
+    series -> setDrawMode(QSurface3DSeries::DrawSurface);
+    series -> dataProxy()->resetArray(dataArray);
     graph -> addSeries(series);
 
     MainLayout -> addWidget(container);
