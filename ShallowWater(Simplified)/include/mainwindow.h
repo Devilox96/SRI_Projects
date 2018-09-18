@@ -37,14 +37,17 @@ public:
 //-----------------------------//
 void InitGrid(std :: vector <std :: vector <dVectorND <double>>>& GridP, double ExcitationP, double VXP, double VYP, int PointsNumP);
 
-dVectorND <double> GetH(const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j);
 dVectorND <double> GetU(const dVectorND <double>& HP, double gP);
 dVectorND <double> GetV(const dVectorND <double>& HP, double gP);
 
-dVectorND <double> GetHiHalf(double DeltaTP, double DeltaXP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP);
-dVectorND <double> GetHjHalf(double DeltaTP, double DeltaYP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP);
+dVectorND <double> GetHiHalf(double DeltaTP, double DeltaXP, const dVectorND <double>& UPlusP, const dVectorND <double>& UCurP, double gP);
+dVectorND <double> GetHjHalf(double DeltaTP, double DeltaYP, const dVectorND <double>& VPlusP, const dVectorND <double>& VCurP, double gP);
 
-dVectorND <double> NextH(double DeltaTP, double DeltaXP, double DeltaYP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP);
+//dVectorND <double> NextH(double DeltaTP, double DeltaXP, double DeltaYP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP);
+void NextH(   double DeltaTP, double DeltaXP, double DeltaYP,
+                            const dVectorND <double>& CurVecP, const dVectorND <double>& UPlusVecP, const dVectorND <double>& UMinusVecP, const dVectorND <double>& VPlusVecP, const dVectorND <double>& VMinusVecP,
+                            dVectorND <double>& TargetVecP,
+                            double gP);
 //-----------------------------//
 class MainWindow : public QMainWindow {
     Q_OBJECT

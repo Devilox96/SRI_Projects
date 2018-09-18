@@ -12,11 +12,13 @@ void MainWindow :: Calc(unsigned int StepsP) {
     for (unsigned int iter = 0; iter < StepsP; iter++) {
         for (unsigned int i = 1; i < PointNum - 1; i++) {
             for (unsigned int j = 1; j < PointNum - 1; j++) {
-                dVectorND <double> TempH = NextH(0.001, 0.1, 0.1, Grid, i, j, 9.81);
+//                dVectorND <double> TempH = NextH(0.001, 0.1, 0.1, Grid, i, j, 9.81);
+                NextH(   0.001, 0.1, 0.1,
+                                                    Grid[i][j], Grid[i + 1][j], Grid[i - 1][j], Grid[i][j + 1], Grid[i][j - 1],
+                                                    TempGrid[i][j],
+                                                    9.81);
 
-                TempGrid[i][j][0] = TempH[0];
-                TempGrid[i][j][1] = TempH[1] / TempH[0];
-                TempGrid[i][j][2] = TempH[2] / TempH[0];
+//                TempGrid[i][j] = TempH;
             }
         }
 
@@ -97,49 +99,32 @@ void InitGrid(std :: vector <std :: vector <dVectorND <double>>>& GridP, double 
     }
 }
 
-dVectorND <double> GetH(const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j) {
-    return dVectorND <double>({GridP[i][j][0],
-                     GridP[i][j][1] * GridP[i][j][0],
-                     GridP[i][j][2] * GridP[i][j][0]});
-}
 dVectorND <double> GetU(const dVectorND <double>& HP, double gP) {
-    return dVectorND <double>({HP[1],
-                     pow(HP[1], 2.0) / HP[0] + 0.5 * gP * pow(HP[0], 2.0),
-                     HP[1] * HP[2] / HP[0]});
+    return dVectorND <double>({HP[1], pow(HP[1], 2.0) / HP[0] + 0.5 * gP * pow(HP[0], 2.0), HP[1] * HP[2] / HP[0]});
 }
 dVectorND <double> GetV(const dVectorND <double>& HP, double gP) {
-    return dVectorND <double>({HP[2],
-                     HP[1] * HP[2] / HP[0],
-                     pow(HP[2], 2.0) / HP[0] + 0.5 * gP * pow(HP[0], 2.0)});
+    return dVectorND <double>({HP[2], HP[1] * HP[2] / HP[0], pow(HP[2], 2.0) / HP[0] + 0.5 * gP * pow(HP[0], 2.0)});
 }
 
-dVectorND <double> GetHiHalf(const double DeltaTP, const double DeltaXP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
-    dVectorND <double> H_iplus1_jL = GetH(GridP, i + 1, j);
-    dVectorND <double> H_i_jL = GetH(GridP, i, j);
-
-    dVectorND <double> U_iplus1_jL = GetU(H_iplus1_jL, gP);
-    dVectorND <double> U_i_jL = GetU(H_i_jL, gP);
-
-    return (H_iplus1_jL + H_i_jL) / 2.0 - (U_iplus1_jL - U_i_jL) * (DeltaTP / DeltaXP) / 2.0;
+dVectorND <double> GetHiHalf(const double DeltaTP, const double DeltaXP, const dVectorND <double>& UPlusP, const dVectorND <double>& UCurP, double gP) {
+    return (UPlusP + UCurP) / 2.0 - (GetU(UPlusP, gP) - GetU(UCurP, gP)) * (DeltaTP / DeltaXP) / 2.0;
 }
-dVectorND <double> GetHjHalf(const double DeltaTP, const double DeltaYP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
-    dVectorND <double> H_i_jplus1L = GetH(GridP, i, j + 1);
-    dVectorND <double> H_i_jL = GetH(GridP, i, j);
-
-    dVectorND <double> V_i_jplus1L = GetV(H_i_jplus1L, gP);
-    dVectorND <double> V_i_jL = GetV(H_i_jL, gP);
-
-    return (H_i_jplus1L + H_i_jL) / 2.0 - (V_i_jplus1L - V_i_jL) * (DeltaTP / DeltaYP) / 2.0;
+dVectorND <double> GetHjHalf(const double DeltaTP, const double DeltaYP, const dVectorND <double>& VPlusP, const dVectorND <double>& VCurP, double gP) {
+    return (VPlusP + VCurP) / 2.0 - (GetV(VPlusP, gP) -  GetV(VCurP, gP)) * (DeltaTP / DeltaYP) / 2.0;
 }
 
-dVectorND <double> NextH(const double DeltaTP, const double DeltaXP, const double DeltaYP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
-    dVectorND <double> H_iplushalf_jL = GetHiHalf(DeltaTP, DeltaXP, GridP, i, j, gP);
-    dVectorND <double> H_iminushalf_jL = GetHiHalf(DeltaTP, DeltaXP, GridP, i - 1, j, gP);
+//dVectorND <double> NextH(const double DeltaTP, const double DeltaXP, const double DeltaYP, const std :: vector <std :: vector <dVectorND <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
+void NextH(   double DeltaTP, double DeltaXP, double DeltaYP,
+                            const dVectorND <double>& CurVecP, const dVectorND <double>& UPlusVecP, const dVectorND <double>& UMinusVecP, const dVectorND <double>& VPlusVecP, const dVectorND <double>& VMinusVecP,
+                            dVectorND <double>& TargetVecP,
+                            double gP) {
+    dVectorND <double> H_iplushalf_jL = GetHiHalf(DeltaTP, DeltaXP, UPlusVecP, CurVecP, gP);
+    dVectorND <double> H_iminushalf_jL = GetHiHalf(DeltaTP, DeltaXP, UMinusVecP, CurVecP, gP);
 
-    dVectorND <double> H_i_jplushalfL = GetHjHalf(DeltaTP, DeltaYP, GridP, i, j, gP);
-    dVectorND <double> H_i_jminushalfL = GetHjHalf(DeltaTP, DeltaYP, GridP, i, j - 1, gP);
+    dVectorND <double> H_i_jplushalfL = GetHjHalf(DeltaTP, DeltaYP, VPlusVecP, CurVecP, gP);
+    dVectorND <double> H_i_jminushalfL = GetHjHalf(DeltaTP, DeltaYP, VMinusVecP, CurVecP, gP);
 
-    return  GetH(GridP, i, j) -
+    TargetVecP =  CurVecP -
             (GetU(H_iplushalf_jL, gP) - GetU(H_iminushalf_jL, gP)) * (DeltaTP / DeltaXP) -
             (GetV(H_i_jplushalfL, gP) - GetV(H_i_jminushalfL, gP)) * (DeltaTP / DeltaYP);
 }
