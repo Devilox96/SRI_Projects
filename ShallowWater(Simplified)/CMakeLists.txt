@@ -17,8 +17,10 @@ set(QtPackages
 find_package(Qt5 COMPONENTS Core Widgets DataVisualization Gui PATHS ${QtPath} NO_DEFAULT_PATH)
 #---Qt---#
 
+add_subdirectory(Libs/dMath/Core)
+
 add_executable(ShallowWater_Simplified_
         main.cpp
         include/dvectors.cpp
-        include/mainwindow.cpp include/dLaxWendroff.cpp include/dLaxWendroff.h)
-target_link_libraries(ShallowWater_Simplified_ ${QtPackages})
+        include/mainwindow.cpp include/dLaxWendroff.cpp include/dLaxWendroff.h include/dRichtmyerMethod.cpp include/dRichtmyerMethod.h)
+target_link_libraries(ShallowWater_Simplified_ ${QtPackages} dMathCoreLib)
