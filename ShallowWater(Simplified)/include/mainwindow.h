@@ -9,7 +9,7 @@
 #include <QtDataVisualization/QSurface3DSeries>
 #include <QtMath>
 //-----------------------------//
-#include "dvectors.h"
+#include "Libs/dMath/Core/dVectors.h"
 //-----------------------------//
 using namespace QtDataVisualization;
 //-----------------------------//
@@ -19,16 +19,16 @@ struct Point {
     double h, u, v;
 };
 //-----------------------------//
-void InitGrid(std :: vector <std :: vector <Point>>& GridP, double ExcitationP, double VXP, double VYP, int PointsNumP);
+void InitGrid(std :: vector <std :: vector <dVector3D <double>>>& GridP, double ExcitationP, double VXP, double VYP, int PointsNumP);
 
-dVector3D GetH(const std :: vector <std :: vector <Point>>& GridP, unsigned int i, unsigned int j);
-dVector3D GetU(const dVector3D& HP, double gP);
-dVector3D GetV(const dVector3D& HP, double gP);
+dVector3D <double> GetH(const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j);
+dVector3D <double> GetU(const dVector3D <double>& HP, double gP);
+dVector3D <double> GetV(const dVector3D <double>& HP, double gP);
 
-dVector3D GetHiHalf(double DeltaTP, double DeltaXP, const std :: vector <std :: vector <Point>>& GridP, unsigned int i, unsigned int j, double gP);
-dVector3D GetHjHalf(double DeltaTP, double DeltaYP, const std :: vector <std :: vector <Point>>& GridP, unsigned int i, unsigned int j, double gP);
+dVector3D <double> GetHiHalf(double DeltaTP, double DeltaXP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP);
+dVector3D <double> GetHjHalf(double DeltaTP, double DeltaYP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP);
 
-dVector3D NextH(double DeltaTP, double DeltaXP, double DeltaYP, const std :: vector <std :: vector <Point>>& GridP, unsigned int i, unsigned int j, double gP);
+dVector3D <double> NextH(double DeltaTP, double DeltaXP, double DeltaYP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP);
 //-----------------------------//
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -44,7 +44,7 @@ public:
     QSurfaceDataProxy* m_sqrtSinProxy;
     QSurface3DSeries* m_sqrtSinSeries;
 
-    std :: vector <std :: vector <Point>> Grid;
+    std :: vector <std :: vector <dVector3D <double>>> Grid;
 
     void Calc(unsigned int StepsP);
 };

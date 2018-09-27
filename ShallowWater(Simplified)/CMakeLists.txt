@@ -16,8 +16,9 @@ set(QtPackages
 find_package(Qt5 COMPONENTS Core Widgets DataVisualization PATHS ${QtPath} NO_DEFAULT_PATH)
 #---Qt---#
 
+add_subdirectory(Libs/dMath)
+
 add_executable(ShallowWater_Simplified_
         main.cpp
-        include/dvectors.cpp
         include/mainwindow.cpp)
-target_link_libraries(ShallowWater_Simplified_ ${QtPackages})
+target_link_libraries(ShallowWater_Simplified_ ${QtPackages} ${dMath})
