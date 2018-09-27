@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 
-void MainWindow :: Calc(unsigned int StepsP) {
+void Solver :: Calc(unsigned int StepsP) {
     unsigned int PointNum = 100;
 
-    InitGrid(Grid, 10.0, 0.0, 0.0, PointNum);
+    InitGrid(10.0, 0.0, 0.0, PointNum);
 
     Grid[50][50].x = 12.0;
 
@@ -12,7 +12,7 @@ void MainWindow :: Calc(unsigned int StepsP) {
     for (unsigned int iter = 0; iter < StepsP; iter++) {
         for (unsigned int i = 1; i < PointNum - 1; i++) {
             for (unsigned int j = 1; j < PointNum - 1; j++) {
-                dVector3D <double> TempH = NextH(0.001, 0.1, 0.1, Grid, i, j, 9.81);
+                dVector3D <double> TempH = NextH(i, j, 9.81);
 
                 TempGrid[i][j] = TempH;
             }
@@ -30,7 +30,9 @@ void MainWindow :: Calc(unsigned int StepsP) {
 }
 //-----------------------------//
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    Calc(500);
+    TestSolver = new Solver;
+
+    TestSolver -> Calc(500);
 
     MainWidget = new QWidget;
     setCentralWidget(MainWidget);
@@ -57,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         for (int j = 0; j < sampleCountX; j++) {
             float x = j;
 
-            auto y = float(Grid[i][j].x);
+            auto y = float(TestSolver -> Grid[i][j].x);
             (*newRow)[index++].setPosition(QVector3D(x, y, z));
         }
         *dataArray << newRow;
@@ -71,51 +73,48 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     MainLayout -> addWidget(container);
 }
 //-----------------------------//
-void InitGrid(std :: vector <std :: vector <dVector3D <double>>>& GridP, double ExcitationP, double VXP, double VYP, int PointsNumP) {
+void Solver::InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP) {
     for (int i = 0; i < PointsNumP; i++) {
-        GridP.emplace_back(std :: vector <dVector3D <double>>());
+        Grid.emplace_back(std :: vector <dVector3D <double>>());
 
         for (int j = 0; j < PointsNumP; j++) {
-            GridP.back().emplace_back(dVector3D <double>(ExcitationP, VXP * ExcitationP, VYP * ExcitationP));
+            Grid.back().emplace_back(dVector3D <double>(ExcitationP, VXP * ExcitationP, VYP * ExcitationP));
         }
     }
 }
 
-dVector3D <double> GetH(const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j) {
-    return GridP[i][j];
-}
-dVector3D <double> GetU(const dVector3D <double>& HP, double gP) {
+dVector3D <double> Solver::GetU(const dVector3D <double>& HP, double gP) {
     return dVector3D <double>(HP.y, pow(HP.y, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0), HP.y * HP.z / HP.x);
 }
-dVector3D <double> GetV(const dVector3D <double>& HP, double gP) {
+dVector3D <double> Solver::GetV(const dVector3D <double>& HP, double gP) {
     return dVector3D <double>(HP.z, HP.y * HP.z / HP.x, pow(HP.z, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0));
 }
 
-dVector3D <double> GetHiHalf(const double DeltaTP, const double DeltaXP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
-    dVector3D <double> H_iplus1_jL = GetH(GridP, i + 1, j);
-    dVector3D <double> H_i_jL = GetH(GridP, i, j);
+dVector3D <double> Solver::GetHiHalf(unsigned int i, unsigned int j, double gP) {
+    dVector3D <double> H_iplus1_jL = Grid[i + 1][j];
+    dVector3D <double> H_i_jL = Grid[i][j];
 
     dVector3D <double> U_iplus1_jL = GetU(H_iplus1_jL, gP);
     dVector3D <double> U_i_jL = GetU(H_i_jL, gP);
 
-    return (H_iplus1_jL + H_i_jL) / 2.0 - (U_iplus1_jL - U_i_jL) * (DeltaTP / DeltaXP) / 2.0;
+    return (H_iplus1_jL + H_i_jL) / 2.0 - (U_iplus1_jL - U_i_jL) * (TimeStep / xStep) / 2.0;
 }
-dVector3D <double> GetHjHalf(const double DeltaTP, const double DeltaYP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
-    dVector3D <double> H_i_jplus1L = GetH(GridP, i, j + 1);
-    dVector3D <double> H_i_jL = GetH(GridP, i, j);
+dVector3D <double> Solver::GetHjHalf(unsigned int i, unsigned int j, double gP) {
+    dVector3D <double> H_i_jplus1L = Grid[i][j + 1];
+    dVector3D <double> H_i_jL = Grid[i][j];
 
     dVector3D <double> V_i_jplus1L = GetV(H_i_jplus1L, gP);
     dVector3D <double> V_i_jL = GetV(H_i_jL, gP);
 
-    return (H_i_jplus1L + H_i_jL) / 2.0 - (V_i_jplus1L - V_i_jL) * (DeltaTP / DeltaYP) / 2.0;
+    return (H_i_jplus1L + H_i_jL) / 2.0 - (V_i_jplus1L - V_i_jL) * (TimeStep / yStep) / 2.0;
 }
 
-dVector3D <double> NextH(const double DeltaTP, const double DeltaXP, const double DeltaYP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
-    dVector3D <double> H_iplushalf_jL = GetHiHalf(DeltaTP, DeltaXP, GridP, i, j, gP);
-    dVector3D <double> H_iminushalf_jL = GetHiHalf(DeltaTP, DeltaXP, GridP, i - 1, j, gP);
+dVector3D <double> Solver::NextH(unsigned int i, unsigned int j, double gP) {
+    dVector3D <double> H_iplushalf_jL = GetHiHalf(i, j, gP);
+    dVector3D <double> H_iminushalf_jL = GetHiHalf(i - 1, j, gP);
 
-    dVector3D <double> H_i_jplushalfL = GetHjHalf(DeltaTP, DeltaYP, GridP, i, j, gP);
-    dVector3D <double> H_i_jminushalfL = GetHjHalf(DeltaTP, DeltaYP, GridP, i, j - 1, gP);
+    dVector3D <double> H_i_jplushalfL = GetHjHalf(i, j, gP);
+    dVector3D <double> H_i_jminushalfL = GetHjHalf(i, j - 1, gP);
 
     dVector3D <double> U_iplushalf_jL = GetU(H_iplushalf_jL, gP);
     dVector3D <double> U_iminushalf_jL = GetU(H_iminushalf_jL, gP);
@@ -123,7 +122,7 @@ dVector3D <double> NextH(const double DeltaTP, const double DeltaXP, const doubl
     dVector3D <double> V_i_jplushalfL = GetV(H_i_jplushalfL, gP);
     dVector3D <double> V_i_jminushalfL = GetV(H_i_jminushalfL, gP);
 
-    dVector3D <double> H_i_jL = GetH(GridP, i, j);
+    dVector3D <double> H_i_jL = Grid[i][j];
 
-    return H_i_jL - (U_iplushalf_jL - U_iminushalf_jL) * (DeltaTP / DeltaXP) - (V_i_jplushalfL - V_i_jminushalfL) * (DeltaTP / DeltaYP);
+    return H_i_jL - (U_iplushalf_jL - U_iminushalf_jL) * (TimeStep / xStep) - (V_i_jplushalfL - V_i_jminushalfL) * (TimeStep / yStep);
 }

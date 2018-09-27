@@ -13,22 +13,36 @@
 //-----------------------------//
 using namespace QtDataVisualization;
 //-----------------------------//
-struct Point {
-    Point(double hP, double uP, double vP) : h(hP), u(uP), v(vP) {}
+class Solver {
+public:
+    Solver() = default;
+    ~Solver() = default;
 
-    double h, u, v;
+    void Calc(unsigned int StepsP);
+
+    std :: vector <std :: vector <dVector3D <double>>> Grid;
+private:
+    double TimeStep = 0.001;
+
+    double xStep = 0.1;
+    double yStep = 0.1;
+    double zStep = 0.0;
+
+    double g = 9.81;
+
+
+
+
+    void InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP);
+
+    dVector3D <double> GetU(const dVector3D <double>& HP, double gP);
+    dVector3D <double> GetV(const dVector3D <double>& HP, double gP);
+
+    dVector3D <double> GetHiHalf(unsigned int i, unsigned int j, double gP);
+    dVector3D <double> GetHjHalf(unsigned int i, unsigned int j, double gP);
+
+    dVector3D <double> NextH(unsigned int i, unsigned int j, double gP);
 };
-//-----------------------------//
-void InitGrid(std :: vector <std :: vector <dVector3D <double>>>& GridP, double ExcitationP, double VXP, double VYP, int PointsNumP);
-
-dVector3D <double> GetH(const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j);
-dVector3D <double> GetU(const dVector3D <double>& HP, double gP);
-dVector3D <double> GetV(const dVector3D <double>& HP, double gP);
-
-dVector3D <double> GetHiHalf(double DeltaTP, double DeltaXP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP);
-dVector3D <double> GetHjHalf(double DeltaTP, double DeltaYP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP);
-
-dVector3D <double> NextH(double DeltaTP, double DeltaXP, double DeltaYP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP);
 //-----------------------------//
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -44,9 +58,9 @@ public:
     QSurfaceDataProxy* m_sqrtSinProxy;
     QSurface3DSeries* m_sqrtSinSeries;
 
-    std :: vector <std :: vector <dVector3D <double>>> Grid;
+    Solver* TestSolver;
 
-    void Calc(unsigned int StepsP);
+//    void Calc(unsigned int StepsP);
 };
 //-----------------------------//
 #endif
