@@ -14,9 +14,7 @@ void MainWindow :: Calc(unsigned int StepsP) {
             for (unsigned int j = 1; j < PointNum - 1; j++) {
                 dVector3D <double> TempH = NextH(0.001, 0.1, 0.1, Grid, i, j, 9.81);
 
-                TempGrid[i][j].x = TempH.x;
-                TempGrid[i][j].y = TempH.y / TempH.x;
-                TempGrid[i][j].z = TempH.z / TempH.x;
+                TempGrid[i][j] = TempH;
             }
         }
 
@@ -78,25 +76,19 @@ void InitGrid(std :: vector <std :: vector <dVector3D <double>>>& GridP, double 
         GridP.emplace_back(std :: vector <dVector3D <double>>());
 
         for (int j = 0; j < PointsNumP; j++) {
-            GridP.back().emplace_back(dVector3D <double>(ExcitationP, VXP, VYP));
+            GridP.back().emplace_back(dVector3D <double>(ExcitationP, VXP * ExcitationP, VYP * ExcitationP));
         }
     }
 }
 
 dVector3D <double> GetH(const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j) {
-    return dVector3D <double>(GridP[i][j].x,
-                     GridP[i][j].y * GridP[i][j].x,
-                     GridP[i][j].z * GridP[i][j].x);
+    return GridP[i][j];
 }
 dVector3D <double> GetU(const dVector3D <double>& HP, double gP) {
-    return dVector3D <double>(HP.y,
-                     pow(HP.y, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0),
-                     HP.y * HP.z / HP.x);
+    return dVector3D <double>(HP.y, pow(HP.y, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0), HP.y * HP.z / HP.x);
 }
 dVector3D <double> GetV(const dVector3D <double>& HP, double gP) {
-    return dVector3D <double>(HP.z,
-                     HP.y * HP.z / HP.x,
-                     pow(HP.z, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0));
+    return dVector3D <double>(HP.z, HP.y * HP.z / HP.x, pow(HP.z, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0));
 }
 
 dVector3D <double> GetHiHalf(const double DeltaTP, const double DeltaXP, const std :: vector <std :: vector <dVector3D <double>>>& GridP, unsigned int i, unsigned int j, double gP) {
