@@ -12,7 +12,7 @@ void Solver :: Calc(unsigned int StepsP) {
     for (unsigned int iter = 0; iter < StepsP; iter++) {
         for (unsigned int i = 1; i < PointNum - 1; i++) {
             for (unsigned int j = 1; j < PointNum - 1; j++) {
-                dVector3D <double> TempH = NextH(i, j, 9.81);
+                dVector3D <double> TempH = NextH(i, j);
 
                 TempGrid[i][j] = TempH;
             }
@@ -83,44 +83,44 @@ void Solver::InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP
     }
 }
 
-dVector3D <double> Solver::GetU(const dVector3D <double>& HP, double gP) {
-    return dVector3D <double>(HP.y, pow(HP.y, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0), HP.y * HP.z / HP.x);
+dVector3D <double> Solver::GetU(const dVector3D <double>& HP) {
+    return dVector3D <double>(HP.y, pow(HP.y, 2.0) / HP.x + 0.5 * g * pow(HP.x, 2.0), HP.y * HP.z / HP.x);
 }
-dVector3D <double> Solver::GetV(const dVector3D <double>& HP, double gP) {
-    return dVector3D <double>(HP.z, HP.y * HP.z / HP.x, pow(HP.z, 2.0) / HP.x + 0.5 * gP * pow(HP.x, 2.0));
+dVector3D <double> Solver::GetV(const dVector3D <double>& HP) {
+    return dVector3D <double>(HP.z, HP.y * HP.z / HP.x, pow(HP.z, 2.0) / HP.x + 0.5 * g * pow(HP.x, 2.0));
 }
 
-dVector3D <double> Solver::GetHiHalf(unsigned int i, unsigned int j, double gP) {
+dVector3D <double> Solver::GetHiHalf(unsigned int i, unsigned int j) {
     dVector3D <double> H_iplus1_jL = Grid[i + 1][j];
     dVector3D <double> H_i_jL = Grid[i][j];
 
-    dVector3D <double> U_iplus1_jL = GetU(H_iplus1_jL, gP);
-    dVector3D <double> U_i_jL = GetU(H_i_jL, gP);
+    dVector3D <double> U_iplus1_jL = GetU(H_iplus1_jL);
+    dVector3D <double> U_i_jL = GetU(H_i_jL);
 
     return (H_iplus1_jL + H_i_jL) / 2.0 - (U_iplus1_jL - U_i_jL) * (TimeStep / xStep) / 2.0;
 }
-dVector3D <double> Solver::GetHjHalf(unsigned int i, unsigned int j, double gP) {
+dVector3D <double> Solver::GetHjHalf(unsigned int i, unsigned int j) {
     dVector3D <double> H_i_jplus1L = Grid[i][j + 1];
     dVector3D <double> H_i_jL = Grid[i][j];
 
-    dVector3D <double> V_i_jplus1L = GetV(H_i_jplus1L, gP);
-    dVector3D <double> V_i_jL = GetV(H_i_jL, gP);
+    dVector3D <double> V_i_jplus1L = GetV(H_i_jplus1L);
+    dVector3D <double> V_i_jL = GetV(H_i_jL);
 
     return (H_i_jplus1L + H_i_jL) / 2.0 - (V_i_jplus1L - V_i_jL) * (TimeStep / yStep) / 2.0;
 }
 
-dVector3D <double> Solver::NextH(unsigned int i, unsigned int j, double gP) {
-    dVector3D <double> H_iplushalf_jL = GetHiHalf(i, j, gP);
-    dVector3D <double> H_iminushalf_jL = GetHiHalf(i - 1, j, gP);
+dVector3D <double> Solver::NextH(unsigned int i, unsigned int j) {
+    dVector3D <double> H_iplushalf_jL = GetHiHalf(i, j);
+    dVector3D <double> H_iminushalf_jL = GetHiHalf(i - 1, j);
 
-    dVector3D <double> H_i_jplushalfL = GetHjHalf(i, j, gP);
-    dVector3D <double> H_i_jminushalfL = GetHjHalf(i, j - 1, gP);
+    dVector3D <double> H_i_jplushalfL = GetHjHalf(i, j);
+    dVector3D <double> H_i_jminushalfL = GetHjHalf(i, j - 1);
 
-    dVector3D <double> U_iplushalf_jL = GetU(H_iplushalf_jL, gP);
-    dVector3D <double> U_iminushalf_jL = GetU(H_iminushalf_jL, gP);
+    dVector3D <double> U_iplushalf_jL = GetU(H_iplushalf_jL);
+    dVector3D <double> U_iminushalf_jL = GetU(H_iminushalf_jL);
 
-    dVector3D <double> V_i_jplushalfL = GetV(H_i_jplushalfL, gP);
-    dVector3D <double> V_i_jminushalfL = GetV(H_i_jminushalfL, gP);
+    dVector3D <double> V_i_jplushalfL = GetV(H_i_jplushalfL);
+    dVector3D <double> V_i_jminushalfL = GetV(H_i_jminushalfL);
 
     dVector3D <double> H_i_jL = Grid[i][j];
 

@@ -35,13 +35,13 @@ private:
 
     void InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP);
 
-    dVector3D <double> GetU(const dVector3D <double>& HP, double gP);
-    dVector3D <double> GetV(const dVector3D <double>& HP, double gP);
+    dVector3D <double> GetU(const dVector3D <double>& HP);
+    dVector3D <double> GetV(const dVector3D <double>& HP);
 
-    dVector3D <double> GetHiHalf(unsigned int i, unsigned int j, double gP);
-    dVector3D <double> GetHjHalf(unsigned int i, unsigned int j, double gP);
+    dVector3D <double> GetHiHalf(unsigned int i, unsigned int j);
+    dVector3D <double> GetHjHalf(unsigned int i, unsigned int j);
 
-    dVector3D <double> NextH(unsigned int i, unsigned int j, double gP);
+    dVector3D <double> NextH(unsigned int i, unsigned int j);
 };
 //-----------------------------//
 class MainWindow : public QMainWindow {
@@ -55,12 +55,7 @@ public:
     QWidget* MainWidget;
     QGridLayout* MainLayout;
 
-    QSurfaceDataProxy* m_sqrtSinProxy;
-    QSurface3DSeries* m_sqrtSinSeries;
-
     Solver* TestSolver;
-
-//    void Calc(unsigned int StepsP);
 };
 //-----------------------------//
 #endif
