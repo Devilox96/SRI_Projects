@@ -1,12 +1,5 @@
 #include "mainwindow.h"
 //-----------------------------//
-dRichtmyer::dRichtmyer(double TimeStepP) : TimeStep(TimeStepP) {}
-dRichtmyer::dRichtmyer(double TimeStepP, double xStepP) : TimeStep(TimeStepP), xStep(xStepP) {}
-dRichtmyer::dRichtmyer(double TimeStepP, double xStepP, double yStepP) :
-        TimeStep(TimeStepP), xStep(xStepP), yStep(yStepP) {}
-dRichtmyer::dRichtmyer(double TimeStepP, double xStepP, double yStepP, double zStepP) :
-        TimeStep(TimeStepP), xStep(xStepP), yStep(yStepP), zStep(zStepP) {}
-//-----------------------------//
 void dRichtmyer::SetTimeStep(double TimeStepP) {
     TimeStep = TimeStepP;
 }
@@ -23,46 +16,37 @@ void dRichtmyer::SetZStep(double zStepP) {
 //-----------------------------//
 dVector3D <double> dRichtmyer::Solve1D( dVector3D <double> U,
                                         dVector3D <double> Ux_minus_1,
-                                        dVector3D <double> Ux_plus_1,
-                                        dVector3D <double> X_minus_1,
-                                        dVector3D <double> X,
-                                        dVector3D <double> X_plus_1) {
+                                        dVector3D <double> Ux_plus_1) {
     if (TimeStep == 0.0 || xStep == 0.0) {
         std::cout << "Error: set steps!" << std::endl;
         exit(-1);
     }
 
-    dVector3D <double> HalfStepX_plus = HalfStepVector(U, Ux_plus_1, X, X_plus_1, xStep);
-    dVector3D <double> HalfStepX_minus = HalfStepVector(Ux_minus_1, U, X_minus_1, X, xStep);
+    dVector3D <double> UxHalf_plusL = UxHalfVector(U, Ux_plus_1);
+    dVector3D <double> UxHalf_minusL = UxHalfVector(Ux_minus_1, U);
 
     return  U -
-            (HalfStepX_plus - HalfStepX_minus) * (TimeStep / xStep);
+            (xFunc(UxHalf_plusL) - xFunc(UxHalf_minusL)) * (TimeStep / xStep);
 }
 dVector3D <double> dRichtmyer::Solve2D( dVector3D <double> U,
                                         dVector3D <double> Ux_minus_1,
                                         dVector3D <double> Ux_plus_1,
                                         dVector3D <double> Uy_minus_1,
-                                        dVector3D <double> Uy_plus_1,
-                                        dVector3D <double> X_minus_1,
-                                        dVector3D <double> X,
-                                        dVector3D <double> X_plus_1,
-                                        dVector3D <double> Y_minus_1,
-                                        dVector3D <double> Y,
-                                        dVector3D <double> Y_plus_1) {
+                                        dVector3D <double> Uy_plus_1) {
     if (TimeStep == 0.0 || xStep == 0.0 || yStep == 0.0) {
         std::cout << "Error: set steps!" << std::endl;
         exit(-1);
     }
 
-    dVector3D <double> HalfStepX_plus = HalfStepVector(U, Ux_plus_1, X, X_plus_1, xStep);
-    dVector3D <double> HalfStepX_minus = HalfStepVector(Ux_minus_1, U, X_minus_1, X, xStep);
+    dVector3D <double> UxHalf_plusL = UxHalfVector(U, Ux_plus_1);
+    dVector3D <double> UxHalf_minusL = UxHalfVector(Ux_minus_1, U);
 
-    dVector3D <double> HalfStepY_plus = HalfStepVector(U, Uy_plus_1, Y, Y_plus_1, yStep);
-    dVector3D <double> HalfStepY_minus = HalfStepVector(Uy_minus_1, U, Y_minus_1, Y, yStep);
+    dVector3D <double> UyHalf_plusL = UyHalfVector(U, Uy_plus_1);
+    dVector3D <double> UyHalf_minusL = UyHalfVector(Uy_minus_1, U);
 
     return  U -
-            (HalfStepX_plus - HalfStepX_minus) * (TimeStep / xStep) -
-            (HalfStepY_plus - HalfStepY_minus) * (TimeStep / yStep);
+            (xFunc(UxHalf_plusL) - xFunc(UxHalf_minusL)) * (TimeStep / xStep) -
+            (yFunc(UyHalf_plusL) - yFunc(UyHalf_minusL)) * (TimeStep / yStep);
 }
 dVector3D <double> dRichtmyer::Solve3D( dVector3D <double> U,
                                         dVector3D <double> Ux_minus_1,
@@ -70,47 +54,65 @@ dVector3D <double> dRichtmyer::Solve3D( dVector3D <double> U,
                                         dVector3D <double> Uy_minus_1,
                                         dVector3D <double> Uy_plus_1,
                                         dVector3D <double> Uz_minus_1,
-                                        dVector3D <double> Uz_plus_1,
-                                        dVector3D <double> X_minus_1,
-                                        dVector3D <double> X,
-                                        dVector3D <double> X_plus_1,
-                                        dVector3D <double> Y_minus_1,
-                                        dVector3D <double> Y,
-                                        dVector3D <double> Y_plus_1,
-                                        dVector3D <double> Z_minus_1,
-                                        dVector3D <double> Z,
-                                        dVector3D <double> Z_plus_1) {
+                                        dVector3D <double> Uz_plus_1) {
     if (TimeStep == 0.0 || xStep == 0.0 || yStep == 0.0 || zStep == 0.0) {
         std::cout << "Error: set steps!" << std::endl;
         exit(-1);
     }
 
-    dVector3D <double> HalfStepX_plus = HalfStepVector(U, Ux_plus_1, X, X_plus_1, xStep);
-    dVector3D <double> HalfStepX_minus = HalfStepVector(Ux_minus_1, U, X_minus_1, X, xStep);
+    dVector3D <double> UxHalf_plusL = UxHalfVector(U, Ux_plus_1);
+    dVector3D <double> UxHalf_minusL = UxHalfVector(Ux_minus_1, U);
 
-    dVector3D <double> HalfStepY_plus = HalfStepVector(U, Uy_plus_1, Y, Y_plus_1, yStep);
-    dVector3D <double> HalfStepY_minus = HalfStepVector(Uy_minus_1, U, Y_minus_1, Y, yStep);
+    dVector3D <double> UyHalf_plusL = UyHalfVector(U, Uy_plus_1);
+    dVector3D <double> UyHalf_minusL = UyHalfVector(Uy_minus_1, U);
 
-    dVector3D <double> HalfStepZ_plus = HalfStepVector(U, Uz_plus_1, Z, Z_plus_1, zStep);
-    dVector3D <double> HalfStepZ_minus = HalfStepVector(Uz_minus_1, U, Z_minus_1, Z, zStep);
+    dVector3D <double> UzHalf_plusL = UzHalfVector(U, Uz_plus_1);
+    dVector3D <double> UzHalf_minusL = UzHalfVector(Uz_minus_1, U);
 
     return  U -
-            (HalfStepX_plus - HalfStepX_minus) * (TimeStep / xStep) -
-            (HalfStepY_plus - HalfStepY_minus) * (TimeStep / yStep) -
-            (HalfStepZ_plus - HalfStepZ_minus) * (TimeStep / zStep);
+            (xFunc(UxHalf_plusL) - xFunc(UxHalf_minusL)) * (TimeStep / xStep) -
+            (yFunc(UyHalf_plusL) - yFunc(UyHalf_minusL)) * (TimeStep / yStep) -
+            (zFunc(UzHalf_plusL) - zFunc(UzHalf_minusL)) * (TimeStep / zStep);
 }
 //-----------------------------//
-dVector3D <double> dRichtmyer::HalfStepVector(  dVector3D <double> U,
-                                                dVector3D <double> U_plus_1,
-                                                dVector3D <double> F,
-                                                dVector3D <double> F_plus_1,
-                                                double CoordStepP) {
-    return (U_plus_1 + U) / 2.0 - (F_plus_1 - F) * (TimeStep / 2.0 / CoordStepP);
+dVector3D <double> dRichtmyer::UxHalfVector(const dVector3D <double>& Ux, const dVector3D <double>& Ux_plus_1) {
+    return (Ux_plus_1 + Ux) / 2.0 - (xFunc(Ux_plus_1) - xFunc(Ux)) * (TimeStep / 2.0 / xStep);
+}
+dVector3D <double> dRichtmyer::UyHalfVector(const dVector3D <double>& Uy, const dVector3D <double>& Uy_plus_1) {
+    return (Uy_plus_1 + Uy) / 2.0 - (yFunc(Uy_plus_1) - yFunc(Uy)) * (TimeStep / 2.0 / yStep);
+}
+dVector3D <double> dRichtmyer::UzHalfVector(const dVector3D <double>& Uz, const dVector3D <double>& Uz_plus_1) {
+    return (Uz_plus_1 + Uz) / 2.0 - (zFunc(Uz_plus_1) - zFunc(Uz)) * (TimeStep / 2.0 / zStep);
 }
 //-----------------------------//
-
-
-
+//-----------------------------//
+//-----------------------------//
+dRichtmyerSolver::dRichtmyerSolver(double TimeStepP) {
+    TimeStep = TimeStepP;
+}
+dRichtmyerSolver::dRichtmyerSolver(double TimeStepP, double xStepP) {
+    TimeStep = TimeStepP;
+    xStep = xStepP;
+}
+dRichtmyerSolver::dRichtmyerSolver(double TimeStepP, double xStepP, double yStepP) {
+    TimeStep = TimeStepP;
+    xStep = xStepP;
+    yStep = yStepP;
+}
+dRichtmyerSolver::dRichtmyerSolver(double TimeStepP, double xStepP, double yStepP, double zStepP) {
+    TimeStep = TimeStepP;
+    xStep = xStepP;
+    yStep = yStepP;
+    zStep = zStepP;
+}
+//-----------------------------//
+dVector3D <double> dRichtmyerSolver::xFunc(const dVector3D <double>& U) {
+    return dVector3D <double>(U.y, pow(U.y, 2.0) / U.x + 0.5 * g * pow(U.x, 2.0), U.y * U.z / U.x);
+}
+dVector3D <double> dRichtmyerSolver::yFunc(const dVector3D <double>& U) {
+    return dVector3D <double>(U.z, U.y * U.z / U.x, pow(U.z, 2.0) / U.x + 0.5 * g * pow(U.x, 2.0));
+}
+dVector3D <double> dRichtmyerSolver::zFunc(const dVector3D <double>& U) {}
 
 
 
@@ -131,7 +133,7 @@ dVector3D <double> dRichtmyer::HalfStepVector(  dVector3D <double> U,
 
 
 Solver::Solver() {
-    Test = new dRichtmyer(0.001, 0.1, 0.1);
+    Test = new dRichtmyerSolver(0.001, 0.1, 0.1);
 }
 Solver::~Solver() {
     delete Test;
@@ -152,15 +154,7 @@ void Solver :: Calc(unsigned int StepsP) {
 
         for (unsigned int i = 1; i < PointNum - 1; i++) {
             for (unsigned int j = 1; j < PointNum - 1; j++) {
-//                dVector3D <double> TempH = NextH(i, j);
-
-                dVector3D <double> TempH = Test -> Solve2D( Grid[i][j],
-                                                            Grid[i - 1][j],
-                                                            Grid[i + 1][j],
-                                                            Grid[i][j - 1],
-                                                            Grid[i][j + 1],
-                                                            GetU(Grid[i - 1][j]),
-                                                            GetU(Grid[i][j]))
+                dVector3D <double> TempH = Test -> Solve2D(Grid[i][j], Grid[i - 1][j], Grid[i + 1][j], Grid[i][j - 1], Grid[i][j + 1]);
 
                 TempGrid[i][j] = TempH;
 
@@ -197,7 +191,7 @@ void Solver :: Calc(unsigned int StepsP) {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     TestSolver = new Solver;
 
-    TestSolver -> Calc(2000);
+    TestSolver -> Calc(1000);
 
     MainWidget = new QWidget;
     setCentralWidget(MainWidget);
@@ -248,46 +242,46 @@ void Solver::InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP
     }
 }
 
-dVector3D <double> Solver::GetU(const dVector3D <double>& HP) {
-    return dVector3D <double>(HP.y, pow(HP.y, 2.0) / HP.x + 0.5 * g * pow(HP.x, 2.0), HP.y * HP.z / HP.x);
-}
-dVector3D <double> Solver::GetV(const dVector3D <double>& HP) {
-    return dVector3D <double>(HP.z, HP.y * HP.z / HP.x, pow(HP.z, 2.0) / HP.x + 0.5 * g * pow(HP.x, 2.0));
-}
-
-dVector3D <double> Solver::GetHiHalf(unsigned int i, unsigned int j) {
-    dVector3D <double> H_iplus1_jL = Grid[i + 1][j];
-    dVector3D <double> H_i_jL = Grid[i][j];
-
-    dVector3D <double> U_iplus1_jL = GetU(H_iplus1_jL);
-    dVector3D <double> U_i_jL = GetU(H_i_jL);
-
-    return (H_iplus1_jL + H_i_jL) / 2.0 - (U_iplus1_jL - U_i_jL) * (TimeStep / xStep) / 2.0;
-}
-dVector3D <double> Solver::GetHjHalf(unsigned int i, unsigned int j) {
-    dVector3D <double> H_i_jplus1L = Grid[i][j + 1];
-    dVector3D <double> H_i_jL = Grid[i][j];
-
-    dVector3D <double> V_i_jplus1L = GetV(H_i_jplus1L);
-    dVector3D <double> V_i_jL = GetV(H_i_jL);
-
-    return (H_i_jplus1L + H_i_jL) / 2.0 - (V_i_jplus1L - V_i_jL) * (TimeStep / yStep) / 2.0;
-}
-
-dVector3D <double> Solver::NextH(unsigned int i, unsigned int j) {
-    dVector3D <double> H_iplushalf_jL = GetHiHalf(i, j);
-    dVector3D <double> H_iminushalf_jL = GetHiHalf(i - 1, j);
-
-    dVector3D <double> H_i_jplushalfL = GetHjHalf(i, j);
-    dVector3D <double> H_i_jminushalfL = GetHjHalf(i, j - 1);
-
-    dVector3D <double> U_iplushalf_jL = GetU(H_iplushalf_jL);
-    dVector3D <double> U_iminushalf_jL = GetU(H_iminushalf_jL);
-
-    dVector3D <double> V_i_jplushalfL = GetV(H_i_jplushalfL);
-    dVector3D <double> V_i_jminushalfL = GetV(H_i_jminushalfL);
-
-    dVector3D <double> H_i_jL = Grid[i][j];
-
-    return H_i_jL - (U_iplushalf_jL - U_iminushalf_jL) * (TimeStep / xStep) - (V_i_jplushalfL - V_i_jminushalfL) * (TimeStep / yStep);
-}
+//dVector3D <double> Solver::GetU(const dVector3D <double>& HP) {
+//    return dVector3D <double>(HP.y, pow(HP.y, 2.0) / HP.x + 0.5 * g * pow(HP.x, 2.0), HP.y * HP.z / HP.x);
+//}
+//dVector3D <double> Solver::GetV(const dVector3D <double>& HP) {
+//    return dVector3D <double>(HP.z, HP.y * HP.z / HP.x, pow(HP.z, 2.0) / HP.x + 0.5 * g * pow(HP.x, 2.0));
+//}
+//
+//dVector3D <double> Solver::GetHiHalf(unsigned int i, unsigned int j) {
+//    dVector3D <double> H_iplus1_jL = Grid[i + 1][j];
+//    dVector3D <double> H_i_jL = Grid[i][j];
+//
+//    dVector3D <double> U_iplus1_jL = GetU(H_iplus1_jL);
+//    dVector3D <double> U_i_jL = GetU(H_i_jL);
+//
+//    return (H_iplus1_jL + H_i_jL) / 2.0 - (U_iplus1_jL - U_i_jL) * (TimeStep / xStep) / 2.0;
+//}
+//dVector3D <double> Solver::GetHjHalf(unsigned int i, unsigned int j) {
+//    dVector3D <double> H_i_jplus1L = Grid[i][j + 1];
+//    dVector3D <double> H_i_jL = Grid[i][j];
+//
+//    dVector3D <double> V_i_jplus1L = GetV(H_i_jplus1L);
+//    dVector3D <double> V_i_jL = GetV(H_i_jL);
+//
+//    return (H_i_jplus1L + H_i_jL) / 2.0 - (V_i_jplus1L - V_i_jL) * (TimeStep / yStep) / 2.0;
+//}
+//
+//dVector3D <double> Solver::NextH(unsigned int i, unsigned int j) {
+//    dVector3D <double> H_iplushalf_jL = GetHiHalf(i, j);
+//    dVector3D <double> H_iminushalf_jL = GetHiHalf(i - 1, j);
+//
+//    dVector3D <double> H_i_jplushalfL = GetHjHalf(i, j);
+//    dVector3D <double> H_i_jminushalfL = GetHjHalf(i, j - 1);
+//
+//    dVector3D <double> U_iplushalf_jL = GetU(H_iplushalf_jL);
+//    dVector3D <double> U_iminushalf_jL = GetU(H_iminushalf_jL);
+//
+//    dVector3D <double> V_i_jplushalfL = GetV(H_i_jplushalfL);
+//    dVector3D <double> V_i_jminushalfL = GetV(H_i_jminushalfL);
+//
+//    dVector3D <double> H_i_jL = Grid[i][j];
+//
+//    return H_i_jL - (U_iplushalf_jL - U_iminushalf_jL) * (TimeStep / xStep) - (V_i_jplushalfL - V_i_jminushalfL) * (TimeStep / yStep);
+//}

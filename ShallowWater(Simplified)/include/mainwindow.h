@@ -16,10 +16,6 @@ using namespace QtDataVisualization;
 class dRichtmyer {
 public:
     dRichtmyer() = default;
-    explicit dRichtmyer(double TimeStepP);
-    dRichtmyer(double TimeStepP, double xStepP);
-    dRichtmyer(double TimeStepP, double xStepP, double yStepP);
-    dRichtmyer(double TimeStepP, double xStepP, double yStepP, double zStepP);
     ~dRichtmyer() = default;
 
     //----------//
@@ -34,38 +30,20 @@ public:
 
     dVector3D <double> Solve1D( dVector3D <double> U,
                                 dVector3D <double> Ux_minus_1,
-                                dVector3D <double> Ux_plus_1,
-                                dVector3D <double> X_minus_1,
-                                dVector3D <double> X,
-                                dVector3D <double> X_plus_1);
+                                dVector3D <double> Ux_plus_1);
     dVector3D <double> Solve2D( dVector3D <double> U,
                                 dVector3D <double> Ux_minus_1,
                                 dVector3D <double> Ux_plus_1,
                                 dVector3D <double> Uy_minus_1,
-                                dVector3D <double> Uy_plus_1,
-                                dVector3D <double> X_minus_1,
-                                dVector3D <double> X,
-                                dVector3D <double> X_plus_1,
-                                dVector3D <double> Y_minus_1,
-                                dVector3D <double> Y,
-                                dVector3D <double> Y_plus_1);
+                                dVector3D <double> Uy_plus_1);
     dVector3D <double> Solve3D( dVector3D <double> U,
                                 dVector3D <double> Ux_minus_1,
                                 dVector3D <double> Ux_plus_1,
                                 dVector3D <double> Uy_minus_1,
                                 dVector3D <double> Uy_plus_1,
                                 dVector3D <double> Uz_minus_1,
-                                dVector3D <double> Uz_plus_1,
-                                dVector3D <double> X_minus_1,
-                                dVector3D <double> X,
-                                dVector3D <double> X_plus_1,
-                                dVector3D <double> Y_minus_1,
-                                dVector3D <double> Y,
-                                dVector3D <double> Y_plus_1,
-                                dVector3D <double> Z_minus_1,
-                                dVector3D <double> Z,
-                                dVector3D <double> Z_plus_1);
-private:
+                                dVector3D <double> Uz_plus_1);
+protected:
     double TimeStep = 0.0;
 
     double xStep = 0.0;
@@ -74,11 +52,33 @@ private:
 
     //----------//
 
-    dVector3D <double> HalfStepVector(  dVector3D <double> U,
-                                        dVector3D <double> U_plus_1,
-                                        dVector3D <double> F,
-                                        dVector3D <double> F_plus_1,
-                                        double CoordStepP);
+    virtual dVector3D <double> xFunc(const dVector3D <double>& U) = 0;
+    virtual dVector3D <double> yFunc(const dVector3D <double>& U) = 0;
+    virtual dVector3D <double> zFunc(const dVector3D <double>& U) = 0;
+
+    //----------//
+
+    dVector3D <double> UxHalfVector(const dVector3D <double>& Ux, const dVector3D <double>& Ux_plus_1);
+    dVector3D <double> UyHalfVector(const dVector3D <double>& Uy, const dVector3D <double>& Uy_plus_1);
+    dVector3D <double> UzHalfVector(const dVector3D <double>& Uz, const dVector3D <double>& Uz_plus_1);
+};
+//-----------------------------//
+class dRichtmyerSolver : public dRichtmyer {
+public:
+    dRichtmyerSolver() = default;
+    explicit dRichtmyerSolver(double TimeStepP);
+    dRichtmyerSolver(double TimeStepP, double xStepP);
+    dRichtmyerSolver(double TimeStepP, double xStepP, double yStepP);
+    dRichtmyerSolver(double TimeStepP, double xStepP, double yStepP, double zStepP);
+    ~dRichtmyerSolver() = default;
+private:
+    const double g = 9.81;
+
+    //----------//
+
+    dVector3D <double> xFunc(const dVector3D <double>& U) override;
+    dVector3D <double> yFunc(const dVector3D <double>& U) override;
+    dVector3D <double> zFunc(const dVector3D <double>& U) override;
 };
 //-----------------------------//
 class Solver {
@@ -89,7 +89,7 @@ public:
     void Calc(unsigned int StepsP);
 
     std :: vector <std :: vector <dVector3D <double>>> Grid;
-    dRichtmyer* Test;
+    dRichtmyerSolver* Test;
 private:
     double TimeStep = 0.001;
 
@@ -104,13 +104,13 @@ private:
 
     void InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP);
 
-    dVector3D <double> GetU(const dVector3D <double>& HP);
-    dVector3D <double> GetV(const dVector3D <double>& HP);
-
-    dVector3D <double> GetHiHalf(unsigned int i, unsigned int j);
-    dVector3D <double> GetHjHalf(unsigned int i, unsigned int j);
-
-    dVector3D <double> NextH(unsigned int i, unsigned int j);
+//    dVector3D <double> GetU(const dVector3D <double>& HP);
+//    dVector3D <double> GetV(const dVector3D <double>& HP);
+//
+//    dVector3D <double> GetHiHalf(unsigned int i, unsigned int j);
+//    dVector3D <double> GetHjHalf(unsigned int i, unsigned int j);
+//
+//    dVector3D <double> NextH(unsigned int i, unsigned int j);
 };
 //-----------------------------//
 class MainWindow : public QMainWindow {
