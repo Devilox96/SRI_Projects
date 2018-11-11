@@ -28,7 +28,6 @@ private:
     QPushButton* DivisionButton;
     QSpacerItem* DivideSpacer;
 
-//    QOpenGLWidget* DivisionDisplay;
     DivisionGL* DivisionDisplay;
 
     //----------//

@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget* ParentP) : QMainWindow(ParentP) {
 
     DivideSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-//    DivisionDisplay = new QOpenGLWidget;
     DivisionDisplay = new DivisionGL;
     DivisionDisplay -> setMinimumSize(800, 600);
 
