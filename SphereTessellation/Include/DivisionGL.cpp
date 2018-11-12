@@ -15,8 +15,6 @@ DivisionGL::DivisionGL(QWidget* ParentP) : QOpenGLWidget(ParentP) {
             0,  1,  2,
             0,  1,  3
     };
-
-    InitMatrices();
 }
 //-----------------------------//
 void DivisionGL::initializeGL() {
@@ -29,6 +27,9 @@ void DivisionGL::initializeGL() {
 }
 void DivisionGL::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+
+    SetMatrices();
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -37,13 +38,22 @@ void DivisionGL::paintGL() {
 void DivisionGL::resizeGL(int WidthP, int HeightP) {
     int side = qMin(WidthP, HeightP);
     glViewport((WidthP - side) / 2, (HeightP - side) / 2, side, side);
-    ProjectionMatrix.setToIdentity();
-    ProjectionMatrix.perspective(45.0f, WidthP / float(HeightP), 0.0f, 1000.0f);
 }
 //-----------------------------//
-void DivisionGL::InitMatrices() {
+void DivisionGL::SetMatrices() {
     ModelMatrix.setToIdentity();
-    ViewMatrix.translate(0.0, 0.0, -3.0);
+    ViewMatrix.setToIdentity();
+    ViewMatrix.translate(0.0, 0.5, -3.0f);
+    ProjectionMatrix.setToIdentity();
+    ProjectionMatrix.perspective(45.0f, float(width()) / float(height()), 0.1f, 1000.0f);
+
+    GLint ModelLocationL = glGetUniformLocation(ShaderProgram, "model");
+    GLint ViewLocationL = glGetUniformLocation(ShaderProgram, "view");
+    GLint ProjectionLocationL = glGetUniformLocation(ShaderProgram, "projection");
+
+    glUniformMatrix4fv(ModelLocationL, 1, GL_FALSE, ModelMatrix.constData());
+    glUniformMatrix4fv(ViewLocationL, 1, GL_FALSE, ViewMatrix.constData());
+    glUniformMatrix4fv(ProjectionLocationL, 1, GL_FALSE, ProjectionMatrix.constData());
 }
 void DivisionGL::MakeShader() {
     const char* VertexShaderSource =
@@ -51,10 +61,12 @@ void DivisionGL::MakeShader() {
             "layout(location = 0) in vec3 position;\n"
             "layout(location = 1) in vec3 color;\n"
             "out vec4 vColor;\n"
-            "uniform mat4 modelToWorld;\n"
-            "uniform mat4 worldToView;\n"
+            "uniform mat4 model;\n"
+            "uniform mat4 view;\n"
+            "uniform mat4 projection;\n"
             "void main() {\n"
-            "gl_Position = vec4(position, 1.0);\n"
+//            "gl_Position = vec4(position, 1.0);\n"
+            "gl_Position = projection * view * model * vec4(position, 1.0);\n"
             "vColor = vec4(color, 1.0);\n"
             "}\0";
 

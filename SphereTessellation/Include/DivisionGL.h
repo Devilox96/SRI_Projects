@@ -41,7 +41,7 @@ private:
 
     //----------//
 
-    void InitMatrices();
+    void SetMatrices();
     void MakeShader();
     void MakeTriangle();
 };
