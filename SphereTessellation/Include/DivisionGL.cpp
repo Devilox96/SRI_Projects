@@ -8,13 +8,15 @@ DivisionGL::DivisionGL(QWidget* ParentP) : QOpenGLWidget(ParentP) {
             0.0f,   1.0f,   0.0f,
             0.0f,   0.5f,   0.0f,
             0.0f,   0.0f,   1.0f,
+            0.0f,  -1.5f,   0.0f,
+            0.3f,   0.4f,   0.5f,
     };
-//    indices = {
-//            0,1,2,
-//            0,3,4
-//    };
+    indices = {
+            0,  1,  2,
+            0,  1,  3
+    };
 
-
+    InitMatrices();
 }
 //-----------------------------//
 void DivisionGL::initializeGL() {
@@ -24,30 +26,25 @@ void DivisionGL::initializeGL() {
 
     MakeShader();
     MakeTriangle();
-
-    matrix.ortho(-2.0f, 2.0, -2.0f, 2.0, 2.0, -2.0f);
-    matrix.translate(0.0, 0.0, 1.0);
 }
 void DivisionGL::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//    glBegin(GL_TRIANGLES);
-//        glVertex3f(-1.0f, 0.0f, 0.0);
-//        glVertex3f(1.0f, 0.0f, 0.0);
-//        glVertex3f(0.0f, 1.0f, 0.0);
-//    glEnd();
-
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 void DivisionGL::resizeGL(int WidthP, int HeightP) {
     int side = qMin(WidthP, HeightP);
     glViewport((WidthP - side) / 2, (HeightP - side) / 2, side, side);
-//    glViewport(0, 0, WidthP, HeightP);
-//    m_projection.setToIdentity();
-//    m_projection.perspective(45.0f, WidthP / float(HeightP), 0.0f, 1000.0f);
+    ProjectionMatrix.setToIdentity();
+    ProjectionMatrix.perspective(45.0f, WidthP / float(HeightP), 0.0f, 1000.0f);
 }
 //-----------------------------//
+void DivisionGL::InitMatrices() {
+    ModelMatrix.setToIdentity();
+    ViewMatrix.translate(0.0, 0.0, -3.0);
+}
 void DivisionGL::MakeShader() {
     const char* VertexShaderSource =
             "#version 450\n"
@@ -116,16 +113,22 @@ void DivisionGL::MakeShader() {
 void DivisionGL::MakeTriangle() {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.constData(), GL_STATIC_DRAW);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.constData(), GL_STATIC_DRAW);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
 
     glUseProgram(ShaderProgram);
 }

@@ -22,9 +22,9 @@ protected:
     void paintGL() override;
     void resizeGL(int WidthP, int HeightP) override;
 private:
-    int u_modelToWorld;
-    QMatrix4x4 m_projection;
-    QMatrix4x4 matrix;
+    QMatrix4x4 ModelMatrix;
+    QMatrix4x4 ViewMatrix;
+    QMatrix4x4 ProjectionMatrix;
 
     GLuint ShaderProgram;
     GLuint VertexShader;
@@ -32,6 +32,7 @@ private:
 
     GLuint VAO;
     GLuint VBO;
+    GLuint EBO;
 
     //----------//
 
@@ -40,6 +41,7 @@ private:
 
     //----------//
 
+    void InitMatrices();
     void MakeShader();
     void MakeTriangle();
 };
