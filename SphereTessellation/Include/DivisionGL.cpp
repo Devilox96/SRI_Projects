@@ -42,8 +42,9 @@ void DivisionGL::resizeGL(int WidthP, int HeightP) {
 //-----------------------------//
 void DivisionGL::SetMatrices() {
     ModelMatrix.setToIdentity();
+    ModelMatrix.rotate(60.0, 0.0, 0.0, 1.0);
     ViewMatrix.setToIdentity();
-    ViewMatrix.translate(0.0, 0.5, -3.0f);
+    ViewMatrix.translate(0.0, 0.5f, -3.0f);
     ProjectionMatrix.setToIdentity();
     ProjectionMatrix.perspective(45.0f, float(width()) / float(height()), 0.1f, 1000.0f);
 
@@ -65,7 +66,6 @@ void DivisionGL::MakeShader() {
             "uniform mat4 view;\n"
             "uniform mat4 projection;\n"
             "void main() {\n"
-//            "gl_Position = vec4(position, 1.0);\n"
             "gl_Position = projection * view * model * vec4(position, 1.0);\n"
             "vColor = vec4(color, 1.0);\n"
             "}\0";
