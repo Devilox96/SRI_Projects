@@ -7,23 +7,21 @@ P_ref = 1.0         #---in atms---#
 R_const = 8.31e7    #---in CGS system---#
 Mass = 44           #---in gramm per mole---#
 
-T_custom = 300
-P_custom = 0.007
-
 LeftLimit = 4500    #---in cm^-1---#
 RightLimit = 6000   #---in cm^-1---#
-IntensityLimit = 1.0e-26
-GridStep = 0.1
+IntensityLimit = 1.0e-24
+GridStep = 0.005
 GridSize = int((RightLimit - LeftLimit) / GridStep)
 
 #-----------------------------#
 R_const_SI = 8.31
 Mass_SI = 0.044
 Gamma = 7.0 / 5.0
+g = 3.75
 
 T1 = 220
-T2 = 180
-T3 = 130
+T2 = 220 - 2.5 * 15
+T3 = 220 - 2.5 * 20
 
 P1 = 700            #---in Pa---#
 C1 = P1 * ((Mass_SI * P1) / (R_const_SI * T1)) ** (-Gamma)
@@ -34,11 +32,21 @@ def PressureFunc(TemperatureP):
 def PaToAtm(PressureP):
     return PressureP / 101325.0
 
-P1 = PaToAtm(PressureFunc(T1))
-P2 = PaToAtm(PressureFunc(T2))
-P3 = PaToAtm(PressureFunc(T3))
+P1_Pa = PressureFunc(T1)
+P2_Pa = PressureFunc(T2)
+P3_Pa = PressureFunc(T3) * np.exp(-30000 / ((R_const_SI * T3) / (Mass_SI * g)))
+
+def ConcentrationCGS(TemperatreP, PressureP):
+    return PressureP / (1.23e-23 * TemperatreP) * 1.0e-6
+
+print("%10.3e %10.3e %10.3e" % (ConcentrationCGS(T1, P1_Pa), ConcentrationCGS(T2, P2_Pa), ConcentrationCGS(T3, P3_Pa)))
+
+P1 = PaToAtm(P1_Pa)
+P2 = PaToAtm(P2_Pa)
+P3 = PaToAtm(P3_Pa)
 
 print("Pressure (atm):", P1, P2, P3)
+# print("Pressure (atm):", P1, P2)
 #-----------------------------#
 
 FrequiencyArray, IntensityArray, GammaSelfArray = [], [], []
@@ -56,7 +64,7 @@ for line in open('Data.out', 'r'):
 plt.xlabel('Wavelength, cm^-1')
 plt.ylabel('Intensity, cm^-1/(molec*cm^-2)')
 plt.xlim([LeftLimit, RightLimit])
-plt.ylim([0.0, 1.3e-20])
+plt.ylim([0.0, 1.4e-20])
 plt.show()
 #-----------------------------#
 
@@ -104,18 +112,24 @@ for i in range(0, 3):
 
         Absorption(FrequiencyArray[LineI], IntensityArray[LineI], LorentzValueL, VoigtValueL, SumCoeff)
 
-        if (LineI % 100 == 0):
+        if (LineI % 10 == 0):
             print(LineI, "out of", np.size(FrequiencyArray))
+
+    SumCoeff *= ConcentrationCGS(TemperatureArray[i], PressureArray[i] * 101325.0)
 
     plt.title("Temperature:" + str(TemperatureArray[i]))
 
     plt.xlabel('Wavelength, cm^-1')
-    plt.ylabel('Intensity, cm^-1/(molec*cm^-2)')
+    plt.ylabel('Absorbtion, cm^-1')
 
     plt.xlim([LeftLimit, RightLimit])
-    plt.ylim([0.0, 1.3e-20])
+    plt.ylim([0.0, 5.0e-3])
 
     X_values = np.arange(LeftLimit, RightLimit, GridStep)
+
+    with open(str(TemperatureArray[i]) + '.txt', 'w') as f:
+        for j in range(0, np.size(X_values)):
+            f.write("%s\t" "%s\n" % (X_values[j], SumCoeff[j]))
 
     plt.plot(X_values, SumCoeff)
     plt.show()
