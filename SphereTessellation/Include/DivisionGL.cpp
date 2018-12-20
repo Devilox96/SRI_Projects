@@ -2,7 +2,7 @@
 //-----------------------------//
 DivisionGL::DivisionGL(QWidget* ParentP) : QOpenGLWidget(ParentP) {
     vertices = {
-           -0.5f,  -0.5f,   0.0f,
+           -0.5f,  -1.0f,   0.0f,
             1.0f,   0.0f,   0.0f,
             0.5f,  -0.5f,   0.0f,
             0.0f,   1.0f,   0.0f,
@@ -42,7 +42,6 @@ void DivisionGL::resizeGL(int WidthP, int HeightP) {
 //-----------------------------//
 void DivisionGL::SetMatrices() {
     ModelMatrix.setToIdentity();
-    ModelMatrix.rotate(60.0, 0.0, 0.0, 1.0);
     ViewMatrix.setToIdentity();
     ViewMatrix.translate(0.0, 0.5f, -3.0f);
     ProjectionMatrix.setToIdentity();

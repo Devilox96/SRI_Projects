@@ -68,21 +68,13 @@ void MainWindow::InitControl() {
 void MainWindow::InitSurface() {
     using namespace QtDataVisualization;
 
+    Plot = new Q3DSurface;
+    Plot -> setFlags(Qt::FramelessWindowHint);
+
     DisplayData = new QSurfaceDataArray;
 
-    auto surface = new Q3DSurface;
-    surface -> setFlags(Qt::FramelessWindowHint);
-    auto data = new QSurfaceDataArray;
-    QSurfaceDataRow *dataRow1 = new QSurfaceDataRow;
-    auto dataRow2 = new QSurfaceDataRow;
-
-    *dataRow1 << QVector3D(0.0f, 0.1f, 0.5f) << QVector3D(1.0f, 0.5f, 0.5f);
-    *dataRow2 << QVector3D(0.0f, 1.8f, 1.0f) << QVector3D(1.0f, 1.2f, 1.0f);
-    *data << dataRow1 << dataRow2;
-
-    auto series = new QSurface3DSeries;
-    series->dataProxy()->resetArray(DisplayData);
-    surface -> addSeries(series);
+    DataSeries = new QSurface3DSeries;
+    DataSeries -> setDrawMode(QSurface3DSeries::DrawSurface);
 
     auto SurfaceFrame = new QFrame;
     SurfaceFrame -> setFrameShape(QFrame::Shape::Box);
@@ -94,7 +86,7 @@ void MainWindow::InitSurface() {
     PlotLayout -> setMargin(0);
     SurfaceFrame -> setLayout(PlotLayout);
 
-    auto Container = QWidget::createWindowContainer(surface);
+    auto Container = QWidget::createWindowContainer(Plot);
     Container -> setMinimumSize(300, 300);
     Container -> setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     PlotLayout -> addWidget(Container);
@@ -110,16 +102,19 @@ void MainWindow::InitConnections() {
     connect(yStepLine, &QLineEdit::textChanged, this, &MainWindow::EnableCalculateButtonSlot);
 }
 //-----------------------------//
-void MainWindow::GetDisplayDataSlot(const QVector <QVector <double>>& DataP) {
+void MainWindow::GetDisplayDataSlot(const QVector <QVector <double>>& DataP, double xGridStepP, double yGridStepP) {
     for (int i = 0; i < DataP.size(); i++) {
         DisplayDataRows.push_back(new QtDataVisualization::QSurfaceDataRow);
 
         for (int j = 0; j < DataP[0].size(); j++) {
-            *DisplayDataRows.back() << QVector3D(i, j, float(DataP[i][j]));
+            *DisplayDataRows.back() << QVector3D(float(j * yGridStepP), float(DataP[i][j]), float(i * xGridStepP));
         }
 
         *DisplayData << DisplayDataRows.back();
     }
+
+    DataSeries -> dataProxy() -> resetArray(DisplayData);
+    Plot -> addSeries(DataSeries);
 }
 //-----------------------------//
 void MainWindow::EnableCalculateButtonSlot() {

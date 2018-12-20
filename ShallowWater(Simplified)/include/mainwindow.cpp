@@ -148,6 +148,7 @@ dVectorND <double> dRichtmyerSolver::zFunc(const dVectorND <double>& U) {}
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -173,6 +174,19 @@ void Solver :: Calc(unsigned int StepsP) {
     Grid[100][100][0] = 12.0;
 
     std :: vector <std :: vector <dVectorND <double>>> TempGrid = Grid;
+=======
+    Grid[49][50].h = 11.9;
+    Grid[50][49].h = 11.9;
+    Grid[50][51].h = 11.9;
+    Grid[51][50].h = 11.9;
+
+    Grid[49][49].h = 11.7;
+    Grid[51][51].h = 11.7;
+    Grid[49][51].h = 11.7;
+    Grid[51][49].h = 11.7;
+
+    std :: vector <std :: vector <Point>> TempGrid = Grid;
+>>>>>>> f10d94e86212ecdf5334690c6c08d22fb72cd80c
 
     for (unsigned int iter = 0; iter < StepsP; iter++) {
         double Energy = 0.0;

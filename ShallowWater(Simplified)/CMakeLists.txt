@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(QtPath /opt/Qt/5.10.1/gcc_64/lib/cmake)
+set(QtPath /home/devilox/DeviloxDocuments/ProgTools/Qt/5.11.1/gcc_64/lib/cmake)
 set(QtPackages
         Qt5::Core
         Qt5::Widgets
@@ -21,4 +21,8 @@ add_subdirectory(Libs/dMath)
 add_executable(ShallowWater_Simplified_
         main.cpp
         include/mainwindow.cpp)
+<<<<<<< HEAD
 target_link_libraries(ShallowWater_Simplified_ ${QtPackages} ${dMath})
+=======
+target_link_libraries(ShallowWater_Simplified_ ${QtPackages})
+>>>>>>> f10d94e86212ecdf5334690c6c08d22fb72cd80c
