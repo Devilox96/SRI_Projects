@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ffmpeg -y -framerate 30 -i Images/Image_%03d.png Video.mp4
