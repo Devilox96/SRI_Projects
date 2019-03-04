@@ -14,6 +14,9 @@ Solver::~Solver() {
 void Solver :: Calc(unsigned int StepsP) {
     auto Start = std::chrono::system_clock::now();
     //----------//
+    std::ofstream EnergyFile;
+    EnergyFile.open("Energy.dat", std::ios::app);
+
 
     unsigned int PointNum = 200;
 
@@ -57,9 +60,12 @@ void Solver :: Calc(unsigned int StepsP) {
         }
 
         std::cout << Energy << " : " << iter << std::endl;
+        EnergyFile << Energy << std::endl;
 
         Grid = TempGrid;
     }
+
+    EnergyFile.close();
 
     //----------//
     auto Stop = std::chrono::system_clock::now();

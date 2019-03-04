@@ -11,7 +11,7 @@ X = np.arange(-1, 1, 0.01)
 Y = np.arange(-1, 1, 0.01)
 X, Y = np.meshgrid(X, Y)
 #-----------------------------#
-for i in range(0, 50):
+for i in range(0, 117):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
 

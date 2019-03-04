@@ -52,9 +52,8 @@ protected:
 
     virtual dVectorND <double> xFunc(const dVectorND <double>& U) = 0;
     virtual dVectorND <double> yFunc(const dVectorND <double>& U) = 0;
-    virtual dVectorND <double> zFunc(const dVectorND <double>& U) = 0;
-    virtual dVectorND <double> fFunc(const dVectorND <double>& U) = 0;
-    virtual dVectorND <double> rFunc(const dVectorND <double>& U) = 0;
+    virtual dVectorND <double> zFunc(const dVectorND <double>& U) {}
+    virtual dVectorND <double> AbsValFunc(const dVectorND <double>& U) {}
 
     //----------//
 
@@ -73,16 +72,14 @@ public:
     ~dRichtmyerSolver() = default;
 private:
     const double g = 9.81;
-    const double B_0 = 100;
-    const double f_0 = 1.0;
+    const double B_0 = 10.0;
+    const double f_0 = 10.0;
 
     //----------//
 
     dVectorND <double> xFunc(const dVectorND <double>& U) override;
     dVectorND <double> yFunc(const dVectorND <double>& U) override;
-    dVectorND <double> zFunc(const dVectorND <double>& U) override;
-    dVectorND <double> fFunc(const dVectorND <double>& U) override;
-    dVectorND <double> rFunc(const dVectorND <double>& U) override;
+    dVectorND <double> AbsValFunc(const dVectorND <double>& U) override;
 };
 //-----------------------------//
 #endif

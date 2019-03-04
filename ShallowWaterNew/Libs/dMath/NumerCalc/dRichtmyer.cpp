@@ -60,7 +60,8 @@ dVectorND <double> dRichtmyer::Solve2D( dVectorND <double> U,
 
     return  U -
             (xFunc(UxHalf_plusL) - xFunc(UxHalf_minusL)) * (TimeStep / xStep) -
-            (yFunc(UyHalf_plusL) - yFunc(UyHalf_minusL)) * (TimeStep / yStep);
+            (yFunc(UyHalf_plusL) - yFunc(UyHalf_minusL)) * (TimeStep / yStep) -
+            AbsValFunc(U) * TimeStep;
 }
 dVectorND <double> dRichtmyer::Solve3D( dVectorND <double> U,
                                         dVectorND <double> Ux_minus_1,
@@ -90,13 +91,13 @@ dVectorND <double> dRichtmyer::Solve3D( dVectorND <double> U,
 }
 //-----------------------------//
 dVectorND <double> dRichtmyer::UxHalfVector(const dVectorND <double>& Ux, const dVectorND <double>& Ux_plus_1) {
-    return (Ux_plus_1 + Ux) / 2.0 - (xFunc(Ux_plus_1) - xFunc(Ux)) * (TimeStep / 2.0 / xStep);
+    return (Ux_plus_1 + Ux) / 2.0 - (xFunc(Ux_plus_1) - xFunc(Ux)) * (TimeStep / 2.0 / xStep) - AbsValFunc(Ux) * TimeStep;
 }
 dVectorND <double> dRichtmyer::UyHalfVector(const dVectorND <double>& Uy, const dVectorND <double>& Uy_plus_1) {
-    return (Uy_plus_1 + Uy) / 2.0 - (yFunc(Uy_plus_1) - yFunc(Uy)) * (TimeStep / 2.0 / yStep);
+    return (Uy_plus_1 + Uy) / 2.0 - (yFunc(Uy_plus_1) - yFunc(Uy)) * (TimeStep / 2.0 / yStep) - AbsValFunc(Uy) * TimeStep;
 }
 dVectorND <double> dRichtmyer::UzHalfVector(const dVectorND <double>& Uz, const dVectorND <double>& Uz_plus_1) {
-    return (Uz_plus_1 + Uz) / 2.0 - (zFunc(Uz_plus_1) - zFunc(Uz)) * (TimeStep / 2.0 / zStep);
+    return (Uz_plus_1 + Uz) / 2.0 - (zFunc(Uz_plus_1) - zFunc(Uz)) * (TimeStep / 2.0 / zStep) - AbsValFunc(Uz) * TimeStep;
 }
 //-----------------------------//
 //-----------------------------//
@@ -138,4 +139,11 @@ dVectorND <double> dRichtmyerSolver::yFunc(const dVectorND <double>& U) {
                                 0,
                                 B_0 * U[2] / U[0]});
 }
-dVectorND <double> dRichtmyerSolver::zFunc(const dVectorND <double>& U) {}
+dVectorND <double> dRichtmyerSolver::AbsValFunc(const dVectorND <double>& U) {
+    return dVectorND <double> ({0,
+                                B_0 * U[3] / U[0] - U[2] * f_0,
+                                B_0 * U[4] / U[0] - U[1] * f_0,
+                                -B_0 * U[1] / U[0],
+                                -B_0 * U[2] / U[0],
+                                0});
+}
