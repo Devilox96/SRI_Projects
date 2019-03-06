@@ -11,7 +11,7 @@ X = np.arange(-1, 1, 0.01)
 Y = np.arange(-1, 1, 0.01)
 X, Y = np.meshgrid(X, Y)
 #-----------------------------#
-for i in range(0, 117):
+for i in range(0, 50):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
 
@@ -34,7 +34,7 @@ for i in range(0, 117):
 
     print(i)
 
-    plt.savefig("Images/Image_%03d.png" % i)
+    plt.savefig("Images/Image_%03d.png" % i, dpi=300)
     surf.remove()
     plt.close(fig)
 #-----------------------------#

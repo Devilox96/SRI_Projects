@@ -1,7 +1,7 @@
 #include "Solver.h"
 //-----------------------------//
 Solver::Solver() {
-    Test = new dRichtmyerSolver(0.001, 0.1, 0.1);
+    Test = new dRichtmyerSolver2D(0.0005, 0.1, 0.1);
 
     InitGrid(10.0, 0.0, 0.0, 200);
 
@@ -12,7 +12,7 @@ Solver::~Solver() {
 }
 
 void Solver :: Calc(unsigned int StepsP) {
-    auto Start = std::chrono::system_clock::now();
+//    auto Start = std::chrono::system_clock::now();
     //----------//
     std::ofstream EnergyFile;
     EnergyFile.open("Energy.dat", std::ios::app);
@@ -29,9 +29,10 @@ void Solver :: Calc(unsigned int StepsP) {
     for (unsigned int iter = 0; iter < StepsP; iter++) {
         double Energy = 0.0;
 
-        for (unsigned int i = 1; i < PointNum - 1; i++) {
-            for (unsigned int j = 1; j < PointNum - 1; j++) {
-                dVectorND <double> TempH = Test -> Solve2D(Grid[i][j], Grid[i - 1][j], Grid[i + 1][j], Grid[i][j - 1], Grid[i][j + 1]);
+        for (unsigned int i = 0; i < PointNum; i++) {
+            for (unsigned int j = 0; j < PointNum; j++) {
+//                dVectorND <double> TempH = Test -> Solve2D(Grid[i][j], Grid[i - 1][j], Grid[i + 1][j], Grid[i][j - 1], Grid[i][j + 1]);
+                dVectorND <double> TempH = Test -> Solve(Grid, i, j, 200, 200);
 
                 TempGrid[i][j] = TempH;
 
@@ -41,12 +42,12 @@ void Solver :: Calc(unsigned int StepsP) {
             }
         }
 
-        for (unsigned int i = 0; i < PointNum; i++) {
-            TempGrid[i][0] = TempGrid[i][1];
-            TempGrid[i][PointNum - 1] = TempGrid[i][PointNum - 2];
-            TempGrid[0][i] = TempGrid[1][i];
-            TempGrid[PointNum - 1][i] = TempGrid[PointNum - 2][i];
-        }
+//        for (unsigned int i = 0; i < PointNum; i++) {
+//            TempGrid[i][0] = TempGrid[i][1];
+//            TempGrid[i][PointNum - 1] = TempGrid[i][PointNum - 2];
+//            TempGrid[0][i] = TempGrid[1][i];
+//            TempGrid[PointNum - 1][i] = TempGrid[PointNum - 2][i];
+//        }
 
         for (unsigned int i = 0; i < PointNum; i++) {
             Energy += ( pow((Grid[i][0][0] - TempGrid[i][0][0]) / Test -> GetTimeStep(), 1.0) +
@@ -68,10 +69,10 @@ void Solver :: Calc(unsigned int StepsP) {
     EnergyFile.close();
 
     //----------//
-    auto Stop = std::chrono::system_clock::now();
-
-    std::chrono::duration <double> Time = Stop - Start;
-    std::cout << Time.count() << std::endl;
+//    auto Stop = std::chrono::system_clock::now();
+//
+//    std::chrono::duration <double> Time = Stop - Start;
+//    std::cout << Time.count() << std::endl;
 }
 
 void Solver::InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP) {
