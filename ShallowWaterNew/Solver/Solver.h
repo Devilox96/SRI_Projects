@@ -8,7 +8,7 @@
 #include "../Libs/dMath/Core/dVectorND.h"
 #include "../Libs/dMath/NumerCalc/dRichtmyer2D.h"
 //-----------------------------//
-class dRichtmyerSolver2D : public dRichtmyer2D {
+class dRichtmyerSolver2D : public dRichtmyer2D <dVectorND <double>> {
 public:
     dRichtmyerSolver2D() = default;
     dRichtmyerSolver2D(double TimeStepP, double xStepP, double yStepP) {
