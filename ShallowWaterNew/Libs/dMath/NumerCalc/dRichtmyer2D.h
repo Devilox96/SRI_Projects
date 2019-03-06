@@ -23,6 +23,10 @@ public:
         yStep = yStepP;
     }
 
+    void SetData(std::vector <std::vector <T>>* DataP) {
+        Data = DataP;
+    }
+
     //----------//
 
     double GetTimeStep() {
@@ -38,19 +42,15 @@ public:
 
     //----------//
 
-    T Solve(const std::vector <std::vector <T>>& GridP,
-            long xIndexP,
-            long yIndexP,
-            long xSizeP,
-            long ySizeP) {
-        long xIndex_plus_1 = (xIndexP + 1 == xSizeP ? 0 : xIndexP + 1);
-        long xIndex_plus_2 = (xIndexP + 2 >= xSizeP ? xSizeP - xIndexP : xIndexP + 2);
-        long xIndex_minus_1 = (xIndexP - 1 < 0 ? xSizeP - 1 : xIndexP - 1);
-        long xIndex_minus_2 = (xIndexP - 2 < 0 ? xSizeP + xIndexP - 2 : xIndexP - 2);
-        long yIndex_plus_1 = (yIndexP + 1 == ySizeP ? 0 : yIndexP + 1);
-        long yIndex_plus_2 = (yIndexP + 2 >= ySizeP ? ySizeP - yIndexP : yIndexP + 2);
-        long yIndex_minus_1 = (yIndexP - 1 < 0 ? ySizeP - 1 : yIndexP - 1);
-        long yIndex_minus_2 = (yIndexP - 2 < 0 ? ySizeP + yIndexP - 2 : yIndexP - 2);
+    T Solve(const std::vector <std::vector <T>>& GridP, int xIndexP, int yIndexP, int xSizeP, int ySizeP) {
+        int xIndex_plus_1 = (xIndexP + 1 == xSizeP ? 0 : xIndexP + 1);
+        int xIndex_plus_2 = (xIndexP + 2 >= xSizeP ? xSizeP - xIndexP : xIndexP + 2);
+        int xIndex_minus_1 = (xIndexP - 1 < 0 ? xSizeP - 1 : xIndexP - 1);
+        int xIndex_minus_2 = (xIndexP - 2 < 0 ? xSizeP + xIndexP - 2 : xIndexP - 2);
+        int yIndex_plus_1 = (yIndexP + 1 == ySizeP ? 0 : yIndexP + 1);
+        int yIndex_plus_2 = (yIndexP + 2 >= ySizeP ? ySizeP - yIndexP : yIndexP + 2);
+        int yIndex_minus_1 = (yIndexP - 1 < 0 ? ySizeP - 1 : yIndexP - 1);
+        int yIndex_minus_2 = (yIndexP - 2 < 0 ? ySizeP + yIndexP - 2 : yIndexP - 2);
 
         T Ux_minus_1L = FirstStepSolve(GridP[xIndex_minus_1][yIndexP],
                                                         GridP[xIndex_minus_2][yIndexP],
@@ -91,6 +91,8 @@ protected:
     double yStep = 0.0;
 
     bool Homogeneous = true;
+    
+    std::vector <std::vector <T>>* Data;
 
     //----------//
 
@@ -102,11 +104,7 @@ protected:
 
     //----------//
 
-    T FirstStepSolve(   const T& U,
-                        const T& Ux_minus_1,
-                        const T& Ux_plus_1,
-                        const T& Uy_minus_1,
-                        const T& Uy_plus_1) {
+    T FirstStepSolve(const T& U, const T& Ux_minus_1, const T& Ux_plus_1, const T& Uy_minus_1, const T& Uy_plus_1) {
         if (Homogeneous) {
             return  0.25 * (Ux_plus_1 + Ux_minus_1 + Uy_plus_1 + Uy_minus_1) -
                     TimeStep / (2.0 * xStep) * (xFunc(Ux_plus_1) - xFunc(Ux_minus_1)) -
