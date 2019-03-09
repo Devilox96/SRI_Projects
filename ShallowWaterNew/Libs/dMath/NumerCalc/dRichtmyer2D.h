@@ -2,12 +2,15 @@
 #define DRICHTMYER2D_H
 //-----------------------------//
 #include <vector>
+#include <algorithm>
+//-----------------------------//
 #include "dVectors.h" //---dMath/Core/dVectors.h---//
 //-----------------------------//
 template <class T>
 class dRichtmyer2D {
 public:
-    explicit dRichtmyer2D(bool HomegeneousP = true) : Homogeneous(HomegeneousP) {}
+    dRichtmyer2D(unsigned long xSizeP = 1, unsigned long ySizeP = 1, bool HomegeneousP = true) :
+                    xSize(xSizeP), ySize(ySizeP), Homogeneous(HomegeneousP) {}
     ~dRichtmyer2D() = default;
 
     //----------//
@@ -21,10 +24,6 @@ public:
     }
     void SetYStep(double yStepP) {
         yStep = yStepP;
-    }
-
-    void SetData(std::vector <std::vector <T>>* DataP) {
-        Data = DataP;
     }
 
     //----------//
@@ -42,47 +41,62 @@ public:
 
     //----------//
 
-    T Solve(const std::vector <std::vector <T>>& GridP, int xIndexP, int yIndexP, int xSizeP, int ySizeP) {
-        int xIndex_plus_1 = (xIndexP + 1 == xSizeP ? 0 : xIndexP + 1);
-        int xIndex_plus_2 = (xIndexP + 2 >= xSizeP ? xSizeP - xIndexP : xIndexP + 2);
-        int xIndex_minus_1 = (xIndexP - 1 < 0 ? xSizeP - 1 : xIndexP - 1);
-        int xIndex_minus_2 = (xIndexP - 2 < 0 ? xSizeP + xIndexP - 2 : xIndexP - 2);
-        int yIndex_plus_1 = (yIndexP + 1 == ySizeP ? 0 : yIndexP + 1);
-        int yIndex_plus_2 = (yIndexP + 2 >= ySizeP ? ySizeP - yIndexP : yIndexP + 2);
-        int yIndex_minus_1 = (yIndexP - 1 < 0 ? ySizeP - 1 : yIndexP - 1);
-        int yIndex_minus_2 = (yIndexP - 2 < 0 ? ySizeP + yIndexP - 2 : yIndexP - 2);
+    void Solve() {
+        long xIndex_plus_1;
+        long xIndex_plus_2;
+        long xIndex_minus_1;
+        long xIndex_minus_2;
+        long yIndex_plus_1;
+        long yIndex_plus_2;
+        long yIndex_minus_1;
+        long yIndex_minus_2;
+        
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < ySize; j++) {
+                xIndex_plus_1 = (i + 1 == xSize ? 0 : i + 1);
+                xIndex_plus_2 = (i + 2 >= xSize ? xSize - i : i + 2);
+                xIndex_minus_1 = (i - 1 < 0 ? xSize - 1 : i - 1);
+                xIndex_minus_2 = (i - 2 < 0 ? xSize + i - 2 : i - 2);
+                yIndex_plus_1 = (j + 1 == ySize ? 0 : j + 1);
+                yIndex_plus_2 = (j + 2 >= ySize ? ySize - j : j + 2);
+                yIndex_minus_1 = (j - 1 < 0 ? ySize - 1 : j - 1);
+                yIndex_minus_2 = (j - 2 < 0 ? ySize + j - 2 : j - 2);
 
-        T Ux_minus_1L = FirstStepSolve(GridP[xIndex_minus_1][yIndexP],
-                                                        GridP[xIndex_minus_2][yIndexP],
-                                                        GridP[xIndexP][yIndexP],
-                                                        GridP[xIndex_minus_1][yIndex_minus_1],
-                                                        GridP[xIndex_minus_1][yIndex_plus_1]);
-        T Ux_plus_1L = FirstStepSolve( GridP[xIndex_plus_1][yIndexP],
-                                                        GridP[xIndexP][yIndexP],
-                                                        GridP[xIndex_plus_2][yIndexP],
-                                                        GridP[xIndex_plus_1][yIndex_minus_1],
-                                                        GridP[xIndex_plus_1][yIndex_plus_1]);
-        T Uy_minus_1L = FirstStepSolve(GridP[xIndexP][yIndex_minus_1],
-                                                        GridP[xIndex_minus_1][yIndex_minus_1],
-                                                        GridP[xIndex_plus_1][yIndex_minus_1],
-                                                        GridP[xIndexP][yIndex_minus_2],
-                                                        GridP[xIndexP][yIndexP]);
-        T Uy_plus_1L = FirstStepSolve( GridP[xIndexP][yIndex_plus_1],
-                                                        GridP[xIndex_minus_1][yIndex_plus_1],
-                                                        GridP[xIndex_plus_1][yIndex_plus_1],
-                                                        GridP[xIndexP][yIndexP],
-                                                        GridP[xIndexP][yIndex_plus_2]);
+                T Ux_minus_1L = FirstStepSolve((*CurrentData)[xIndex_minus_1][j],
+                                               (*CurrentData)[xIndex_minus_2][j],
+                                               (*CurrentData)[i][j],
+                                               (*CurrentData)[xIndex_minus_1][yIndex_minus_1],
+                                               (*CurrentData)[xIndex_minus_1][yIndex_plus_1]);
+                T Ux_plus_1L = FirstStepSolve( (*CurrentData)[xIndex_plus_1][j],
+                                               (*CurrentData)[i][j],
+                                               (*CurrentData)[xIndex_plus_2][j],
+                                               (*CurrentData)[xIndex_plus_1][yIndex_minus_1],
+                                               (*CurrentData)[xIndex_plus_1][yIndex_plus_1]);
+                T Uy_minus_1L = FirstStepSolve((*CurrentData)[i][yIndex_minus_1],
+                                               (*CurrentData)[xIndex_minus_1][yIndex_minus_1],
+                                               (*CurrentData)[xIndex_plus_1][yIndex_minus_1],
+                                               (*CurrentData)[i][yIndex_minus_2],
+                                               (*CurrentData)[i][j]);
+                T Uy_plus_1L = FirstStepSolve( (*CurrentData)[i][yIndex_plus_1],
+                                               (*CurrentData)[xIndex_minus_1][yIndex_plus_1],
+                                               (*CurrentData)[xIndex_plus_1][yIndex_plus_1],
+                                               (*CurrentData)[i][j],
+                                               (*CurrentData)[i][yIndex_plus_2]);
 
-        if (Homogeneous) {
-            return  GridP[xIndexP][yIndexP] -
-                    TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
-                    TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L));
-        } else {
-            return  GridP[xIndexP][yIndexP] -
-                    TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
-                    TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L)) -
-                    TimeStep * AbsValFunc(GridP[xIndexP][yIndexP]);
+                if (Homogeneous) {
+                    (*TempData)[i][j] = (*CurrentData)[i][j] -
+                                        TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
+                                        TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L));
+                } else {
+                    (*TempData)[i][j] = (*CurrentData)[i][j] -
+                                        TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
+                                        TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L)) -
+                                        TimeStep * AbsValFunc((*CurrentData)[i][j]);
+                }
+            }
         }
+
+        std::swap(CurrentData, TempData);
     }
 protected:
     double TimeStep = 0.0;
@@ -92,7 +106,14 @@ protected:
 
     bool Homogeneous = true;
     
-    std::vector <std::vector <T>>* Data;
+    unsigned long xSize;
+    unsigned long ySize;
+    
+    std::vector <std::vector <T>> DataFirst;
+    std::vector <std::vector <T>> DataSecond;
+
+    std::vector <std::vector <T>>* CurrentData = &DataFirst;
+    std::vector <std::vector <T>>* TempData = &DataSecond;
 
     //----------//
 

@@ -4,9 +4,11 @@
 #include <vector>
 #include <chrono>
 #include <fstream>
+#include <cmath>
 //-----------------------------//
 #include "../Libs/dMath/Core/dVectorND.h"
 #include "../Libs/dMath/NumerCalc/dRichtmyer2D.h"
+#include "OutputDataFormat.h"
 //-----------------------------//
 class dRichtmyerSolver2D : public dRichtmyer2D <dVectorND <double>> {
 public:
@@ -19,6 +21,48 @@ public:
         Homogeneous = true;
     }
     ~dRichtmyerSolver2D() = default;
+
+    void SetInitialData(unsigned long xSizeP, unsigned long ySizeP) {
+        xSize = xSizeP;
+        ySize = ySizeP;
+
+        DataFirst.resize(xSizeP);
+        DataSecond.resize(xSizeP);
+
+        for (unsigned long i = 0; i < xSizeP; i++) {
+            for (unsigned long j = 0; j < ySizeP; j++) {
+                DataFirst[i].emplace_back(dVectorND <double> ({10.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
+                DataSecond[i].emplace_back(dVectorND <double> ({10.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
+            }
+        }
+
+        DataFirst[xSizeP / 2][ySizeP / 2][0] = 12.0;
+    }
+    double GetFullEnergy() {
+        double EnergyL = 0.0;
+
+        for (const auto& LineI : (*CurrentData)) {
+            for (const auto& ValueI : LineI) {
+                EnergyL += (g * ValueI[0] + pow(ValueI[1] / ValueI[0], 2.0) + pow(ValueI[2] / ValueI[0], 2.0));
+            }
+        }
+
+        return EnergyL;
+    }
+    void SaveData(const std::string& PathP) {
+        std::ofstream OutputL;
+        OutputL.open(PathP);
+
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < ySize; j++) {
+                OutputL << (*CurrentData)[i][j][0] << "\t";
+            }
+
+            OutputL << std::endl;
+        }
+
+        OutputL.close();
+    }
 private:
     const double g = 9.81;
     const double B_0 = 10.0;
@@ -50,34 +94,14 @@ private:
                                     -B_0 * U[2] / U[0],
                                     0});
     }
-};
-//-----------------------------//
-class Solver {
-public:
-    Solver();
-    ~Solver();
 
-    void Calc(unsigned int StepsP);
+    //----------//
 
-    std :: vector <std :: vector <dVectorND <double>>> Grid;
-    dRichtmyerSolver2D* Test;
-
-    void SaveData(const std::string& PathP) {
-        std::ofstream OutputL;
-        OutputL.open(PathP);
-
-        for (int i = 0; i < 200; i++) {
-            for (int j = 0; j < 200; j++) {
-                OutputL << Grid[i][j][0] << "\t";
-            }
-
-            OutputL << std::endl;
-        }
-
-        OutputL.close();
-    }
-private:
-    void InitGrid(double ExcitationP, double VXP, double VYP, int PointsNumP);
+    OutputDataFormat <double>* AmplitudeSaver;
+    OutputDataFormat <double>* xVelocitySaver;
+    OutputDataFormat <double>* yVelocitySaver;
+    OutputDataFormat <double>* xFieldSaver;
+    OutputDataFormat <double>* yFieldSaver;
 };
 //-----------------------------//
 #endif
