@@ -9,7 +9,7 @@
 template <class T>
 class dRichtmyer2D {
 public:
-    dRichtmyer2D(unsigned long xSizeP = 1, unsigned long ySizeP = 1, bool HomegeneousP = true) :
+    explicit dRichtmyer2D(unsigned long xSizeP = 1, unsigned long ySizeP = 1, bool HomegeneousP = true) :
                     xSize(xSizeP), ySize(ySizeP), Homogeneous(HomegeneousP) {}
     ~dRichtmyer2D() = default;
 
