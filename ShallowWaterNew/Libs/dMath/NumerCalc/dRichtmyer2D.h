@@ -66,22 +66,22 @@ public:
                                                (*CurrentData)[xIndex_minus_2][j],
                                                (*CurrentData)[i][j],
                                                (*CurrentData)[xIndex_minus_1][yIndex_minus_1],
-                                               (*CurrentData)[xIndex_minus_1][yIndex_plus_1]);
+                                               (*CurrentData)[xIndex_minus_1][yIndex_plus_1], i, j);
                 T Ux_plus_1L = FirstStepSolve( (*CurrentData)[xIndex_plus_1][j],
                                                (*CurrentData)[i][j],
                                                (*CurrentData)[xIndex_plus_2][j],
                                                (*CurrentData)[xIndex_plus_1][yIndex_minus_1],
-                                               (*CurrentData)[xIndex_plus_1][yIndex_plus_1]);
+                                               (*CurrentData)[xIndex_plus_1][yIndex_plus_1], i, j);
                 T Uy_minus_1L = FirstStepSolve((*CurrentData)[i][yIndex_minus_1],
                                                (*CurrentData)[xIndex_minus_1][yIndex_minus_1],
                                                (*CurrentData)[xIndex_plus_1][yIndex_minus_1],
                                                (*CurrentData)[i][yIndex_minus_2],
-                                               (*CurrentData)[i][j]);
+                                               (*CurrentData)[i][j], i, j);
                 T Uy_plus_1L = FirstStepSolve( (*CurrentData)[i][yIndex_plus_1],
                                                (*CurrentData)[xIndex_minus_1][yIndex_plus_1],
                                                (*CurrentData)[xIndex_plus_1][yIndex_plus_1],
                                                (*CurrentData)[i][j],
-                                               (*CurrentData)[i][yIndex_plus_2]);
+                                               (*CurrentData)[i][yIndex_plus_2], i, j);
 
                 if (Homogeneous) {
                     (*TempData)[i][j] = (*CurrentData)[i][j] -
@@ -90,8 +90,9 @@ public:
                 } else {
                     (*TempData)[i][j] = (*CurrentData)[i][j] -
                                         TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
-                                        TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L)) -
-                                        TimeStep * AbsValFunc((*CurrentData)[i][j]);
+                                        TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L)) +
+                                        TimeStep * AbsValFunc((*CurrentData)[i][j]) -
+                                        TimeStep * Viscosity(i, j) * 0.0001;
                 }
             }
         }
@@ -122,10 +123,13 @@ protected:
     virtual T AbsValFunc(const T& U) {
         return dVectorND <double> (1);
     }
+    virtual T Viscosity(int xPosP, int yPosP) {
+        return dVectorND <double> (1);
+    }
 
     //----------//
 
-    T FirstStepSolve(const T& U, const T& Ux_minus_1, const T& Ux_plus_1, const T& Uy_minus_1, const T& Uy_plus_1) {
+    T FirstStepSolve(const T& U, const T& Ux_minus_1, const T& Ux_plus_1, const T& Uy_minus_1, const T& Uy_plus_1, int xStepP, int yStepP) {
         if (Homogeneous) {
             return  0.25 * (Ux_plus_1 + Ux_minus_1 + Uy_plus_1 + Uy_minus_1) -
                     TimeStep / (2.0 * xStep) * (xFunc(Ux_plus_1) - xFunc(Ux_minus_1)) -
@@ -133,8 +137,9 @@ protected:
         } else {
             return  0.25 * (Ux_plus_1 + Ux_minus_1 + Uy_plus_1 + Uy_minus_1) -
                     TimeStep / (2.0 * xStep) * (xFunc(Ux_plus_1) - xFunc(Ux_minus_1)) -
-                    TimeStep / (2.0 * yStep) * (yFunc(Uy_plus_1) - yFunc(Uy_minus_1)) -
-                    TimeStep * AbsValFunc(U);
+                    TimeStep / (2.0 * yStep) * (yFunc(Uy_plus_1) - yFunc(Uy_minus_1)) +
+                    TimeStep * AbsValFunc(U) -
+                    TimeStep * Viscosity(xStepP, yStepP) * 0.0001;
         }
     }
 };
