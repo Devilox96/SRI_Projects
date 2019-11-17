@@ -109,12 +109,60 @@ public:
         xFieldFile.close();
         yFieldFile.close();
     }
+
+    //----------//
+
+    void Solve() {
+        long xIndex_plus_1;
+        long xIndex_plus_2;
+        long xIndex_minus_1;
+        long xIndex_minus_2;
+        long yIndex_plus_1;
+        long yIndex_plus_2;
+        long yIndex_minus_1;
+        long yIndex_minus_2;
+
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < ySize; j++) {
+                xIndex_plus_1 = (i + 1 == xSize ? 0 : i + 1);
+                xIndex_plus_2 = (i + 2 >= xSize ? i + 2 - xSize : i + 2);
+                xIndex_minus_1 = (i - 1 < 0 ? xSize - 1 : i - 1);
+                xIndex_minus_2 = (i - 2 < 0 ? xSize + i - 2 : i - 2);
+                yIndex_plus_1 = (j + 1 == ySize ? 0 : j + 1);
+                yIndex_plus_2 = (j + 2 >= ySize ? j + 2 - ySize : j + 2);
+                yIndex_minus_1 = (j - 1 < 0 ? ySize - 1 : j - 1);
+                yIndex_minus_2 = (j - 2 < 0 ? ySize + j - 2 : j - 2);
+
+                (*TempData)[i][j] = SecondStepSolve((*CurrentData)[i][j],
+                                                    (*CurrentData)[xIndex_minus_2][j],
+                                                    (*CurrentData)[xIndex_plus_2][j],
+                                                    (*CurrentData)[i][yIndex_minus_2],
+                                                    (*CurrentData)[i][yIndex_plus_2],
+                                                    (*CurrentData)[xIndex_plus_1][yIndex_plus_1],
+                                                    (*CurrentData)[xIndex_minus_1][yIndex_minus_1],
+                                                    (*CurrentData)[xIndex_plus_1][yIndex_minus_1],
+                                                    (*CurrentData)[xIndex_minus_1][yIndex_plus_1],
+                                                    i, j);
+            }
+        }
+
+        std::swap(CurrentData, TempData);
+    }
 private:
     const double g = 9.81;
     const double B_0 = 0.5;
     const double f_0 = 0.1;
 
+    unsigned long xSize = 1;
+    unsigned long ySize = 1;
+
     std::vector <double> Gradient;
+
+    std::vector <std::vector <dVectorND <double>>> DataFirst;
+    std::vector <std::vector <dVectorND <double>>> DataSecond;
+
+    std::vector <std::vector <dVectorND <double>>>* CurrentData = &DataFirst;
+    std::vector <std::vector <dVectorND <double>>>* TempData = &DataSecond;
 
     //----------//
 
