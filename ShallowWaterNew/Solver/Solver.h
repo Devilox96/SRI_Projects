@@ -12,11 +12,11 @@
 class dRichtmyerSolver2D : public dRichtmyer2D <dVectorND <double>> {
 public:
     dRichtmyerSolver2D(double TimeStepP, double xStepP, double yStepP) {
-        TimeStep = TimeStepP;
-        xStep = xStepP;
-        yStep = yStepP;
+        mStepTime = TimeStepP;
+        mStepX = xStepP;
+        mStepY = yStepP;
 
-        Homogeneous = false;
+//        Homogeneous = false;
     }
     ~dRichtmyerSolver2D() = default;
 
@@ -110,9 +110,20 @@ public:
         yFieldFile.close();
     }
 
+    double getStepTime() {
+        return mStepTime;
+    }
+
+    double getStepX() {
+        return mStepX;
+    }
+    double getStepY() {
+        return mStepY;
+    }
+
     //----------//
 
-    void Solve() {
+    void solveGrid() {
         long xIndex_plus_1;
         long xIndex_plus_2;
         long xIndex_minus_1;
@@ -133,7 +144,7 @@ public:
                 yIndex_minus_1 = (j - 1 < 0 ? ySize - 1 : j - 1);
                 yIndex_minus_2 = (j - 2 < 0 ? ySize + j - 2 : j - 2);
 
-                (*TempData)[i][j] = SecondStepSolve((*CurrentData)[i][j],
+                (*TempData)[i][j] = solve((*CurrentData)[i][j],
                                                     (*CurrentData)[xIndex_minus_2][j],
                                                     (*CurrentData)[xIndex_plus_2][j],
                                                     (*CurrentData)[i][yIndex_minus_2],
@@ -141,8 +152,7 @@ public:
                                                     (*CurrentData)[xIndex_plus_1][yIndex_plus_1],
                                                     (*CurrentData)[xIndex_minus_1][yIndex_minus_1],
                                                     (*CurrentData)[xIndex_plus_1][yIndex_minus_1],
-                                                    (*CurrentData)[xIndex_minus_1][yIndex_plus_1],
-                                                    i, j);
+                                                    (*CurrentData)[xIndex_minus_1][yIndex_plus_1]);
             }
         }
 
@@ -166,77 +176,77 @@ private:
 
     //----------//
 
-    dVectorND <double> xFunc(const dVectorND <double>& U) override {
+    dVectorND <double> funcX(const dVectorND <double>& U) override {
         return dVectorND <double> ({U[1],
                                     (pow(U[1], 2.0) - pow(U[3], 2.0)) / U[0] + 0.5 * g * pow(U[0], 2.0),
                                     (U[1] * U[2] - U[3] * U[4]) / U[0],
                                     0,
                                     (U[1] * U[4] - U[2] * U[3]) / U[0]});
     }
-    dVectorND <double> yFunc(const dVectorND <double>& U) override {
+    dVectorND <double> funcY(const dVectorND <double>& U) override {
         return dVectorND <double> ({U[2],
                                     (U[1] * U[2] - U[3] * U[4]) / U[0],
                                     (pow(U[2], 2.0) - pow(U[4], 2.0)) / U[0] + 0.5 * g * pow(U[0], 2.0),
                                     (U[2] * U[3] - U[1] * U[4]) / U[0],
                                     0});
     }
-    dVectorND <double> AbsValFunc(int xPosP, int yPosP) override {
-        return dVectorND <double> ({0,
-                                    B_0 * (*CurrentData)[xPosP][yPosP][3] / (*CurrentData)[xPosP][yPosP][0] - (*CurrentData)[xPosP][yPosP][2] * (f_0 + Gradient[yPosP]),
-                                    B_0 * (*CurrentData)[xPosP][yPosP][4] / (*CurrentData)[xPosP][yPosP][0] - (*CurrentData)[xPosP][yPosP][1] * (f_0 + Gradient[yPosP]),
-                                    -B_0 * (*CurrentData)[xPosP][yPosP][1] / (*CurrentData)[xPosP][yPosP][0],
-                                    -B_0 * (*CurrentData)[xPosP][yPosP][2] / (*CurrentData)[xPosP][yPosP][0]});
-    }
-    dVectorND <double> Viscosity(int xPosP, int yPosP) override {
-        long xIndex_plus_1;
-        long xIndex_minus_1;
-        long yIndex_plus_1;
-        long yIndex_minus_1;
-
-        xIndex_plus_1 = (xPosP + 1 == xSize ? 0 : xPosP + 1);
-        xIndex_minus_1 = (xPosP - 1 < 0 ? xSize - 1 : xPosP - 1);
-        yIndex_plus_1 = (yPosP + 1 == ySize ? 0 : yPosP + 1);
-        yIndex_minus_1 = (yPosP - 1 < 0 ? ySize - 1 : yPosP - 1);
-
-        double v_x_xx = ((*CurrentData)[xIndex_minus_1][yPosP][1] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
-                         (*CurrentData)[xPosP][yPosP][1] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xIndex_plus_1][yPosP][1] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
-                        (xStep * xStep);
-        double v_x_yy = ((*CurrentData)[xPosP][yIndex_minus_1][1] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
-                         (*CurrentData)[xPosP][yPosP][1] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xPosP][yIndex_plus_1][1] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
-                        (yStep * yStep);
-        double v_y_xx = ((*CurrentData)[xIndex_minus_1][yPosP][2] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
-                         (*CurrentData)[xPosP][yPosP][2] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xIndex_plus_1][yPosP][2] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
-                        (xStep * xStep);
-        double v_y_yy = ((*CurrentData)[xPosP][yIndex_minus_1][2] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
-                         (*CurrentData)[xPosP][yPosP][2] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xPosP][yIndex_plus_1][2] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
-                        (yStep * yStep);
-        double B_x_xx = ((*CurrentData)[xIndex_minus_1][yPosP][3] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
-                         (*CurrentData)[xPosP][yPosP][3] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xIndex_plus_1][yPosP][3] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
-                        (xStep * xStep);
-        double B_x_yy = ((*CurrentData)[xPosP][yIndex_minus_1][3] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
-                         (*CurrentData)[xPosP][yPosP][3] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xPosP][yIndex_plus_1][3] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
-                        (yStep * yStep);
-        double B_y_xx = ((*CurrentData)[xIndex_minus_1][yPosP][4] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
-                         (*CurrentData)[xPosP][yPosP][4] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xIndex_plus_1][yPosP][4] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
-                        (xStep * xStep);
-        double B_y_yy = ((*CurrentData)[xPosP][yIndex_minus_1][4] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
-                         (*CurrentData)[xPosP][yPosP][4] / (*CurrentData)[xPosP][yPosP][0] * 2 +
-                         (*CurrentData)[xPosP][yIndex_plus_1][4] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
-                        (yStep * yStep);
-
-        return dVectorND <double> ({0,
-                                    (*CurrentData)[xPosP][yPosP][0] * (v_x_xx + v_x_yy),
-                                    (*CurrentData)[xPosP][yPosP][0] * (v_y_xx + v_y_yy),
-                                    (*CurrentData)[xPosP][yPosP][0] * (B_x_xx + B_x_yy),
-                                    (*CurrentData)[xPosP][yPosP][0] * (B_y_xx + B_y_yy)});
-    }
+//    dVectorND <double> AbsValFunc(int xPosP, int yPosP) override {
+//        return dVectorND <double> ({0,
+//                                    B_0 * (*CurrentData)[xPosP][yPosP][3] / (*CurrentData)[xPosP][yPosP][0] - (*CurrentData)[xPosP][yPosP][2] * (f_0 + Gradient[yPosP]),
+//                                    B_0 * (*CurrentData)[xPosP][yPosP][4] / (*CurrentData)[xPosP][yPosP][0] - (*CurrentData)[xPosP][yPosP][1] * (f_0 + Gradient[yPosP]),
+//                                    -B_0 * (*CurrentData)[xPosP][yPosP][1] / (*CurrentData)[xPosP][yPosP][0],
+//                                    -B_0 * (*CurrentData)[xPosP][yPosP][2] / (*CurrentData)[xPosP][yPosP][0]});
+//    }
+//    dVectorND <double> Viscosity(int xPosP, int yPosP) override {
+//        long xIndex_plus_1;
+//        long xIndex_minus_1;
+//        long yIndex_plus_1;
+//        long yIndex_minus_1;
+//
+//        xIndex_plus_1 = (xPosP + 1 == xSize ? 0 : xPosP + 1);
+//        xIndex_minus_1 = (xPosP - 1 < 0 ? xSize - 1 : xPosP - 1);
+//        yIndex_plus_1 = (yPosP + 1 == ySize ? 0 : yPosP + 1);
+//        yIndex_minus_1 = (yPosP - 1 < 0 ? ySize - 1 : yPosP - 1);
+//
+//        double v_x_xx = ((*CurrentData)[xIndex_minus_1][yPosP][1] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
+//                         (*CurrentData)[xPosP][yPosP][1] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xIndex_plus_1][yPosP][1] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
+//                        (xStep * xStep);
+//        double v_x_yy = ((*CurrentData)[xPosP][yIndex_minus_1][1] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
+//                         (*CurrentData)[xPosP][yPosP][1] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xPosP][yIndex_plus_1][1] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
+//                        (yStep * yStep);
+//        double v_y_xx = ((*CurrentData)[xIndex_minus_1][yPosP][2] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
+//                         (*CurrentData)[xPosP][yPosP][2] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xIndex_plus_1][yPosP][2] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
+//                        (xStep * xStep);
+//        double v_y_yy = ((*CurrentData)[xPosP][yIndex_minus_1][2] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
+//                         (*CurrentData)[xPosP][yPosP][2] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xPosP][yIndex_plus_1][2] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
+//                        (yStep * yStep);
+//        double B_x_xx = ((*CurrentData)[xIndex_minus_1][yPosP][3] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
+//                         (*CurrentData)[xPosP][yPosP][3] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xIndex_plus_1][yPosP][3] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
+//                        (xStep * xStep);
+//        double B_x_yy = ((*CurrentData)[xPosP][yIndex_minus_1][3] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
+//                         (*CurrentData)[xPosP][yPosP][3] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xPosP][yIndex_plus_1][3] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
+//                        (yStep * yStep);
+//        double B_y_xx = ((*CurrentData)[xIndex_minus_1][yPosP][4] / (*CurrentData)[xIndex_minus_1][yPosP][0] +
+//                         (*CurrentData)[xPosP][yPosP][4] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xIndex_plus_1][yPosP][4] / (*CurrentData)[xIndex_plus_1][yPosP][0]) /
+//                        (xStep * xStep);
+//        double B_y_yy = ((*CurrentData)[xPosP][yIndex_minus_1][4] / (*CurrentData)[xPosP][yIndex_minus_1][0] +
+//                         (*CurrentData)[xPosP][yPosP][4] / (*CurrentData)[xPosP][yPosP][0] * 2 +
+//                         (*CurrentData)[xPosP][yIndex_plus_1][4] / (*CurrentData)[xPosP][yIndex_plus_1][0]) /
+//                        (yStep * yStep);
+//
+//        return dVectorND <double> ({0,
+//                                    (*CurrentData)[xPosP][yPosP][0] * (v_x_xx + v_x_yy),
+//                                    (*CurrentData)[xPosP][yPosP][0] * (v_y_xx + v_y_yy),
+//                                    (*CurrentData)[xPosP][yPosP][0] * (B_x_xx + B_x_yy),
+//                                    (*CurrentData)[xPosP][yPosP][0] * (B_y_xx + B_y_yy)});
+//    }
 
     //----------//
 
@@ -273,7 +283,7 @@ private:
                         << "\n";
     }
     void SetExcitation() {
-        double Fraction = 1.0 / (2.0 * M_PI * 20.0 * xStep * 20.0 * yStep);
+        double Fraction = 1.0 / (2.0 * M_PI * 20.0 * mStepX * 20.0 * mStepY);
 
         for (int i = -100; i < 100; i++) {
             for (int j = -100; j < 100; j++) {

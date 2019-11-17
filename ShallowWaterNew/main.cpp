@@ -10,10 +10,10 @@ int main() {
     double Time = 0.0;
 
     for (int i = 0; i < 250; i++) {
-        MHDSolver -> SetTimeStep(0.3 * (MHDSolver -> GetYStep()) / MHDSolver -> GetMaxAmplitude());
-        MHDSolver -> Solve();
-        std::cout << 0.3 * (MHDSolver -> GetXStep()) / MHDSolver -> GetMaxAmplitude() << std::endl;
-        Time += MHDSolver -> GetTimeStep();
+        MHDSolver -> setTimeStep(0.3 * (MHDSolver -> getStepY()) / MHDSolver -> GetMaxAmplitude());
+        MHDSolver -> solveGrid();
+        std::cout << 0.3 * (MHDSolver -> getStepX()) / MHDSolver -> GetMaxAmplitude() << std::endl;
+        Time += MHDSolver -> getStepTime();
 
         if (i % 10 == 0) {
             MHDSolver -> AppendData();

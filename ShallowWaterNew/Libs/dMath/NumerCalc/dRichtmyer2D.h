@@ -1,100 +1,112 @@
 #ifndef DRICHTMYER2D_H
 #define DRICHTMYER2D_H
 //-----------------------------//
-#include <vector>
-#include <algorithm>
-//-----------------------------//
-#include "dVectors.h" //---dMath/Core/dVectors.h---//
+#include <iostream>
 //-----------------------------//
 template <class T>
 class dRichtmyer2D {
 public:
-    explicit dRichtmyer2D(bool HomegeneousP = true) : Homogeneous(HomegeneousP) {}
+    dRichtmyer2D() = default;
     ~dRichtmyer2D() = default;
 
     //----------//
 
-    void SetTimeStep(double TimeStepP) {
-        TimeStep = TimeStepP;
-    }
+    void setTimeStep(double tStep) {
+        mStepTime = tStep;
 
-    void SetXStep(double xStepP) {
-        xStep = xStepP;
+        if (mStepX != 0) {
+            mRatioX = mStepTime / mStepX;
+        }
+
+        if (mStepY != 0) {
+            mRatioY = mStepTime / mStepY;
+        }
     }
-    void SetYStep(double yStepP) {
-        yStep = yStepP;
+    void setXStep(double tStep) {
+        mStepX = tStep;
+
+        if (mStepX != 0) {
+            mRatioX = mStepTime / mStepX;
+        }
+    }
+    void setYStep(double tStep) {
+        mStepY = tStep;
+
+        if (mStepY != 0) {
+            mRatioY = mStepTime / mStepY;
+        }
     }
 
     //----------//
 
-    double GetTimeStep() {
-        return TimeStep;
-    }
+    T solve(const T& tOffsetZero,
+            const T& tX_min_2_Y,        const T& tX_pl_2_Y,
+            const T& tX_Y_min_2,        const T& tX_Y_pl_2,
+            const T& tX_pl_1_Y_pl_1,    const T& tX_min_1_Y_min_1,
+            const T& tX_pl_1_Y_min_1,   const T& tX_min_1_Y_pl_1) {
+        if (mStepTime <= 0 || mStepX <= 0 || mStepY <= 0) {
+            std::cout << "ERROR! dRichtmyer2D: Incorrect steps!" << std::endl;
+        }
 
-    double GetXStep() {
-        return xStep;
+        T HalfMinusX = firstStep(tX_min_2_Y, tOffsetZero, tX_min_1_Y_min_1, tX_min_1_Y_pl_1);
+        T HalfPlusX = firstStep(tOffsetZero, tX_pl_2_Y, tX_pl_1_Y_min_1, tX_pl_1_Y_pl_1);
+        T HalfMinusY = firstStep(tX_min_1_Y_min_1, tX_pl_1_Y_min_1, tX_Y_min_2, tOffsetZero);
+        T HalfPlusY = firstStep(tX_min_1_Y_pl_1, tX_pl_1_Y_pl_1, tOffsetZero, tX_Y_pl_2);
+
+        return  tOffsetZero -
+                (funcX(HalfPlusX) - funcX(HalfMinusX)) * mRatioX -
+                (funcY(HalfPlusY) - funcY(HalfMinusY)) * mRatioY;
     }
-    double GetYStep() {
-        return yStep;
+    T solveZwas(const T& tOffsetZero,
+                const T& tX_min_1_Y,        const T& tX_pl_1_Y,
+                const T& tX_Y_min_1,        const T& tX_Y_pl_1,
+                const T& tX_pl_1_Y_pl_1,    const T& tX_min_1_Y_min_1,
+                const T& tX_pl_1_Y_min_1,   const T& tX_min_1_Y_pl_1) {
+        T Half_X_min_Y_min = firstStepZwas(tX_Y_min_1, tOffsetZero, tX_min_1_Y, tX_min_1_Y_min_1);
+        T Half_X_pl_Y_min = firstStepZwas(tX_pl_1_Y_min_1, tX_pl_1_Y, tOffsetZero, tX_Y_min_1);
+        T Half_X_min_Y_pl = firstStepZwas(tOffsetZero, tX_Y_pl_1, tX_min_1_Y_pl_1, tX_min_1_Y);
+        T Half_X_pl_Y_pl = firstStepZwas(tX_pl_1_Y, tX_pl_1_Y_pl_1, tX_Y_pl_1, tOffsetZero);
+
+        T GradX =   (funcX(Half_X_pl_Y_pl) - funcX(Half_X_min_Y_pl) +
+                    funcX(Half_X_pl_Y_min) - funcX(Half_X_min_Y_min)) / 2;
+        T GradY =   (funcY(Half_X_pl_Y_pl) - funcY(Half_X_pl_Y_min) +
+                    funcY(Half_X_min_Y_pl) - funcY(Half_X_min_Y_min)) / 2;
+
+        return tOffsetZero - GradX * mRatioX - GradY * mRatioY;
     }
 protected:
-    double TimeStep = 0.0;
-
-    double xStep = 0.0;
-    double yStep = 0.0;
-
-    bool Homogeneous = true;
-
-    //----------//
-
-    virtual T xFunc(const T& U) = 0;
-    virtual T yFunc(const T& U) = 0;
-    virtual T AbsValFunc(int xPosP, int yPosP) {
-        return dVectorND <double> (1);
+    virtual T funcX(const T& tVal) {
+        return tVal;
     }
-    virtual T Viscosity(int xPosP, int yPosP) {
-        return dVectorND <double> (1);
+    virtual T funcY(const T& tVal) {
+        return tVal;
     }
 
     //----------//
 
-    T SecondStepSolve(  const T& tOffsetZero,
-                        const T& tX_min_2_Y,        const T& tX_pl_2_Y,
-                        const T& tX_Y_min_2,        const T& tX_Y_pl_2,
-                        const T& tX_pl_1_Y_pl_1,    const T& tX_min_1_Y_min_1,
-                        const T& tX_pl_1_Y_min_1,   const T& tX_min_1_Y_pl_1,
-                        int xPos, int yPos) {
-        T Ux_minus_1L = FirstStepSolve(tX_min_2_Y, tOffsetZero, tX_min_1_Y_min_1, tX_min_1_Y_pl_1, xPos, yPos);
-        T Ux_plus_1L = FirstStepSolve(tOffsetZero, tX_pl_2_Y, tX_pl_1_Y_min_1, tX_pl_1_Y_pl_1, xPos, yPos);
-        T Uy_minus_1L = FirstStepSolve(tX_min_1_Y_min_1, tX_pl_1_Y_min_1, tX_Y_min_2, tOffsetZero, xPos, yPos);
-        T Uy_plus_1L = FirstStepSolve(tX_min_1_Y_pl_1, tX_pl_1_Y_pl_1, tOffsetZero, tX_Y_pl_2, xPos, yPos);
+    double mStepTime = 0.0;
 
-        if (Homogeneous) {
-            return  tOffsetZero -
-                    TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
-                    TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L));
-        } else {
-            return  tOffsetZero -
-                    TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
-                    TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L)) +
-                    TimeStep * AbsValFunc(xPos, yPos) -
-                    TimeStep * Viscosity(xPos, yPos) * 0.001;
-        }
+    double mStepX = 0.0;
+    double mStepY = 0.0;
+
+    double mRatioX = 0.0; //---mStepTime / mStepX---//
+    double mRatioY = 0.0; //---mStepTime / mStepY---//
+
+    //----------//
+
+    T firstStep(const T& tOffsetMinusX, const T& tOffsetPlusX,
+                const T& tOffsetMinusY, const T& tOffsetPlusY) {
+        return  (tOffsetPlusX + tOffsetMinusX + tOffsetPlusY + tOffsetMinusY) / 4 -
+                ((funcX(tOffsetPlusX) - funcX(tOffsetMinusX)) * mRatioX +
+                (funcY(tOffsetPlusY) - funcY(tOffsetMinusY)) * mRatioY) / 2;
     }
-
-    T FirstStepSolve(const T& Ux_minus_1, const T& Ux_plus_1, const T& Uy_minus_1, const T& Uy_plus_1, int xStepP, int yStepP) {
-        if (Homogeneous) {
-            return  0.25 * (Ux_plus_1 + Ux_minus_1 + Uy_plus_1 + Uy_minus_1) -
-                    TimeStep / (2.0 * xStep) * (xFunc(Ux_plus_1) - xFunc(Ux_minus_1)) -
-                    TimeStep / (2.0 * yStep) * (yFunc(Uy_plus_1) - yFunc(Uy_minus_1));
-        } else {
-            return  0.25 * (Ux_plus_1 + Ux_minus_1 + Uy_plus_1 + Uy_minus_1) -
-                    TimeStep / (2.0 * xStep) * (xFunc(Ux_plus_1) - xFunc(Ux_minus_1)) -
-                    TimeStep / (2.0 * yStep) * (yFunc(Uy_plus_1) - yFunc(Uy_minus_1)) +
-                    TimeStep * AbsValFunc(xStepP, yStepP) -
-                    TimeStep * Viscosity(xStepP, yStepP) * 0.001;
-        }
+    T firstStepZwas(const T& tBottomRight,  const T& tTopRight,
+                    const T& tTopLeft,      const T& tBottomLeft) {
+        return  (tBottomRight + tTopRight + tTopLeft + tBottomLeft) / 4 -
+                ((funcX((tBottomRight + tTopRight) / 2) - funcX((tBottomLeft + tTopLeft) / 2)) * mRatioX +
+                (funcY((tTopRight + tTopLeft) / 2) - funcY((tBottomRight + tBottomLeft) / 2)) * mRatioY) / 2;
     }
 };
+
 //-----------------------------//
 #endif
