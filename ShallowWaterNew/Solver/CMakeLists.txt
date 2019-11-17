@@ -1,4 +1,4 @@
-project(DolverLib)
+project(SolverLib)
 
 set(Source
         Solver.cpp

@@ -9,8 +9,8 @@ int main() {
     double InitialFullEnergy = MHDSolver -> GetFullEnergy();
     double Time = 0.0;
 
-    for (int i = 0; i < 20000; i++) {
-        MHDSolver -> SetTimeStep(0.3 * (MHDSolver -> GetXStep()) / MHDSolver -> GetMaxAmplitude());
+    for (int i = 0; i < 500; i++) {
+        MHDSolver -> SetTimeStep(0.3 * (MHDSolver -> GetYStep()) / MHDSolver -> GetMaxAmplitude());
         MHDSolver -> Solve();
         std::cout << 0.3 * (MHDSolver -> GetXStep()) / MHDSolver -> GetMaxAmplitude() << std::endl;
         Time += MHDSolver -> GetTimeStep();

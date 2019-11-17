@@ -2,17 +2,19 @@
 #define DIVISIONGL_H
 //-----------------------------//
 #include <iostream>
+#include <fstream>
+#include <streambuf>
 //-----------------------------//
 #include <QOpenGLWidget>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
-#include <QOpenGLFunctions_4_5_Core>
+#include <QOpenGLFunctions_3_0>
 #include <QOpenGLVertexArrayObject>
 #include <QVector>
 #include <QOpenGLContext>
 #include <QSurfaceFormat>
 //-----------------------------//
-class DivisionGL : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
+class DivisionGL : public QOpenGLWidget, protected QOpenGLFunctions_3_0 {
     Q_OBJECT
 public:
     explicit DivisionGL(QWidget* ParentP = nullptr);
@@ -30,9 +32,9 @@ private:
     GLuint VertexShader;
     GLuint FragmentShader;
 
-    GLuint VAO;
-    GLuint VBO;
-    GLuint EBO;
+    GLuint BoxVAO;
+//    GLuint VBO;
+//    GLuint EBO;
 
     //----------//
 

@@ -34,7 +34,11 @@ public:
             }
         }
 
-        DataFirst[xSizeP / 2][ySizeP / 2][0] = 12.0;
+        SetExcitation();
+
+        for (unsigned long i = 0; i < ySizeP; i++) {
+            Gradient.emplace_back(0.1 / ySizeP * i);
+        }
 
         AmplitudeFile.open(SavePath + "Amplitude.dat");
         xVelocityFile.open(SavePath + "xVelocity.dat");
@@ -46,8 +50,8 @@ public:
         SavePath = PathP;
     }
     void AppendData() {
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
+        for (int j = 0; j < ySize; j++) {
+            for (int i = 0; i < xSize; i++) {
                 AmplitudeFile << (*CurrentData)[i][j][0] << "\t";
                 xVelocityFile << (*CurrentData)[i][j][1] << "\t";
                 yVelocityFile << (*CurrentData)[i][j][2] << "\t";
@@ -107,8 +111,8 @@ public:
     }
 private:
     const double g = 9.81;
-    const double B_0 = 10.0;
-    const double f_0 = 1.0;
+    const double B_0 = 0.5;
+    const double f_0 = 0.1;
 
     std::vector <double> Gradient;
 
@@ -128,12 +132,12 @@ private:
                                     (U[2] * U[3] - U[1] * U[4]) / U[0],
                                     0});
     }
-    dVectorND <double> AbsValFunc(const dVectorND <double>& U) override {
+    dVectorND <double> AbsValFunc(int xPosP, int yPosP) override {
         return dVectorND <double> ({0,
-                                    B_0 * U[3] / U[0] - U[2] * f_0,
-                                    B_0 * U[4] / U[0] - U[1] * f_0,
-                                    -B_0 * U[1] / U[0],
-                                    -B_0 * U[2] / U[0]});
+                                    B_0 * (*CurrentData)[xPosP][yPosP][3] / (*CurrentData)[xPosP][yPosP][0] - (*CurrentData)[xPosP][yPosP][2] * (f_0 + Gradient[yPosP]),
+                                    B_0 * (*CurrentData)[xPosP][yPosP][4] / (*CurrentData)[xPosP][yPosP][0] - (*CurrentData)[xPosP][yPosP][1] * (f_0 + Gradient[yPosP]),
+                                    -B_0 * (*CurrentData)[xPosP][yPosP][1] / (*CurrentData)[xPosP][yPosP][0],
+                                    -B_0 * (*CurrentData)[xPosP][yPosP][2] / (*CurrentData)[xPosP][yPosP][0]});
     }
     dVectorND <double> Viscosity(int xPosP, int yPosP) override {
         long xIndex_plus_1;
@@ -219,6 +223,20 @@ private:
                         << xMinP        << "\t"     << xMaxP    << "\t"
                         << yMinP        << "\t"     << yMaxP    << "\t"
                         << "\n";
+    }
+    void SetExcitation() {
+        double Fraction = 1.0 / (2.0 * M_PI * 20.0 * xStep * 20.0 * yStep);
+
+        for (int i = -100; i < 100; i++) {
+            for (int j = -100; j < 100; j++) {
+                (*CurrentData)[xSize / 2 + i][ySize / 2 + j][0] = 10.0 + Fraction * exp(-0.5 * (pow(i / 20.0, 2.0) + pow(j / 20.0, 2.0)));
+            }
+        }
+//        for (int i = 0; i < 200; i++) {
+//            for (int j = 0; j < 200; j++) {
+//                (*CurrentData)[i][j][0] = 12 - 2.0 / 200 * i;
+//            }
+//        }
     }
 };
 //-----------------------------//

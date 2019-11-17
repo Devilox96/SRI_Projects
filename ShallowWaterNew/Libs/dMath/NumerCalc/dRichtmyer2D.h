@@ -54,11 +54,11 @@ public:
         for (int i = 0; i < xSize; i++) {
             for (int j = 0; j < ySize; j++) {
                 xIndex_plus_1 = (i + 1 == xSize ? 0 : i + 1);
-                xIndex_plus_2 = (i + 2 >= xSize ? xSize - i : i + 2);
+                xIndex_plus_2 = (i + 2 >= xSize ? i + 2 - xSize : i + 2);
                 xIndex_minus_1 = (i - 1 < 0 ? xSize - 1 : i - 1);
                 xIndex_minus_2 = (i - 2 < 0 ? xSize + i - 2 : i - 2);
                 yIndex_plus_1 = (j + 1 == ySize ? 0 : j + 1);
-                yIndex_plus_2 = (j + 2 >= ySize ? ySize - j : j + 2);
+                yIndex_plus_2 = (j + 2 >= ySize ? j + 2 - ySize : j + 2);
                 yIndex_minus_1 = (j - 1 < 0 ? ySize - 1 : j - 1);
                 yIndex_minus_2 = (j - 2 < 0 ? ySize + j - 2 : j - 2);
 
@@ -91,8 +91,8 @@ public:
                     (*TempData)[i][j] = (*CurrentData)[i][j] -
                                         TimeStep / xStep * (xFunc(Ux_plus_1L) - xFunc(Ux_minus_1L)) -
                                         TimeStep / yStep * (yFunc(Uy_plus_1L) - yFunc(Uy_minus_1L)) +
-                                        TimeStep * AbsValFunc((*CurrentData)[i][j]) -
-                                        TimeStep * Viscosity(i, j) * 0.0001;
+                                        TimeStep * AbsValFunc(i, j) -
+                                        TimeStep * Viscosity(i, j) * 0.001;
                 }
             }
         }
@@ -120,7 +120,7 @@ protected:
 
     virtual T xFunc(const T& U) = 0;
     virtual T yFunc(const T& U) = 0;
-    virtual T AbsValFunc(const T& U) {
+    virtual T AbsValFunc(int xPosP, int yPosP) {
         return dVectorND <double> (1);
     }
     virtual T Viscosity(int xPosP, int yPosP) {
@@ -138,8 +138,8 @@ protected:
             return  0.25 * (Ux_plus_1 + Ux_minus_1 + Uy_plus_1 + Uy_minus_1) -
                     TimeStep / (2.0 * xStep) * (xFunc(Ux_plus_1) - xFunc(Ux_minus_1)) -
                     TimeStep / (2.0 * yStep) * (yFunc(Uy_plus_1) - yFunc(Uy_minus_1)) +
-                    TimeStep * AbsValFunc(U) -
-                    TimeStep * Viscosity(xStepP, yStepP) * 0.0001;
+                    TimeStep * AbsValFunc(xStepP, yStepP) -
+                    TimeStep * Viscosity(xStepP, yStepP) * 0.001;
         }
     }
 };

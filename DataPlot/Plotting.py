@@ -8,15 +8,15 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 #-----------------------------#
-xSize = float(sys.argv[1])
-ySize = float(sys.argv[2])
+xSize = int(sys.argv[1])
+ySize = int(sys.argv[2])
 
-xMin = float(sys.argv[3])
-xMax = float(sys.argv[4])
+xMin = int(sys.argv[3])
+xMax = int(sys.argv[4])
 xStep = (xMax - xMin) / xSize
 
-yMin = float(sys.argv[5])
-yMax = float(sys.argv[6])
+yMin = int(sys.argv[5])
+yMax = int(sys.argv[6])
 yStep = (yMax - yMin) / ySize
 
 X = np.arange(xMin, xMax, xStep)
@@ -26,12 +26,17 @@ X, Y = np.meshgrid(X, Y)
 DataPath = "./Data/"
 
 for FileName in os.listdir(DataPath):
-    Z = []
+    # Z = []
 
-    for Line in open(DataPath + FileName, "r"):
-        Z.append([float(Number) for Number in Line.split()])
+    Z = np.fromfile(DataPath + FileName, dtype=float, sep="\t")
+    Z = np.reshape(Z, (-1, xSize))
 
-    Z = np.asarray(Z)
+    print(Z)
+
+    # for Line in open(DataPath + FileName, "r"):
+    #     Z.append([float(Number) for Number in Line.split()])
+
+    # Z = np.asarray(Z)
 
     for i in range(0, int(len(Z) / ySize)):
         fig = plt.figure()
@@ -40,7 +45,9 @@ for FileName in os.listdir(DataPath):
         ax.zaxis.set_major_locator(LinearLocator(10))
         ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
-        surf = ax.plot_surface(X, Y, Z[int(i * ySize):int((i + 1) * ySize)], cmap=cm.coolwarm, linewidth=0, antialiased=False, vmax=9.999, vmin=10.001)
+        ColorBarRange = np.amax(Z) - np.amin(Z)
+
+        surf = ax.plot_surface(X, Y, Z[int(i * ySize):int((i + 1) * ySize)], cmap=cm.coolwarm, linewidth=0, antialiased=False, vmax=0.01, vmin=-0.01)
         fig.colorbar(surf, shrink=0.5, aspect=5)
 
         print(i)
