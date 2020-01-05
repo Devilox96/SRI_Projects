@@ -53,9 +53,11 @@ public:
         T HalfMinusY = firstStep(tX_min_1_Y_min_1, tX_pl_1_Y_min_1, tX_Y_min_2, tOffsetZero);
         T HalfPlusY = firstStep(tX_min_1_Y_pl_1, tX_pl_1_Y_pl_1, tOffsetZero, tX_Y_pl_2);
 
-        return  tOffsetZero -
-                (funcX(HalfPlusX) - funcX(HalfMinusX)) * mRatioX -
-                (funcY(HalfPlusY) - funcY(HalfMinusY)) * mRatioY;
+        T Solution = tOffsetZero -
+                     (funcX(HalfPlusX) - funcX(HalfMinusX)) * mRatioX -
+                     (funcY(HalfPlusY) - funcY(HalfMinusY)) * mRatioY;
+
+        return Solution;
     }
     T solveZwas(const T& tOffsetZero,
                 const T& tX_min_1_Y,        const T& tX_pl_1_Y,
@@ -68,11 +70,29 @@ public:
         T Half_X_pl_Y_pl = firstStepZwas(tX_pl_1_Y, tX_pl_1_Y_pl_1, tX_Y_pl_1, tOffsetZero);
 
         T GradX =   (funcX(Half_X_pl_Y_pl) - funcX(Half_X_min_Y_pl) +
-                    funcX(Half_X_pl_Y_min) - funcX(Half_X_min_Y_min)) / 2;
+                     funcX(Half_X_pl_Y_min) - funcX(Half_X_min_Y_min)) / 2;
         T GradY =   (funcY(Half_X_pl_Y_pl) - funcY(Half_X_pl_Y_min) +
-                    funcY(Half_X_min_Y_pl) - funcY(Half_X_min_Y_min)) / 2;
+                     funcY(Half_X_min_Y_pl) - funcY(Half_X_min_Y_min)) / 2;
 
         return tOffsetZero - GradX * mRatioX - GradY * mRatioY;
+    }
+    T solveZwas(const T& tOffsetZero,
+                const T& tX_min_1_Y,        const T& tX_pl_1_Y,
+                const T& tX_Y_min_1,        const T& tX_Y_pl_1,
+                const T& tX_pl_1_Y_pl_1,    const T& tX_min_1_Y_min_1,
+                const T& tX_pl_1_Y_min_1,   const T& tX_min_1_Y_pl_1,
+                const T& tExtra) {
+        T Half_X_min_Y_min = firstStepZwas(tX_Y_min_1, tOffsetZero, tX_min_1_Y, tX_min_1_Y_min_1) + tExtra;
+        T Half_X_pl_Y_min = firstStepZwas(tX_pl_1_Y_min_1, tX_pl_1_Y, tOffsetZero, tX_Y_min_1) + tExtra;
+        T Half_X_min_Y_pl = firstStepZwas(tOffsetZero, tX_Y_pl_1, tX_min_1_Y_pl_1, tX_min_1_Y) + tExtra;
+        T Half_X_pl_Y_pl = firstStepZwas(tX_pl_1_Y, tX_pl_1_Y_pl_1, tX_Y_pl_1, tOffsetZero) + tExtra;
+
+        T GradX =   (funcX(Half_X_pl_Y_pl) - funcX(Half_X_min_Y_pl) +
+                     funcX(Half_X_pl_Y_min) - funcX(Half_X_min_Y_min)) / 2;
+        T GradY =   (funcY(Half_X_pl_Y_pl) - funcY(Half_X_pl_Y_min) +
+                     funcY(Half_X_min_Y_pl) - funcY(Half_X_min_Y_min)) / 2;
+
+        return tOffsetZero - GradX * mRatioX - GradY * mRatioY + tExtra;
     }
 protected:
     virtual T funcX(const T& tVal) {
@@ -89,8 +109,8 @@ protected:
     double mStepX = 0.0;
     double mStepY = 0.0;
 
-    double mRatioX = 0.0; //---mStepTime / mStepX---//
-    double mRatioY = 0.0; //---mStepTime / mStepY---//
+    double mRatioX = 0.0;   //---mStepTime / mStepX---//
+    double mRatioY = 0.0;   //---mStepTime / mStepY---//
 
     //----------//
 

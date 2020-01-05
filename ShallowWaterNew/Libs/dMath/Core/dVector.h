@@ -36,7 +36,7 @@ public:
         return *this;
     }
     dVector <T, SizeT>& operator=(dVector <T, SizeT>&& tMove) noexcept {
-        *this = std::move(tMove);
+        mData = std::move(tMove.mData);
         return *this;
     }
 
