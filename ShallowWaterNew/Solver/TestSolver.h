@@ -152,9 +152,6 @@ private:
 
     std::vector <std::vector <double>> Vx_mid_xt;
     std::vector <std::vector <double>> Vy_mid_yt;
-
-//    std::vector <std::vector <double>> u_accel;
-//    std::vector <std::vector <double>> v_accel;
     //-----Arrays-----//
 
     //-----Saving-----//

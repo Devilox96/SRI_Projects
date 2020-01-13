@@ -88,16 +88,6 @@ TestSolver::TestSolver() {
         Vy_mid_yt[i].resize(mGridY - 1);
     }
 
-    //----------//
-
-//    u_accel.resize(mGridX - 2);
-//    v_accel.resize(mGridX - 2);
-//
-//    for (unsigned long i = 0; i < mGridX - 2; i++) {
-//        u_accel[i].resize(mGridY - 2);
-//        v_accel[i].resize(mGridY - 2);
-//    }
-
     //---Solver---//
 }
 void TestSolver::setSavePath(const std::string& tPath) {
@@ -133,18 +123,6 @@ void TestSolver::solve() {
                 Vy[i][j] = vh[i][j] * (*CurrentData)[i][j][2] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
             }
         }
-
-//        for (int i = 0; i < mGridX - 2; i++) {
-//            for (int j = 0; j < mGridY - 2; j++) {
-//                u_accel[i][j] =
-//                        mCorParam[j + 1] * (*CurrentData)[i + 1][j + 1][2] - mGrav / (2.0 * mStepX) *
-//                        (mGeography[i + 2][j + 1] - mGeography[i][j + 1]);
-//
-//                v_accel[i][j] =
-//                        -mCorParam[j + 1] * (*CurrentData)[i + 1][j + 1][1] - mGrav / (2.0 * mStepY) *
-//                        (mGeography[i + 1][j + 2] - mGeography[i + 1][j]);
-//            }
-//        }
 
         //----------//
 
@@ -195,21 +173,11 @@ void TestSolver::solve() {
                 (*TempData)[i][j][0] = (*CurrentData)[i][j][0] -
                                        (mStepTime / mStepX) * (mid_xt[i][j][1] - mid_xt[i - 1][j][1]) -
                                        (mStepTime / mStepY) * (mid_yt[i][j][2] - mid_yt[i][j - 1][2]);
-//                (*TempData)[i][j][1] = (uh[i][j] -
-//                                       (mStepTime / mStepX) * (Ux_mid_xt[i][j] - Ux_mid_xt[i - 1][j]) -
-//                                       (mStepTime / mStepY) * (Uy_mid_yt[i][j] - Uy_mid_yt[i][j - 1]) +
-//                                       mStepTime * u_accel[i - 1][j - 1] * 0.5 * ((*CurrentData)[i][j][0] + (*TempData)[i][j][0])) /
-//                                       (*TempData)[i][j][0];
                 (*TempData)[i][j][1] = (uh[i][j] -
                                        (mStepTime / mStepX) * (Ux_mid_xt[i][j] - Ux_mid_xt[i - 1][j]) -
                                        (mStepTime / mStepY) * (Uy_mid_yt[i][j] - Uy_mid_yt[i][j - 1]) +
                                        mStepTime * Source[1] * 0.5 * ((*CurrentData)[i][j][0] + (*TempData)[i][j][0])) /
                                        (*TempData)[i][j][0];
-//                (*TempData)[i][j][2] = (vh[i][j] -
-//                                        (mStepTime / mStepX) * (Vx_mid_xt[i][j] - Vx_mid_xt[i - 1][j]) -
-//                                        (mStepTime / mStepY) * (Vy_mid_yt[i][j] - Vy_mid_yt[i][j - 1]) +
-//                                        mStepTime * v_accel[i - 1][j - 1] * 0.5 * ((*CurrentData)[i][j][0] + (*TempData)[i][j][0])) /
-//                                       (*TempData)[i][j][0];
                 (*TempData)[i][j][2] = (vh[i][j] -
                                         (mStepTime / mStepX) * (Vx_mid_xt[i][j] - Vx_mid_xt[i - 1][j]) -
                                         (mStepTime / mStepY) * (Vy_mid_yt[i][j] - Vy_mid_yt[i][j - 1]) +
