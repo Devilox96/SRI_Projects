@@ -138,12 +138,6 @@ private:
     dGrid mid_xt;
     dGrid mid_yt;
 
-    std::vector <std::vector <double>> Ux;
-    std::vector <std::vector <double>> Uy;
-
-    std::vector <std::vector <double>> Vx;
-    std::vector <std::vector <double>> Vy;
-
     std::vector <std::vector <double>> Ux_mid_xt;
     std::vector <std::vector <double>> Uy_mid_yt;
 
@@ -169,9 +163,9 @@ private:
 //    double getFullEnergy();
     void appendData();
     void saveData();
-//
-//    dVector <double, 3> funcX(const dVector <double, 3>& tVec) override;
-//    dVector <double, 3> funcY(const dVector <double, 3>& tVec) override;
+
+    dVector <double, 3> funcX(const dVector <double, 3>& tVec) override;
+    dVector <double, 3> funcY(const dVector <double, 3>& tVec) override;
     dVector <double, 3> source(int tPosX, int tPosY);
 };
 //-----------------------------//

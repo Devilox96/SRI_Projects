@@ -13,24 +13,6 @@ TestSolver::TestSolver() {
 
     //---Solver---//
 
-    Ux.resize(mGridX);
-    Uy.resize(mGridX);
-
-    for (unsigned long i = 0; i < mGridX; i++) {
-        Ux[i].resize(mGridY);
-        Uy[i].resize(mGridY);
-    }
-
-    Vx.resize(mGridX);
-    Vy.resize(mGridX);
-
-    for (unsigned long i = 0; i < mGridX; i++) {
-        Vx[i].resize(mGridY);
-        Vy[i].resize(mGridY);
-    }
-
-    //----------//
-
     mid_xt.resize(mGridX - 1);
     mid_yt.resize(mGridX);
 
@@ -103,31 +85,11 @@ void TestSolver::solve() {
 
         //----------//
 
-        for (int i = 0; i < mGridX; i++) {
-            for (int j = 0; j < mGridY; j++) {
-                Ux[i][j] = pow((*CurrentData)[i][j][1], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
-                Uy[i][j] = (*CurrentData)[i][j][1] * (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0];
-
-                Vx[i][j] = (*CurrentData)[i][j][1] * (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0];
-                Vy[i][j] = pow((*CurrentData)[i][j][2], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
-            }
-        }
-
-        //----------//
-
         for (unsigned long i = 0; i < mGridX - 1; i++) {
             for (unsigned long j = 0; j < mGridY; j++) {
                 mid_xt[i][j] =
-                        0.5 *
-                        dVector <double, 3>(
-                        (*CurrentData)[i + 1][j][0] + (*CurrentData)[i][j][0],
-                        (*CurrentData)[i + 1][j][1] + (*CurrentData)[i][j][1],
-                        (*CurrentData)[i + 1][j][2] + (*CurrentData)[i][j][2]) -
-                        0.5 * (mStepTime / mStepX) *
-                        dVector <double, 3>(
-                        (*CurrentData)[i + 1][j][1] - (*CurrentData)[i][j][1],
-                        Ux[i + 1][j] - Ux[i][j],
-                        Vx[i + 1][j] - Vx[i][j]);
+                        0.5 * ((*CurrentData)[i + 1][j] + (*CurrentData)[i][j]) -
+                        0.5 * (mStepTime / mStepX) * (funcX((*CurrentData)[i + 1][j]) - funcX((*CurrentData)[i][j]));
 
                 Ux_mid_xt[i][j] = mid_xt[i][j][1] * mid_xt[i][j][1] / mid_xt[i][j][0] + 0.5 * mGrav * pow(mid_xt[i][j][0], 2.0);
                 Vx_mid_xt[i][j] = mid_xt[i][j][1] * mid_xt[i][j][2] / mid_xt[i][j][0];
@@ -137,16 +99,8 @@ void TestSolver::solve() {
         for (unsigned long i = 0; i < mGridX; i++) {
             for (unsigned long j = 0; j < mGridY - 1; j++) {
                 mid_yt[i][j] =
-                        0.5 *
-                        dVector <double, 3>(
-                                (*CurrentData)[i][j + 1][0] + (*CurrentData)[i][j][0],
-                                (*CurrentData)[i][j + 1][1] + (*CurrentData)[i][j][1],
-                                (*CurrentData)[i][j + 1][2] + (*CurrentData)[i][j][2]) -
-                        0.5 * (mStepTime / mStepY) *
-                        dVector <double, 3>(
-                                (*CurrentData)[i][j + 1][2] - (*CurrentData)[i][j][2],
-                                Uy[i][j + 1] - Uy[i][j],
-                                Vy[i][j + 1] - Vy[i][j]);
+                        0.5 * ((*CurrentData)[i][j + 1] + (*CurrentData)[i][j]) -
+                        0.5 * (mStepTime / mStepY) * (funcY((*CurrentData)[i][j + 1]) - funcY((*CurrentData)[i][j]));
 
                 Uy_mid_yt[i][j] = mid_yt[i][j][1] * mid_yt[i][j][2] / mid_yt[i][j][0];
                 Vy_mid_yt[i][j] = mid_yt[i][j][2] * mid_yt[i][j][2] / mid_yt[i][j][0] + 0.5 * mGrav * pow(mid_yt[i][j][0], 2.0);
@@ -313,6 +267,18 @@ void TestSolver::saveData() {
     system("python3.6 Plotting.py 254 50 0 254 0 50");
 }
 
+dVector <double, 3> TestSolver::funcX(const dVector <double, 3>& tVec) {
+    return dVector <double, 3> (
+            tVec[1],
+            pow(tVec[1], 2.0) / tVec[0] + 0.5 * mGrav * pow(tVec[0], 2.0),
+            tVec[1] * tVec[2] / tVec[0]);
+}
+dVector <double, 3> TestSolver::funcY(const dVector <double, 3>& tVec) {
+    return dVector <double, 3> (
+            tVec[2],
+            tVec[1] * tVec[2] / tVec[0],
+            pow(tVec[2], 2.0) / tVec[0] + 0.5 * mGrav * pow(tVec[0], 2.0));
+}
 dVector <double, 3> TestSolver::source(int tPosX, int tPosY) {
     return dVector <double, 3> (
                 0.0,
