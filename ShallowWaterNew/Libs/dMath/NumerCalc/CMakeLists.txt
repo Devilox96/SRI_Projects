@@ -6,7 +6,7 @@ set(dMathCoreSource
 
 set(Source
         dRungeKutta.cpp
-        dRichtmyer2D.cpp dRichtmyer2D.h)
+        dRichtmyer2D.cpp dRichtmyer2D.h ../../../Solver/TestSolver.cpp ../../../Solver/TestSolver.h)
 
 add_library(dMathNumerCalcLib ${Source} ${dMathCoreSource})
 target_link_libraries(dMathNumerCalcLib dMathCoreLib)

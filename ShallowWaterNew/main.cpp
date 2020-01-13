@@ -2,6 +2,7 @@
 //-----------------------------//
 //#include "Solver/Solver.h"
 #include "Solver/RossbySolver.h"
+#include "Solver/TestSolver.h"
 //-----------------------------//
 int main() {
 //    auto MHDSolver = new dRichtmyerSolver2D(0.00005, 0.1, 0.1);
@@ -44,14 +45,18 @@ int main() {
 
 
 
-    auto Solver = new RossbySolver(0.00005, 111e+03, 111e+03);
+//    auto Solver = new RossbySolver(0.00005, 111e+03, 111e+03);
+//
+//    Solver -> setSavePath("./Data/");
+//    Solver -> initGrid(180, 88);
+//    Solver -> solve();
 
+
+
+    auto Solver = new TestSolver;
     Solver -> setSavePath("./Data/");
-    Solver -> initGrid(180, 88);
+    Solver -> openFiles();
     Solver -> solve();
-
-
-
 
 //    system("python3.6 Plotting.py 200 200 -100 100 -100 100");
 

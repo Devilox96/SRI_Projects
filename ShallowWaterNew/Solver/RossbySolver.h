@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
+#include <random>
 //-----------------------------//
 #include "../Libs/dMath/Core/dVector.h"
 #include "../Libs/dMath/NumerCalc/dRichtmyer2D.h"
@@ -21,7 +22,7 @@ public:
     void solve();
 private:
     //---Constants----//
-    const double mGrav  = 9.81e-03;
+    const double mGrav  = 9.81;
     const double mOmega = 7.2921e-05;
     const double mRad   = 6.371e+06;
     //---Constants----//
@@ -50,6 +51,14 @@ private:
 
     dGrid* CurrentData  = &DataFirst;
     dGrid* TempData     = &DataSecond;
+
+    std::vector <dVector <double, 3>> mLeftBoundary;
+    std::vector <dVector <double, 3>> mRightBoundary;
+    std::vector <dVector <double, 3>> mUpperBoundary;
+    std::vector <dVector <double, 3>> mLowerBoundary;
+
+//    std::vector <std::vector <std::vector <double>>> mGradient;
+    dGrid mGeography;
     //-----Arrays-----//
 
     //-----Saving-----//
@@ -62,8 +71,8 @@ private:
 
     //----------//
 
-    std::vector <std::vector <std::vector <double>>> gradient();
-    double getMaxSpeed();
+    std::vector <std::vector <std::vector <double>>> gradient(const dGrid& tGrid);
+    void boundaries();
     double getFullEnergy();
     void appendData();
     void saveData();

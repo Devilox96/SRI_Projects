@@ -36,20 +36,52 @@ void RossbySolver::initGrid(int tGridX, int tGridY) {
         mCorParam.emplace_back(mCorParam_0 + mBetaParam * (i * mStepY - MeanCoordY));
     }
 
+    //---Geography---//
+
+//    mGeography.resize(mGridX);
+//
+//    for (unsigned long i = 0; i < mGridX; i++) {
+//        mGeography[i].resize(mGridY);
+//    }
+//
+//    for (int i = 0; i < mGridX; i++) {
+//        for (int j = 0; j < mGridY; j++) {
+//            mGeography[i][j][0] = 1000.0 * exp(-0.5 * (pow((i - mGridX / 2.0) / 5.0, 2.0) + pow((j - mGridY / 2.0) / 5.0, 2.0)));
+//        }
+//    }
+
+//    mGradient = gradient(mGeography);
+
     //---Initializing depth gradient from 5700m to 5500m---//
 
     double LatitudeGrad = (5700.0 - 5500.0) / mGridY;
 
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution <> dis(0.0, 1.0);
+
     for (unsigned long i = 0; i < mGridX; i++) {
         for (unsigned long j = 0; j < mGridY; j++) {
-            DataFirst[i][j] = dVector <double, 3>(5500 + LatitudeGrad * double(j), 0.0, 0.0);
-            DataSecond[i][j] = dVector <double, 3>(5500 + LatitudeGrad * double(j), 0.0, 0.0);
+//            DataFirst[i][j] = dVector <double, 3>(5700 - LatitudeGrad * double(j), 0.0, 0.0);
+//            DataSecond[i][j] = dVector <double, 3>(5700 - LatitudeGrad * double(j), 0.0, 0.0);
+            DataFirst[i][j] = dVector <double, 3>(5600 - 2 * mCorParam_0 / mGrav * (double(j) * mStepY - MeanCoordY), 0.0, 0.0);
+            DataSecond[i][j] = dVector <double, 3>(5600 - 2 * mCorParam_0 / mGrav * (double(j) * mStepY - MeanCoordY), 0.0, 0.0);
+
+            DataFirst[i][j][0] += dis(gen) * 5;
+            DataSecond[i][j][0] += dis(gen) * 5;
         }
     }
 
+//    for (unsigned long i = 0; i < mGridX; i++) {
+//        for (unsigned long j = 0; j < mGridY; j++) {
+//            DataFirst[i][j][0] -= mGeography[i][j][0];
+//            DataSecond[i][j][0] -= mGeography[i][j][0];
+//        }
+//    }
+
     //---Initializing geostrophic wind---//
 
-    auto Grad = gradient();
+    auto Grad = gradient(DataFirst);
 
     for (unsigned long i = 0; i < mGridX; i++) {
         for (unsigned long j = 0; j < mGridY; j++) {
@@ -57,6 +89,13 @@ void RossbySolver::initGrid(int tGridX, int tGridY) {
             DataSecond[i][j][2] = mGrav / mCorParam[j] * Grad[i][j][0] / mStepY * DataSecond[i][j][0];
         }
     }
+
+    //---Boundaries---//
+
+    mLeftBoundary.resize(mGridY);
+    mRightBoundary.resize(mGridY);
+    mUpperBoundary.resize(mGridX);
+    mLowerBoundary.resize(mGridX);
 
     //---Energy---//
 
@@ -72,50 +111,175 @@ void RossbySolver::setSavePath(const std::string& tPath) {
     mSavePath = tPath;
 }
 void RossbySolver::solve() {
-    long xIndex_plus_1;
-    long xIndex_minus_1;
-    long yIndex_plus_1;
-    long yIndex_minus_1;
-
     dVector <double, 3> Extra(0, 0, 0);
+    double Timer = 0.0;
 
-    for (int iTime = 0; iTime < 10000; iTime++) {
+    for (int iTime = 0; iTime < 20000; iTime++) {
         double FullEnergy = getFullEnergy();
 
-        if (iTime % 10 == 0) {
+        if (iTime % 200 == 0) {
             appendData();
-            std::cout << "Step: " << iTime << " Full energy: " << FullEnergy << std::endl;
+            std::cout   << "Step: " << iTime
+                        << " Full energy: " << FullEnergy
+                        << " (limit: " << mInitEnergy * 1.1
+                        << ") Time: " << Timer << "s"
+                        << std::endl;
         }
 
-        if (FullEnergy > mInitEnergy * 3.0) {
+        if (FullEnergy > mInitEnergy * 1.1) {
             saveData();
             break;
         }
 
-        setTimeStep(mStepY / getFullEnergy() * 5000.0);
+//        double Time = mStepY / getFullEnergy() * 1000.0;
+        double Time = 14.0;
 
-        for (int i = 0; i < mGridX; i++) {
-            for (int j = 0; j < mGridY; j++) {
-                xIndex_plus_1 = (i + 1 == mGridX ? 0 : i + 1);
-                xIndex_minus_1 = (i - 1 < 0 ? mGridX - 1 : i - 1);
-                yIndex_plus_1 = (j + 1 == mGridY ? 0 : j + 1);
-                yIndex_minus_1 = (j - 1 < 0 ? mGridY - 1 : j - 1);
+        Timer += Time;
 
+        setTimeStep(Time);
+        boundaries();
+
+        for (int i = 1; i < mGridX - 1; i++) {
+            for (int j = 1; j < mGridY - 1; j++) {
                 Extra = source(i, j);
 
                 (*TempData)[i][j] = solveZwas(
                         (*CurrentData)[i][j],
-                        (*CurrentData)[xIndex_minus_1][j],
-                        (*CurrentData)[xIndex_plus_1][j],
-                        (*CurrentData)[i][yIndex_minus_1],
-                        (*CurrentData)[i][yIndex_plus_1],
-                        (*CurrentData)[xIndex_plus_1][yIndex_plus_1],
-                        (*CurrentData)[xIndex_minus_1][yIndex_minus_1],
-                        (*CurrentData)[xIndex_plus_1][yIndex_minus_1],
-                        (*CurrentData)[xIndex_minus_1][yIndex_plus_1],
+                        (*CurrentData)[i - 1][j],
+                        (*CurrentData)[i + 1][j],
+                        (*CurrentData)[i][j - 1],
+                        (*CurrentData)[i][j + 1],
+                        (*CurrentData)[i + 1][j + 1],
+                        (*CurrentData)[i - 1][j - 1],
+                        (*CurrentData)[i + 1][j - 1],
+                        (*CurrentData)[i - 1][j + 1],
                         Extra);
             }
         }
+
+        for (int i = 1; i < mGridY - 1; i++) {
+            Extra = source(0, i);
+
+            (*TempData)[0][i] = solveZwas(
+                    (*CurrentData)[0][i],
+                    mLeftBoundary[i],
+                    (*CurrentData)[1][i],
+                    (*CurrentData)[0][i - 1],
+                    (*CurrentData)[0][i + 1],
+                    (*CurrentData)[1][i + 1],
+                    mLeftBoundary[i - 1],
+                    (*CurrentData)[1][i - 1],
+                    mLeftBoundary[i + 1],
+                    Extra);
+
+            Extra = source(mGridX - 1, i);
+
+            (*TempData)[mGridX - 1][i] = solveZwas(
+                    (*CurrentData)[mGridX - 1][i],
+                    (*CurrentData)[mGridX - 2][i],
+                    mRightBoundary[i],
+                    (*CurrentData)[mGridX - 1][i - 1],
+                    (*CurrentData)[mGridX - 1][i + 1],
+                    mRightBoundary[i + 1],
+                    (*CurrentData)[mGridX - 2][i - 1],
+                    mRightBoundary[i - 1],
+                    (*CurrentData)[mGridX - 2][i + 1],
+                    Extra);
+        }
+
+        for (int i = 1; i < mGridX - 1; i++) {
+            Extra = source(i, 0);
+
+            (*TempData)[i][0] = solveZwas(
+                    (*CurrentData)[i][0],
+                    (*CurrentData)[i - 1][0],
+                    (*CurrentData)[i + 1][0],
+                    mUpperBoundary[i],
+                    (*CurrentData)[i][1],
+                    (*CurrentData)[i + 1][1],
+                    mUpperBoundary[i - 1],
+                    mUpperBoundary[i + 1],
+                    (*CurrentData)[i - 1][1],
+                    Extra);
+
+            Extra = source(i, mGridY - 1);
+
+            (*TempData)[i][mGridY - 1] = solveZwas(
+                    (*CurrentData)[i][mGridY - 1],
+                    (*CurrentData)[i - 1][mGridY - 1],
+                    (*CurrentData)[i + 1][mGridY - 1],
+                    (*CurrentData)[i][mGridY - 2],
+                    mLowerBoundary[i],
+                    mLowerBoundary[i + 1],
+                    (*CurrentData)[i - 1][mGridY - 2],
+                    (*CurrentData)[i + 1][mGridY - 2],
+                    mLowerBoundary[i - 1],
+                    Extra);
+        }
+
+        //---Left-Top---//
+        Extra = source(0, 0);
+
+        (*TempData)[0][0] = solveZwas(
+                (*CurrentData)[0][0],
+                mLeftBoundary[0],
+                (*CurrentData)[1][0],
+                mUpperBoundary[0],
+                (*CurrentData)[0][1],
+                (*CurrentData)[1][1],
+                dVector <double, 3>(5700, mUpperBoundary[1][1], 0),
+                mUpperBoundary[1],
+                mLeftBoundary[1],
+                Extra);
+        //---Left-Top---//
+
+        //---Right-Top---//
+        Extra = source(mGridX - 1, 0);
+
+        (*TempData)[mGridX - 1][0] = solveZwas(
+                (*CurrentData)[mGridX - 1][0],
+                (*CurrentData)[mGridX - 2][0],
+                mRightBoundary[0],
+                mUpperBoundary[mGridX - 1],
+                (*CurrentData)[mGridX - 1][1],
+                mRightBoundary[1],
+                mUpperBoundary[mGridX - 2],
+                dVector <double, 3>(5700, mUpperBoundary[1][1], 0),
+                (*CurrentData)[mGridX - 2][1],
+                Extra);
+        //---Right-Top---//
+
+        //---Left-Bottom---//
+        Extra = source(0, mGridY - 1);
+
+        (*TempData)[0][mGridY - 1] = solveZwas(
+                (*CurrentData)[0][mGridY - 1],
+                mLeftBoundary[mGridY - 1],
+                (*CurrentData)[1][mGridY - 1],
+                (*CurrentData)[0][mGridY - 2],
+                mLowerBoundary[0],
+                mLowerBoundary[1],
+                mLeftBoundary[mGridY - 2],
+                (*CurrentData)[1][mGridY - 2],
+                dVector <double, 3>(5500, mLowerBoundary[1][1], 0),
+                Extra);
+        //---Left-Bottom---//
+
+        //---Right-Bottom---//
+        Extra = source(mGridX - 1, mGridY - 1);
+
+        (*TempData)[mGridX - 1][mGridY - 1] = solveZwas(
+                (*CurrentData)[mGridX - 1][mGridY - 1],
+                (*CurrentData)[mGridX - 2][mGridY - 1],
+                mRightBoundary[mGridY - 1],
+                (*CurrentData)[mGridX - 1][mGridY - 2],
+                mLowerBoundary[mGridX - 1],
+                dVector <double, 3>(5500, mLowerBoundary[1][1], 0),
+                (*CurrentData)[mGridX - 2][mGridY - 2],
+                mRightBoundary[mGridY - 2],
+                mLowerBoundary[mGridX - 2],
+                Extra);
+        //---Right-Bottom---//
 
         std::swap(CurrentData, TempData);
     }
@@ -123,7 +287,7 @@ void RossbySolver::solve() {
     saveData();
 }
 //-----------------------------//
-std::vector <std::vector <std::vector <double>>> RossbySolver::gradient() {
+std::vector <std::vector <std::vector <double>>> RossbySolver::gradient(const dGrid& tGrid) {
     std::vector <std::vector <std::vector <double>>> Grad; //---[0] - x, [1] - y---//
 
     Grad.resize(mGridX);
@@ -136,7 +300,7 @@ std::vector <std::vector <std::vector <double>>> RossbySolver::gradient() {
 
     for (unsigned long j = 0; j < mGridY; j++) {
         for (unsigned long i = 1; i < mGridX - 1; i++) {
-            Grad[i][j].emplace_back((DataFirst[i + 1][j][0] - DataFirst[i - 1][j][0]) / 2);
+            Grad[i][j].emplace_back((tGrid[i + 1][j][0] - tGrid[i - 1][j][0]) / 2);
         }
 
         Grad[0][j].emplace_back(Grad[1][j][0] * 2.0 - Grad[2][j][0]);
@@ -145,7 +309,7 @@ std::vector <std::vector <std::vector <double>>> RossbySolver::gradient() {
 
     for (unsigned long i = 0; i < mGridX; i++) {
         for (unsigned long j = 1; j < mGridY - 1; j++) {
-            Grad[i][j].emplace_back((DataFirst[i][j + 1][0] - DataFirst[i][j - 1][0]) / 2);
+            Grad[i][j].emplace_back((tGrid[i][j + 1][0] - tGrid[i][j - 1][0]) / 2);
         }
 
         Grad[i][0].emplace_back(Grad[i][1][1] * 2.0 - Grad[i][2][1]);
@@ -154,34 +318,25 @@ std::vector <std::vector <std::vector <double>>> RossbySolver::gradient() {
 
     return Grad;
 }
-double RossbySolver::getMaxSpeed() {
-    double VelMax = 0.0;
-
-//    for (unsigned long i = 0; i < mGridX; i++) {
-//        for (unsigned long j = 0; j < mGridY; j++) {
-//            double CurVal = 0.0;
-//
-//            CurVal = sqrt((*CurrentData)[i][j][1] * (*CurrentData)[i][j][1] +
-//                              (*CurrentData)[i][j][2] * (*CurrentData)[i][j][2]) / (*CurrentData)[i][j][0];
-//
-//            if (VelMax < CurVal) {
-//                VelMax = CurVal;
-//            }
-//        }
-//    }
-
-    for (unsigned long i = 0; i < mGridX; i++) {
-        for (unsigned long j = 0; j < mGridY; j++) {
-            double Val =    fabs((*CurrentData)[i][j][2] / (*CurrentData)[i][j][1]) +
-                            sqrt((*CurrentData)[i][j][1] * mGrav);
-
-            if (Val > VelMax) {
-                VelMax = Val;
-            }
-        }
+void RossbySolver::boundaries() {
+    for (int i = 0; i < mGridY; i++) {
+        mLeftBoundary[i] = (*CurrentData)[1][i];
     }
 
-    return VelMax;
+    for (int i = 0; i < mGridX; i++) {
+        mUpperBoundary[i][0] = 5700;
+        mLowerBoundary[i][0] = 5500;
+
+        mUpperBoundary[i][1] = (*CurrentData)[i][1][1];
+        mLowerBoundary[i][1] = (*CurrentData)[i][mGridY - 2][1];
+    }
+
+    mRightBoundary = mLeftBoundary;
+
+    for (int i = 0; i < mGridX; i++) {
+        mUpperBoundary[i][2] = 0;
+        mLowerBoundary[i][2] = 0;
+    }
 }
 double RossbySolver::getFullEnergy() {
     double Energy = 0.0;
@@ -203,8 +358,8 @@ void RossbySolver::appendData() {
     for (int j = 0; j < mGridY; j++) {
         for (int i = 0; i < mGridX; i++) {
             mAmpFile << (*CurrentData)[i][j][0] << "\t";
-            mVelFileX << (*CurrentData)[i][j][1] << "\t";
-            mVelFileY << (*CurrentData)[i][j][2] << "\t";
+            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
+            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
         }
 
         mAmpFile << std::endl;
@@ -235,6 +390,8 @@ dVector <double, 3> RossbySolver::funcY(const dVector <double, 3>& tVec) {
 dVector <double, 3> RossbySolver::source(int tPosX, int tPosY) {
     return dVector <double, 3> (
             0,
+//            -(*CurrentData)[tPosX][tPosY][2] * mCorParam[tPosY] + mGrav * mGradient[tPosX][tPosY][0] / mStepX,
+//            (*CurrentData)[tPosX][tPosY][1] * mCorParam[tPosY]) + mGrav * mGradient[tPosX][tPosY][1] / mStepY;
             -(*CurrentData)[tPosX][tPosY][2] * mCorParam[tPosY],
             (*CurrentData)[tPosX][tPosY][1] * mCorParam[tPosY]);
 }
