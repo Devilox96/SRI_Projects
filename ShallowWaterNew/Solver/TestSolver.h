@@ -141,20 +141,11 @@ private:
     std::vector <std::vector <double>> uh;
     std::vector <std::vector <double>> vh;
 
-//    std::vector <std::vector <double>> h_mid_xt;
-//    std::vector <std::vector <double>> h_mid_yt;
-
     std::vector <std::vector <double>> Ux;
     std::vector <std::vector <double>> Uy;
 
-//    std::vector <std::vector <double>> uh_mid_xt;
-//    std::vector <std::vector <double>> uh_mid_yt;
-
     std::vector <std::vector <double>> Vx;
     std::vector <std::vector <double>> Vy;
-
-//    std::vector <std::vector <double>> vh_mid_xt;
-//    std::vector <std::vector <double>> vh_mid_yt;
 
     std::vector <std::vector <double>> Ux_mid_xt;
     std::vector <std::vector <double>> Uy_mid_yt;
