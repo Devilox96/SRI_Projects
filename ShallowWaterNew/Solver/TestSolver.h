@@ -153,8 +153,8 @@ private:
     std::vector <std::vector <double>> Vx_mid_xt;
     std::vector <std::vector <double>> Vy_mid_yt;
 
-    std::vector <std::vector <double>> u_accel;
-    std::vector <std::vector <double>> v_accel;
+//    std::vector <std::vector <double>> u_accel;
+//    std::vector <std::vector <double>> v_accel;
     //-----Arrays-----//
 
     //-----Saving-----//
@@ -178,7 +178,7 @@ private:
 //
 //    dVector <double, 3> funcX(const dVector <double, 3>& tVec) override;
 //    dVector <double, 3> funcY(const dVector <double, 3>& tVec) override;
-//    dVector <double, 3> source(int tPosX, int tPosY);
+    dVector <double, 3> source(int tPosX, int tPosY);
 };
 //-----------------------------//
 #endif
