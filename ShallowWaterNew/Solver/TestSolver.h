@@ -138,9 +138,6 @@ private:
     dGrid mid_xt;
     dGrid mid_yt;
 
-    std::vector <std::vector <double>> uh;
-    std::vector <std::vector <double>> vh;
-
     std::vector <std::vector <double>> Ux;
     std::vector <std::vector <double>> Uy;
 

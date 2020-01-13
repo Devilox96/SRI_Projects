@@ -13,14 +13,6 @@ TestSolver::TestSolver() {
 
     //---Solver---//
 
-    uh.resize(mGridX);
-    vh.resize(mGridX);
-
-    for (unsigned long i = 0; i < mGridX; i++) {
-        uh[i].resize(mGridY);
-        vh[i].resize(mGridY);
-    }
-
     Ux.resize(mGridX);
     Uy.resize(mGridX);
 
@@ -97,8 +89,8 @@ void TestSolver::openFiles() {
     //---Saving---//
 
     mAmpFile.open(mSavePath + "Amplitude.dat");
-    mVelFileX.open(mSavePath + "xVelocity.dat");
-    mVelFileY.open(mSavePath + "yVelocity.dat");
+//    mVelFileX.open(mSavePath + "xVelocity.dat");
+//    mVelFileY.open(mSavePath + "yVelocity.dat");
 
     //---Saving---//
 }
@@ -113,14 +105,11 @@ void TestSolver::solve() {
 
         for (int i = 0; i < mGridX; i++) {
             for (int j = 0; j < mGridY; j++) {
-                uh[i][j] = (*CurrentData)[i][j][1];
-                vh[i][j] = (*CurrentData)[i][j][2];
+                Ux[i][j] = pow((*CurrentData)[i][j][1], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
+                Uy[i][j] = (*CurrentData)[i][j][1] * (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0];
 
-                Ux[i][j] = pow(uh[i][j], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
-                Uy[i][j] = uh[i][j] * vh[i][j] / (*CurrentData)[i][j][0];
-
-                Vx[i][j] = uh[i][j] * vh[i][j] / (*CurrentData)[i][j][0];
-                Vy[i][j] = pow(vh[i][j], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
+                Vx[i][j] = (*CurrentData)[i][j][1] * (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0];
+                Vy[i][j] = pow((*CurrentData)[i][j][2], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
             }
         }
 
@@ -132,11 +121,11 @@ void TestSolver::solve() {
                         0.5 *
                         dVector <double, 3>(
                         (*CurrentData)[i + 1][j][0] + (*CurrentData)[i][j][0],
-                        uh[i + 1][j] + uh[i][j],
-                        vh[i + 1][j] + vh[i][j]) -
+                        (*CurrentData)[i + 1][j][1] + (*CurrentData)[i][j][1],
+                        (*CurrentData)[i + 1][j][2] + (*CurrentData)[i][j][2]) -
                         0.5 * (mStepTime / mStepX) *
                         dVector <double, 3>(
-                        uh[i + 1][j] - uh[i][j],
+                        (*CurrentData)[i + 1][j][1] - (*CurrentData)[i][j][1],
                         Ux[i + 1][j] - Ux[i][j],
                         Vx[i + 1][j] - Vx[i][j]);
 
@@ -151,11 +140,11 @@ void TestSolver::solve() {
                         0.5 *
                         dVector <double, 3>(
                                 (*CurrentData)[i][j + 1][0] + (*CurrentData)[i][j][0],
-                                uh[i][j + 1] + uh[i][j],
-                                vh[i][j + 1] + vh[i][j]) -
+                                (*CurrentData)[i][j + 1][1] + (*CurrentData)[i][j][1],
+                                (*CurrentData)[i][j + 1][2] + (*CurrentData)[i][j][2]) -
                         0.5 * (mStepTime / mStepY) *
                         dVector <double, 3>(
-                                vh[i][j + 1] - vh[i][j],
+                                (*CurrentData)[i][j + 1][2] - (*CurrentData)[i][j][2],
                                 Uy[i][j + 1] - Uy[i][j],
                                 Vy[i][j + 1] - Vy[i][j]);
 
@@ -173,11 +162,11 @@ void TestSolver::solve() {
                 (*TempData)[i][j][0] = (*CurrentData)[i][j][0] -
                                        (mStepTime / mStepX) * (mid_xt[i][j][1] - mid_xt[i - 1][j][1]) -
                                        (mStepTime / mStepY) * (mid_yt[i][j][2] - mid_yt[i][j - 1][2]);
-                (*TempData)[i][j][1] = uh[i][j] -
+                (*TempData)[i][j][1] = (*CurrentData)[i][j][1] -
                                        (mStepTime / mStepX) * (Ux_mid_xt[i][j] - Ux_mid_xt[i - 1][j]) -
                                        (mStepTime / mStepY) * (Uy_mid_yt[i][j] - Uy_mid_yt[i][j - 1]) +
                                        mStepTime * Source[1] * 0.5 * ((*CurrentData)[i][j][0] + (*TempData)[i][j][0]);
-                (*TempData)[i][j][2] = vh[i][j] -
+                (*TempData)[i][j][2] = (*CurrentData)[i][j][2] -
                                         (mStepTime / mStepX) * (Vx_mid_xt[i][j] - Vx_mid_xt[i - 1][j]) -
                                         (mStepTime / mStepY) * (Vy_mid_yt[i][j] - Vy_mid_yt[i][j - 1]) +
                                         mStepTime * Source[2] * 0.5 * ((*CurrentData)[i][j][0] + (*TempData)[i][j][0]);
@@ -307,19 +296,19 @@ void TestSolver::appendData() {
     for (int j = 0; j < mGridY; j++) {
         for (int i = 0; i < mGridX; i++) {
             mAmpFile << (*CurrentData)[i][j][0] << "\t";
-            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
-            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
+//            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
+//            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
         }
 
         mAmpFile << std::endl;
-        mVelFileX << std::endl;
-        mVelFileY << std::endl;
+//        mVelFileX << std::endl;
+//        mVelFileY << std::endl;
     }
 }
 void TestSolver::saveData() {
     mAmpFile.close();
-    mVelFileX.close();
-    mVelFileY.close();
+//    mVelFileX.close();
+//    mVelFileY.close();
 
     system("python3.6 Plotting.py 254 50 0 254 0 50");
 }
