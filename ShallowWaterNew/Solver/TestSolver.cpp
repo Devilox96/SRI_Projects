@@ -116,11 +116,11 @@ void TestSolver::solve() {
                 uh[i][j] = (*CurrentData)[i][j][1] * (*CurrentData)[i][j][0];
                 vh[i][j] = (*CurrentData)[i][j][2] * (*CurrentData)[i][j][0];
 
-                Ux[i][j] = uh[i][j] * (*CurrentData)[i][j][1] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
-                Uy[i][j] = uh[i][j] * (*CurrentData)[i][j][2];
+                Ux[i][j] = pow(uh[i][j], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
+                Uy[i][j] = uh[i][j] * vh[i][j] / (*CurrentData)[i][j][0];
 
-                Vx[i][j] = uh[i][j] * (*CurrentData)[i][j][2];
-                Vy[i][j] = vh[i][j] * (*CurrentData)[i][j][2] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
+                Vx[i][j] = uh[i][j] * vh[i][j] / (*CurrentData)[i][j][0];
+                Vy[i][j] = pow(vh[i][j], 2.0) / (*CurrentData)[i][j][0] + 0.5 * mGrav * pow((*CurrentData)[i][j][0], 2.0);
             }
         }
 
