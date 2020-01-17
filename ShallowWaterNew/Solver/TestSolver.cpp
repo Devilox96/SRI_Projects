@@ -9,6 +9,8 @@ TestSolver::TestSolver() {
     mRatioX = mStepTime / mStepX;
     mRatioY = mStepTime / mStepY;
 
+
+
     initGrid();
     initGeography();
     initCoriolis();
@@ -38,6 +40,12 @@ TestSolver::TestSolver() {
             mid_yt[i][j] = dVector<double, 3>(0.0, 0.0, 0.0);
         }
     }
+    
+    midXY.resize(mGridX - 1);
+    
+    for (int i = 0; i < mGridX - 1; i++) {
+        midXY[i].emplace_back(dVector <double, 3>(0.0, 0.0, 0.0));
+    }
 
     //---Solver---//
 }
@@ -53,8 +61,8 @@ void TestSolver::openFiles() {
 
     //---Saving---//
 }
-void TestSolver::solve() {
-    for (int iTime = 0; iTime < 16 * 24 * 60; iTime++) {
+void TestSolver::solveCustom() {
+    for (int iTime = 0; iTime < 64 * 24 * 60; iTime++) {
         if (iTime % 480 == 0) {
             appendData();
             std::cout   << "Step: " << iTime << std::endl;
@@ -62,32 +70,25 @@ void TestSolver::solve() {
 
         //----------//
 
-        for (unsigned long i = 0; i < mGridX - 1; i++) {
-            for (unsigned long j = 0; j < mGridY; j++) {
-                mid_xt[i][j] =
-                        0.5 * ((*CurrentData)[i + 1][j] + (*CurrentData)[i][j]) -
-                        0.5 * mRatioX * (funcX((*CurrentData)[i + 1][j]) - funcX((*CurrentData)[i][j]));
-            }
-        }
+        for (int i = 1; i < mGridX - 1; i++) {
+            for (int j = 1; j < mGridY - 1; j++) {
+                auto Extra = mStepTime * source(i - 1, j - 1);
 
-        for (unsigned long i = 0; i < mGridX; i++) {
-            for (unsigned long j = 0; j < mGridY - 1; j++) {
-                mid_yt[i][j] =
-                        0.5 * ((*CurrentData)[i][j + 1] + (*CurrentData)[i][j]) -
-                        0.5 * mRatioY * (funcY((*CurrentData)[i][j + 1]) - funcY((*CurrentData)[i][j]));
+                (*TempData)[i][j] = solveZwas(
+                        (*CurrentData)[i][j],
+                        (*CurrentData)[i - 1][j],
+                        (*CurrentData)[i + 1][j],
+                        (*CurrentData)[i][j - 1],
+                        (*CurrentData)[i][j + 1],
+                        (*CurrentData)[i + 1][j + 1],
+                        (*CurrentData)[i - 1][j - 1],
+                        (*CurrentData)[i + 1][j - 1],
+                        (*CurrentData)[i - 1][j + 1],
+                        Extra);
             }
         }
 
         //----------//
-
-        for (int i = 1; i < mGridX - 1; i++) {
-            for (int j = 1; j < mGridY - 1; j++) {
-                (*TempData)[i][j] = (*CurrentData)[i][j] -
-                                    mRatioX * (funcX(mid_xt[i][j]) - funcX(mid_xt[i - 1][j])) -
-                                    mRatioY * (funcY(mid_yt[i][j]) - funcY(mid_yt[i][j - 1])) +
-                                    mStepTime * source(i - 1, j - 1);
-            }
-        }
 
         for (int i = 1; i < mGridY - 1; i++) {
             (*TempData)[0][i][0] = (*TempData)[mGridX - 2][i][0];

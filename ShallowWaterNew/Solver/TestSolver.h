@@ -8,6 +8,7 @@
 //-----------------------------//
 #include "../Libs/dMath/Core/dVector.h"
 #include "../Libs/dMath/NumerCalc/dRichtmyer2D.h"
+//#include "../Libs/dMath/NumerCalc/dLaxFriedrichs2D.h"
 //-----------------------------//
 using dGrid = std::vector <std::vector <dVector <double, 3>>>;
 //-----------------------------//
@@ -103,7 +104,7 @@ public:
 
     void setSavePath(const std::string& tPath);
     void openFiles();
-    void solve();
+    void solveCustom();
 private:
     //---Constants----//
     const double mGrav  = 9.81;
@@ -123,8 +124,10 @@ private:
     int mGridX = 254;
     int mGridY = 50;
 
-    double mRatioX;
-    double mRatioY;
+//    double mRatioX;
+//    double mRatioY;
+
+    dVector <double, 3> Value;
     //------Grid------//
 
     //-----Arrays-----//
@@ -138,6 +141,8 @@ private:
 
     dGrid mid_xt;
     dGrid mid_yt;
+
+    dGrid midXY;
     //-----Arrays-----//
 
     //-----Saving-----//
@@ -162,8 +167,6 @@ private:
     dVector <double, 3> funcX(const dVector <double, 3>& tVec) override;
     dVector <double, 3> funcY(const dVector <double, 3>& tVec) override;
     dVector <double, 3> source(int tPosX, int tPosY);
-
-//    dVector <double, 3> firstStep
 };
 //-----------------------------//
 #endif

@@ -56,7 +56,7 @@ int main() {
     auto Solver = new TestSolver;
     Solver -> setSavePath("./Data/");
     Solver -> openFiles();
-    Solver -> solve();
+    Solver -> solveCustom();
 
 //    system("python3.6 Plotting.py 200 200 -100 100 -100 100");
 
