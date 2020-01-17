@@ -9,45 +9,10 @@ TestSolver::TestSolver() {
     mRatioX = mStepTime / mStepX;
     mRatioY = mStepTime / mStepY;
 
-
-
     initGrid();
     initGeography();
     initCoriolis();
     initConditions();
-
-    //---Solver---//
-
-    mid_xt.resize(mGridX - 1);
-    mid_yt.resize(mGridX);
-
-    for (unsigned long i = 0; i < mGridX - 1; i++) {
-        mid_xt[i].resize(mGridY);
-    }
-
-    for (unsigned long i = 0; i < mGridX; i++) {
-        mid_yt[i].resize(mGridY - 1);
-    }
-
-    for (unsigned long i = 0; i < mGridX - 1; i++) {
-        for (unsigned long j = 0; j < mGridY; j++) {
-            mid_xt[i][j] = dVector <double, 3>(0.0, 0.0, 0.0);
-        }
-    }
-
-    for (unsigned long i = 0; i < mGridX; i++) {
-        for (unsigned long j = 0; j < mGridY - 1; j++) {
-            mid_yt[i][j] = dVector<double, 3>(0.0, 0.0, 0.0);
-        }
-    }
-    
-    midXY.resize(mGridX - 1);
-    
-    for (int i = 0; i < mGridX - 1; i++) {
-        midXY[i].emplace_back(dVector <double, 3>(0.0, 0.0, 0.0));
-    }
-
-    //---Solver---//
 }
 void TestSolver::setSavePath(const std::string& tPath) {
     mSavePath = tPath;
@@ -56,14 +21,14 @@ void TestSolver::openFiles() {
     //---Saving---//
 
     mAmpFile.open(mSavePath + "Amplitude.dat");
-    mVelFileX.open(mSavePath + "xVelocity.dat");
-    mVelFileY.open(mSavePath + "yVelocity.dat");
+//    mVelFileX.open(mSavePath + "xVelocity.dat");
+//    mVelFileY.open(mSavePath + "yVelocity.dat");
 
     //---Saving---//
 }
 void TestSolver::solveCustom() {
-    for (int iTime = 0; iTime < 64 * 24 * 60; iTime++) {
-        if (iTime % 480 == 0) {
+    for (int iTime = 0; iTime < 4 * 24 * 60; iTime++) {
+        if (iTime % 60 == 0) {
             appendData();
             std::cout   << "Step: " << iTime << std::endl;
         }
@@ -167,9 +132,9 @@ void TestSolver::initConditions() {
 
     for (int i = 0; i < mGridX; i++) {
         for (int j = 0; j < mGridY; j++) {
-            mDataFirst[i][j] = dVector<double, 3>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
+            mDataFirst[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
                                                   0.0, 0.0);
-            mDataSecond[i][j] = dVector<double, 3>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
+            mDataSecond[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
                                                    0.0, 0.0);
         }
     }
@@ -213,39 +178,44 @@ void TestSolver::appendData() {
     for (int j = 0; j < mGridY; j++) {
         for (int i = 0; i < mGridX; i++) {
             mAmpFile << (*CurrentData)[i][j][0] + mGeography[i][j] << "\t";
-            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
-            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
+//            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
+//            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
         }
 
         mAmpFile << std::endl;
-        mVelFileX << std::endl;
-        mVelFileY << std::endl;
+//        mVelFileX << std::endl;
+//        mVelFileY << std::endl;
     }
 }
 void TestSolver::saveData() {
     mAmpFile.close();
-    mVelFileX.close();
-    mVelFileY.close();
+//    mVelFileX.close();
+//    mVelFileY.close();
 
     system("python3.6 Plotting.py 254 50 0 254 0 50");
 }
 
-dVector <double, 3> TestSolver::funcX(const dVector <double, 3>& tVec) {
-    return dVector <double, 3> (
+dVector <double, 5> TestSolver::funcX(const dVector <double, 5>& tVec) {
+    return dVector <double, 5> (
             tVec[1],
             pow(tVec[1], 2.0) / tVec[0] + 0.5 * mGrav * pow(tVec[0], 2.0),
-            tVec[1] * tVec[2] / tVec[0]);
+            tVec[1] * tVec[2] / tVec[0],
+            0.0,
+            0.0);
 }
-dVector <double, 3> TestSolver::funcY(const dVector <double, 3>& tVec) {
-    return dVector <double, 3> (
+dVector <double, 5> TestSolver::funcY(const dVector <double, 5>& tVec) {
+    return dVector <double, 5> (
             tVec[2],
             tVec[1] * tVec[2] / tVec[0],
-            pow(tVec[2], 2.0) / tVec[0] + 0.5 * mGrav * pow(tVec[0], 2.0));
+            pow(tVec[2], 2.0) / tVec[0] + 0.5 * mGrav * pow(tVec[0], 2.0),
+            0.0,
+            0.0);
 }
-dVector <double, 3> TestSolver::source(int tPosX, int tPosY) {
-    return dVector <double, 3> (
-                0.0,
-                mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][2] - mGrav / (2.0 * mStepX) * (mGeography[tPosX + 2][tPosY + 1] - mGeography[tPosX][tPosY + 1]) * (*CurrentData)[tPosX + 1][tPosY + 1][0],
-                -mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][1] - mGrav / (2.0 * mStepY) * (mGeography[tPosX + 1][tPosY + 2] - mGeography[tPosX + 1][tPosY]) * (*CurrentData)[tPosX + 1][tPosY + 1][0]
-            );
+dVector <double, 5> TestSolver::source(int tPosX, int tPosY) {
+    return dVector <double, 5> (
+            0.0,
+            mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][2] - mGrav / (2.0 * mStepX) * (mGeography[tPosX + 2][tPosY + 1] - mGeography[tPosX][tPosY + 1]) * (*CurrentData)[tPosX + 1][tPosY + 1][0],
+            -mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][1] - mGrav / (2.0 * mStepY) * (mGeography[tPosX + 1][tPosY + 2] - mGeography[tPosX + 1][tPosY]) * (*CurrentData)[tPosX + 1][tPosY + 1][0],
+            0.0,
+            0.0);
 }

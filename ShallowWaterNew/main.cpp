@@ -1,7 +1,7 @@
 #include <iostream>
 //-----------------------------//
 //#include "Solver/Solver.h"
-#include "Solver/RossbySolver.h"
+//#include "Solver/RossbySolver.h"
 #include "Solver/TestSolver.h"
 //-----------------------------//
 int main() {
