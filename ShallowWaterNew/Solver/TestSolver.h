@@ -121,9 +121,10 @@ private:
 
     //------Grid------//
     int mGridX = 254;
-//    int mGridX = 15;
     int mGridY = 50;
-//    int mGridY = 15;
+
+    double mRatioX;
+    double mRatioY;
     //------Grid------//
 
     //-----Arrays-----//
@@ -137,12 +138,6 @@ private:
 
     dGrid mid_xt;
     dGrid mid_yt;
-
-    std::vector <std::vector <double>> Ux_mid_xt;
-    std::vector <std::vector <double>> Uy_mid_yt;
-
-    std::vector <std::vector <double>> Vx_mid_xt;
-    std::vector <std::vector <double>> Vy_mid_yt;
     //-----Arrays-----//
 
     //-----Saving-----//
@@ -167,6 +162,8 @@ private:
     dVector <double, 3> funcX(const dVector <double, 3>& tVec) override;
     dVector <double, 3> funcY(const dVector <double, 3>& tVec) override;
     dVector <double, 3> source(int tPosX, int tPosY);
+
+//    dVector <double, 3> firstStep
 };
 //-----------------------------//
 #endif
