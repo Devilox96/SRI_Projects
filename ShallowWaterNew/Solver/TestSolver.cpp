@@ -27,11 +27,10 @@ void TestSolver::openFiles() {
     //---Saving---//
 }
 void TestSolver::solveCustom() {
-//    for (int iTime = 0; iTime < 128 * 24 * 60; iTime++) {
-    for (int iTime = 0; iTime < 32 * 24 * 60; iTime++) {
+    for (int iTime = 0; iTime < mDaysToCalc * 24 * 60; iTime++) {
         double FullEnergy = getFullEnergy();
 
-//        if (iTime % 960 == 0) {
+//        if (iTime % (1440 / mSaveInterval) == 0) {
         if (iTime % 480 == 0) {
             appendData();
             std::cout   << "Step: " << iTime
@@ -49,7 +48,7 @@ void TestSolver::solveCustom() {
         for (int i = 1; i < mGridX - 1; i++) {
             for (int j = 1; j < mGridY - 1; j++) {
 //                auto Extra = mStepTime * (source(i - 1, j - 1) + viscosity(i, j) * 1000.0);
-                
+//
 //                dVector <double, 5> SmoothX(0.0, 0.0, 0.0, 0.0, 0.0);
 //                dVector <double, 5> SmoothY(0.0, 0.0, 0.0, 0.0, 0.0);
 //
@@ -66,8 +65,7 @@ void TestSolver::solveCustom() {
 //                            ((*CurrentData)[i][j][k] / (*CurrentData)[i][j][0] - (*CurrentData)[i][j - 1][k] / (*CurrentData)[i][j - 1][0]);
 //                }
 
-                auto Extra =
-                        mStepTime * (source(i - 1, j - 1));
+                auto Extra = mStepTime * (source(i - 1, j - 1));
 
 //                auto Extra =
 //                        mStepTime * (source(i - 1, j - 1)) +
@@ -162,37 +160,64 @@ void TestSolver::initGrid() {
     }
 }
 void TestSolver::initGeography() {
+    std::ifstream File;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution <> dis(0.0, 500.0);
+
     double StdX = 5.0 * mStepX;
     double StdY = 5.0 * mStepY;
 
     double MeanX = int(mGridX / 2) * mStepX;
     double MeanY = int(mGridY / 2) * mStepY;
 
-    //---Random---//
-//    std::random_device rd;
-//    std::mt19937 gen(rd());
-//    std::uniform_real_distribution <> dis(0.0, 500.0);
-    //---Random---//
+    switch (mGeographyType) {
+        case 0:
+            for (int i = 0; i < mGridX; i++) {
+                for (int j = 0; j < mGridY; j++) {
+                    mGeography[i][j] = 0.0;
+                }
+            }
 
-    //---File---//
-//    std::ifstream File("geography.dat", std::ios::in);
-    //---File---//
+            break;
+        case 1:
+            File.open("geography.dat", std::ios::in);
 
-    for (int i = 0; i < mGridX; i++) {
-        for (int j = 0; j < mGridY; j++) {
-            mGeography[i][j] = 4000 * exp(
-                    -0.5 * pow((i * mStepX - MeanX) / StdX, 2.0)
-                    -0.5 * pow((j * mStepY - MeanY) / StdY, 2.0));
-//
-//            mGeography[i][j] = dis(gen);
-//
-//            mGeography[i][j] = 0.0;
+            for (int i = 0; i < mGridX; i++) {
+                for (int j = 0; j < mGridY; j++) {
+                    File >> mGeography[i][j];
+                }
+            }
 
-//            File >> mGeography[i][j];
-        }
+            File.close();
+
+            break;
+        case 2:
+            for (int i = 0; i < mGridX; i++) {
+                for (int j = 0; j < mGridY; j++) {
+                    mGeography[i][j] = dis(gen);
+                }
+            }
+
+            break;
+        case 3:
+            for (int i = 0; i < mGridX; i++) {
+                for (int j = 0; j < mGridY; j++) {
+                    mGeography[i][j] = 4000 * exp(
+                            -0.5 * pow((i * mStepX - MeanX) / StdX, 2.0)
+                            -0.5 * pow((j * mStepY - MeanY) / StdY, 2.0));
+                }
+            }
+
+            break;
+        default:
+            for (int i = 0; i < mGridX; i++) {
+                for (int j = 0; j < mGridY; j++) {
+                    mGeography[i][j] = 0.0;
+                }
+            }
     }
-
-//    File.close();
 }
 void TestSolver::initCoriolis() {
     double MeanY = int(mGridY / 2) * mStepY;
@@ -210,30 +235,9 @@ void TestSolver::initConditions() {
     for (int i = 0; i < mGridX; i++) {
         for (int j = 0; j < mGridY; j++) {
             mDataFirst[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-                                                  0.0, 0.0);
+                                                  0.0, 0.0, 0.0, 0.0);
             mDataSecond[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-                                                   0.0, 0.0);
-        }
-    }
-
-    double StdX = 5.0 * mStepX;
-    double StdY = 5.0 * mStepY;
-
-    double MeanX = int(mGridX / 2) * mStepX;
-
-    for (int i = 0; i < mGridX; i++) {
-        for (int j = 0; j < mGridY; j++) {
-            mDataFirst[i][j][0] -= 4000 * exp(
-                    -0.5 * pow((i * mStepX - MeanX) / StdX, 2.0)
-                    -0.5 * pow((j * mStepY - MeanY) / StdY, 2.0));
-
-            mDataSecond[i][j][0] -= 4000 * exp(
-                    -0.5 * pow((i * mStepX - MeanX) / StdX, 2.0)
-                    -0.5 * pow((j * mStepY - MeanY) / StdY, 2.0));
-
-////            mGeography[i][j] = dis(gen);
-//            mDataFirst[i][j][0] -= mGeography[i][j];
-//            mDataSecond[i][j][0] -= mGeography[i][j];
+                                                   0.0, 0.0, 0.0, 0.0);
         }
     }
 
@@ -271,6 +275,13 @@ void TestSolver::initConditions() {
         mDataSecond[i][mGridY - 1][2] = 0;
     }
 
+    for (int i = 0; i < mGridX; i++) {
+        for (int j = 0; j < mGridY; j++) {
+            mDataFirst[i][j][0] -= mGeography[i][j];
+            mDataSecond[i][j][0] -= mGeography[i][j];
+        }
+    }
+
     //------//
 
     mInitEnergy = getFullEnergy();
@@ -295,8 +306,8 @@ double TestSolver::getFullEnergy() {
 void TestSolver::appendData() {
     for (int j = 0; j < mGridY; j++) {
         for (int i = 0; i < mGridX; i++) {
-//            mAmpFile << (*CurrentData)[i][j][0] + mGeography[i][j] << "\t";
-            mAmpFile << (*CurrentData)[i][j][0] << "\t";
+            mAmpFile << (*CurrentData)[i][j][0] + mGeography[i][j] << "\t";
+//            mAmpFile << (*CurrentData)[i][j][0] << "\t";
 //            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
 //            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
         }

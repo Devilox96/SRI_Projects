@@ -33,6 +33,17 @@ private:
 
     //----Initials----//
     double mInitEnergy;
+
+    //---0 - flat-------//
+    //---1 - Earth------//
+    //---2 - random-----//
+    //---3 - gaussian---//
+
+    uint8_t mGeographyType = 3;
+
+    int mDaysToCalc = 16;
+    int mSaveInterval = 3;  //---Hours---//
+
     //----Initials----//
 
     //---Beta-plane---//
