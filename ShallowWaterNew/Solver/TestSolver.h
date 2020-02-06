@@ -8,6 +8,7 @@
 //-----------------------------//
 #include "../Libs/dMath/Core/dVector.h"
 #include "../Libs/dMath/NumerCalc/dRichtmyer2D.h"
+//#include "../Libs/dMath/NumerCalc/dLaxFriedrichs2D.h"
 //-----------------------------//
 using dGrid = std::vector <std::vector <dVector <double, 5>>>;
 //-----------------------------//
@@ -25,6 +26,9 @@ private:
     const double mGrav  = 9.81;
     const double mCorParam_0 = 1.0e-04;
     const double mBetaParam = 1.6e-11;
+//    const double mBetaParam = 0.0;
+//    const double mField_0 = 2.0e-05;
+    const double mField_0 = 0.0;
     //---Constants----//
 
     //----Initials----//
@@ -65,13 +69,15 @@ private:
     void initCoriolis();
     void initConditions();
 
-//    double getFullEnergy();
+    double getFullEnergy();
     void appendData();
     void saveData();
 
     dVector <double, 5> funcX(const dVector <double, 5>& tVec) override;
     dVector <double, 5> funcY(const dVector <double, 5>& tVec) override;
     dVector <double, 5> source(int tPosX, int tPosY);
+    dVector <double, 5> viscosity(int tPosX, int tPosY);
+    dVector <double, 5> artVisc(int tPosX, int tPosY, double tFirstParam, double tSecondParam);
 };
 //-----------------------------//
 #endif
