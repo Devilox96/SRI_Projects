@@ -41,8 +41,8 @@ private:
 
     uint8_t mGeographyType = 3;
 
-    int mDaysToCalc = 16;
-    int mSaveInterval = 3;  //---Hours---//
+    int mDaysToCalc = 64;
+    int mSaveInterval = 12;  //---Hours---//
 
     //----Initials----//
 
@@ -83,6 +83,8 @@ private:
     double getFullEnergy();
     void appendData();
     void saveData();
+    double getVelocity();
+    void adjustTimeStep();
 
     dVector <double, 5> funcX(const dVector <double, 5>& tVec) override;
     dVector <double, 5> funcY(const dVector <double, 5>& tVec) override;
