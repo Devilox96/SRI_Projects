@@ -27,8 +27,8 @@ private:
     const double mCorParam_0 = 1.0e-04;
     const double mBetaParam = 1.6e-11;
 //    const double mBetaParam = 0.0;
-//    const double mField_0 = 2.0e-05;
-    const double mField_0 = 0.0;
+    const double mField_0 = 2.0e-05;
+//    const double mField_0 = 0.0;
     //---Constants----//
 
     //----Initials----//

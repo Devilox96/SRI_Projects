@@ -21,8 +21,8 @@ void TestSolver::openFiles() {
     //---Saving---//
 
     mAmpFile.open(mSavePath + "Amplitude.dat");
-//    mVelFileX.open(mSavePath + "xVelocity.dat");
-//    mVelFileY.open(mSavePath + "yVelocity.dat");
+    mVelFileX.open(mSavePath + "VelocityX.dat");
+    mVelFileY.open(mSavePath + "VelocityY.dat");
 
     //---Saving---//
 }
@@ -63,7 +63,7 @@ void TestSolver::solveCustom() {
 
                 auto Extra = mStepTime *
                         ((source(i - 1, j - 1)) +
-                        artVisc(i, j, 2.5, 5.0) +
+                        artVisc(i, j, 5.0, 10.0) +
                         viscosity(i, j) * 1.0e-05);
 
                 (*TempData)[i][j] = solveZwas(
@@ -300,19 +300,19 @@ void TestSolver::appendData() {
         for (int i = 0; i < mGridX; i++) {
             mAmpFile << (*CurrentData)[i][j][0] + mGeography[i][j] << "\t";
 //            mAmpFile << (*CurrentData)[i][j][0] << "\t";
-//            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
-//            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
+            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
+            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
         }
 
         mAmpFile << std::endl;
-//        mVelFileX << std::endl;
-//        mVelFileY << std::endl;
+        mVelFileX << std::endl;
+        mVelFileY << std::endl;
     }
 }
 void TestSolver::saveData() {
     mAmpFile.close();
-//    mVelFileX.close();
-//    mVelFileY.close();
+    mVelFileX.close();
+    mVelFileY.close();
 
     system("python3.6 Plotting.py 254 50 0 254 0 50");
 }
