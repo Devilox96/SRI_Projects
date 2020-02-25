@@ -42,9 +42,9 @@ private:
 
     uint8_t mGeographyType = 3;
 
-    int mDaysToCalc = 16;
-//    int mSaveInterval = 12;  //---Hours---//
-    int mSaveInterval = 6;  //---Hours---//
+    int mDaysToCalc = 64;
+    int mSaveInterval = 12;  //---Hours---//
+//    int mSaveInterval = 6;  //---Hours---//
 
     //----Initials----//
 

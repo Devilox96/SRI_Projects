@@ -64,7 +64,8 @@ void TestSolver::solveCustom() {
 
                 auto Extra = mStepTime *
                         ((source(i - 1, j - 1)) +
-                        artVisc(i, j, 5.0, 10.0) +
+//                        artVisc(i, j, 5.0, 10.0) +
+                        artVisc(i, j, 7.5, 15.0) +
                         viscosity(i, j) * 1.0e-05);
 
                 (*TempData)[i][j] = solveZwas(
@@ -237,7 +238,8 @@ void TestSolver::initFields() {
 
     for (int i = 0; i < mGridY; i++) {
         mVertField[i] = 1.27e-05 + 1.46e-06 * i - 1.38e-08 * pow(i, 2.0);
-        mHorizFieldY[i] = 3.5e-05 - 4.87e-07 * i;
+//        mHorizFieldY[i] = 3.5e-05 - 4.87e-07 * i;
+        mHorizFieldY[i] = 0.0;
     }
 }
 void TestSolver::initConditions() {
@@ -378,22 +380,30 @@ dVector <double, 5> TestSolver::funcY(const dVector <double, 5>& tVec) {
             0.0);
 }
 dVector <double, 5> TestSolver::source(int tPosX, int tPosY) {
+//    double Bz = (((*CurrentData)[tPosX + 2][tPosY][4] - (*CurrentData)[tPosX][tPosY][3]) / mStepX / 2.0 +
+//            ((*CurrentData)[tPosX][tPosY + 2][4] - (*CurrentData)[tPosX][tPosY][4]) / mStepY / 2.0);
+    double Bz = 0.0;
+
     return dVector <double, 5> (
             0.0,
 //            -mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][3] / (*CurrentData)[tPosX + 1][tPosY + 1][0] +
-            -mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][3] / (*CurrentData)[tPosX + 1][tPosY + 1][0] +
+//            -mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][3] / (*CurrentData)[tPosX + 1][tPosY + 1][0] +
+            Bz * (*CurrentData)[tPosX + 1][tPosY + 1][3] / (*CurrentData)[tPosX + 1][tPosY + 1][0] +
             mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][2] -
             mGrav / (2.0 * mStepX) * (mGeography[tPosX + 2][tPosY + 1] -
             mGeography[tPosX][tPosY + 1]) * (*CurrentData)[tPosX + 1][tPosY + 1][0],
 //            -mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][4] / (*CurrentData)[tPosX + 1][tPosY + 1][0] -
-            -mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][4] / (*CurrentData)[tPosX + 1][tPosY + 1][0] -
+//            -mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][4] / (*CurrentData)[tPosX + 1][tPosY + 1][0] -
+            Bz * (*CurrentData)[tPosX + 1][tPosY + 1][4] / (*CurrentData)[tPosX + 1][tPosY + 1][0] -
             mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][1] -
             mGrav / (2.0 * mStepY) * (mGeography[tPosX + 1][tPosY + 2] -
             mGeography[tPosX + 1][tPosY]) * (*CurrentData)[tPosX + 1][tPosY + 1][0],
 //            mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][1] / (*CurrentData)[tPosX + 1][tPosY + 1][0],
-            mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][1] / (*CurrentData)[tPosX + 1][tPosY + 1][0],
+//            mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][1] / (*CurrentData)[tPosX + 1][tPosY + 1][0],
+            Bz * (*CurrentData)[tPosX + 1][tPosY + 1][1] / (*CurrentData)[tPosX + 1][tPosY + 1][0],
 //            mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][2] / (*CurrentData)[tPosX + 1][tPosY + 1][0]);
-            mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][2] / (*CurrentData)[tPosX + 1][tPosY + 1][0]);
+//            mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][2] / (*CurrentData)[tPosX + 1][tPosY + 1][0]);
+            Bz * (*CurrentData)[tPosX + 1][tPosY + 1][2] / (*CurrentData)[tPosX + 1][tPosY + 1][0]);
 }
 dVector <double, 5> TestSolver::viscosity(int tPosX, int tPosY) {
     double v_x_xx = (
