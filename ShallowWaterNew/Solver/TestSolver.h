@@ -8,7 +8,7 @@
 //-----------------------------//
 #include "../Libs/dMath/Core/dVector.h"
 #include "../Libs/dMath/NumerCalc/dRichtmyer2D.h"
-//#include "../Libs/dMath/NumerCalc/dLaxFriedrichs2D.h"
+#include "../Libs/dMath/NumerCalc/dLaxFriedrichs2D.h"
 //-----------------------------//
 using dGrid = std::vector <std::vector <dVector <double, 5>>>;
 //-----------------------------//
@@ -27,8 +27,9 @@ private:
     const double mCorParam_0 = 1.0e-04;
     const double mBetaParam = 1.6e-11;
 //    const double mBetaParam = 0.0;
-    const double mField_0 = 2.0e-05;
-//    const double mField_0 = 0.0;
+//    const double mField_0 = 2.0e-05;
+    const double mField_0 = 0.0;
+//    const double mField_0 = 2.0e-02;
     //---Constants----//
 
     //----Initials----//
@@ -41,14 +42,20 @@ private:
 
     uint8_t mGeographyType = 3;
 
-    int mDaysToCalc = 64;
-    int mSaveInterval = 12;  //---Hours---//
+    int mDaysToCalc = 16;
+//    int mSaveInterval = 12;  //---Hours---//
+    int mSaveInterval = 6;  //---Hours---//
 
     //----Initials----//
 
     //---Beta-plane---//
     std::vector <double> mCorParam;
     //---Beta-plane---//
+
+    //-----Field------//
+    std::vector <double> mVertField;
+    std::vector <double> mHorizFieldY;
+    //-----Field------//
 
     //------Grid------//
     int mGridX = 254;
@@ -78,6 +85,7 @@ private:
     void initGrid();
     void initGeography();
     void initCoriolis();
+    void initFields();
     void initConditions();
 
     double getFullEnergy();

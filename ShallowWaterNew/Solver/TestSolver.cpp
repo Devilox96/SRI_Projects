@@ -12,6 +12,7 @@ TestSolver::TestSolver() {
     initGrid();
     initGeography();
     initCoriolis();
+    initFields();
     initConditions();
 }
 void TestSolver::setSavePath(const std::string& tPath) {
@@ -77,6 +78,14 @@ void TestSolver::solveCustom() {
                         (*CurrentData)[i + 1][j - 1],
                         (*CurrentData)[i - 1][j + 1],
                         Extra);
+//                auto Extra = mStepTime *
+//                             source(i - 1, j - 1);
+//
+//                (*TempData)[i][j] = solve(
+//                        (*CurrentData)[i - 1][j],
+//                        (*CurrentData)[i + 1][j],
+//                        (*CurrentData)[i][j - 1],
+//                        (*CurrentData)[i][j + 1]) + Extra;
             }
         }
 
@@ -119,8 +128,10 @@ void TestSolver::solveCustom() {
             (*TempData)[i][0][2] = 0.0;
             (*TempData)[i][mGridY - 1][2] = 0.0;
 
-            (*TempData)[i][0][4] = 0.0;
-            (*TempData)[i][mGridY - 1][4] = 0.0;
+//            (*TempData)[i][0][4] = 0.0;
+//            (*TempData)[i][mGridY - 1][4] = 0.0;
+            (*TempData)[i][0][4] = mHorizFieldY[0];
+            (*TempData)[i][mGridY - 1][4] = mHorizFieldY[mGridY - 1];
         }
 
         //----------//
@@ -220,16 +231,29 @@ void TestSolver::initCoriolis() {
         mCorParam[i] = mCorParam_0 + mBetaParam * (i * mStepY - MeanY);
     }
 }
+void TestSolver::initFields() {
+    mVertField.resize(mGridY);
+    mHorizFieldY.resize(mGridY);
+
+    for (int i = 0; i < mGridY; i++) {
+        mVertField[i] = 1.27e-05 + 1.46e-06 * i - 1.38e-08 * pow(i, 2.0);
+        mHorizFieldY[i] = 3.5e-05 - 4.87e-07 * i;
+    }
+}
 void TestSolver::initConditions() {
     double MeanWind = 20.0;
     double MeanY = int(mGridY / 2) * mStepY;
 
     for (int i = 0; i < mGridX; i++) {
         for (int j = 0; j < mGridY; j++) {
+//            mDataFirst[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
+//                                                  0.0, 0.0, 0.0, 0.0);
+//            mDataSecond[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
+//                                                   0.0, 0.0, 0.0, 0.0);
             mDataFirst[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-                                                  0.0, 0.0, 0.0, 0.0);
+                                                  0.0, 0.0, 0.0, mHorizFieldY[j]);
             mDataSecond[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-                                                   0.0, 0.0, 0.0, 0.0);
+                                                   0.0, 0.0, 0.0, mHorizFieldY[j]);
         }
     }
 
@@ -300,8 +324,8 @@ void TestSolver::appendData() {
         for (int i = 0; i < mGridX; i++) {
             mAmpFile << (*CurrentData)[i][j][0] + mGeography[i][j] << "\t";
 //            mAmpFile << (*CurrentData)[i][j][0] << "\t";
-            mVelFileX << (*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] << "\t";
-            mVelFileY << (*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] << "\t";
+            mVelFileX << (*CurrentData)[i][j][3] / (*CurrentData)[i][j][0] << "\t";
+            mVelFileY << (*CurrentData)[i][j][4] / (*CurrentData)[i][j][0] << "\t";
         }
 
         mAmpFile << std::endl;
@@ -343,29 +367,33 @@ dVector <double, 5> TestSolver::funcX(const dVector <double, 5>& tVec) {
             (pow(tVec[1], 2.0) - pow(tVec[3], 2.0)) / tVec[0] + 0.5 * mGrav * pow(tVec[0], 2.0),
             (tVec[1] * tVec[2] - tVec[3] * tVec[4]) / tVec[0],
             0.0,
-            (tVec[1] * tVec[4] - tVec[2] * tVec[3]) / tVec[0]);
+            -(tVec[1] * tVec[4] - tVec[2] * tVec[3]) / tVec[0]);
 }
 dVector <double, 5> TestSolver::funcY(const dVector <double, 5>& tVec) {
     return dVector <double, 5> (
             tVec[2],
             (tVec[1] * tVec[2] - tVec[3] * tVec[4]) / tVec[0],
             (pow(tVec[2], 2.0) - pow(tVec[4], 2.0)) / tVec[0] + 0.5 * mGrav * pow(tVec[0], 2.0),
-            (tVec[2] * tVec[3] - tVec[1] * tVec[4]) / tVec[0],
+            -(tVec[2] * tVec[3] - tVec[1] * tVec[4]) / tVec[0],
             0.0);
 }
 dVector <double, 5> TestSolver::source(int tPosX, int tPosY) {
     return dVector <double, 5> (
             0.0,
-            -mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][3] / (*CurrentData)[tPosX + 1][tPosY + 1][0] +
+//            -mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][3] / (*CurrentData)[tPosX + 1][tPosY + 1][0] +
+            -mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][3] / (*CurrentData)[tPosX + 1][tPosY + 1][0] +
             mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][2] -
             mGrav / (2.0 * mStepX) * (mGeography[tPosX + 2][tPosY + 1] -
             mGeography[tPosX][tPosY + 1]) * (*CurrentData)[tPosX + 1][tPosY + 1][0],
-            -mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][4] / (*CurrentData)[tPosX + 1][tPosY + 1][0] -
+//            -mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][4] / (*CurrentData)[tPosX + 1][tPosY + 1][0] -
+            -mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][4] / (*CurrentData)[tPosX + 1][tPosY + 1][0] -
             mCorParam[tPosY + 1] * (*CurrentData)[tPosX + 1][tPosY + 1][1] -
             mGrav / (2.0 * mStepY) * (mGeography[tPosX + 1][tPosY + 2] -
             mGeography[tPosX + 1][tPosY]) * (*CurrentData)[tPosX + 1][tPosY + 1][0],
-            mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][1] / (*CurrentData)[tPosX + 1][tPosY + 1][0],
-            mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][2] / (*CurrentData)[tPosX + 1][tPosY + 1][0]);
+//            mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][1] / (*CurrentData)[tPosX + 1][tPosY + 1][0],
+            mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][1] / (*CurrentData)[tPosX + 1][tPosY + 1][0],
+//            mField_0 * (*CurrentData)[tPosX + 1][tPosY + 1][2] / (*CurrentData)[tPosX + 1][tPosY + 1][0]);
+            mVertField[tPosY] * (*CurrentData)[tPosX + 1][tPosY + 1][2] / (*CurrentData)[tPosX + 1][tPosY + 1][0]);
 }
 dVector <double, 5> TestSolver::viscosity(int tPosX, int tPosY) {
     double v_x_xx = (
