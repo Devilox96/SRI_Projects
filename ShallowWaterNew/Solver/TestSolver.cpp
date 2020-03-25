@@ -32,6 +32,9 @@ void TestSolver::solveCustom() {
     int Frames = 0;
 
 //    for (int iTime = 0; iTime < mDaysToCalc * 24 * 60; iTime++) {
+    std::vector <double> AlphaX(mGridY);    //---Max in rows---//
+    std::vector <double> AlphaY(mGridX);    //---Max in columns---//
+
     while (CurrentTime < mDaysToCalc * 24 * 3600) {
         double FullEnergy = getFullEnergy();
 
@@ -53,6 +56,40 @@ void TestSolver::solveCustom() {
 
         if (FullEnergy > mInitEnergy * 1.1) {
             break;
+        }
+
+        //----------//
+
+        for (int j = 0; j < mGridY; j++) {
+            AlphaX[j] = 0.0;
+
+            for (int i = 0; i < mGridX; i++) {
+                AlphaX[j] = std::max(AlphaX[j], fabs(((*CurrentData)[i][j][1] + (*CurrentData)[i][j][3]) / (*CurrentData)[i][j][0]));
+                AlphaX[j] = std::max(AlphaX[j], fabs(((*CurrentData)[i][j][1] - (*CurrentData)[i][j][3]) / (*CurrentData)[i][j][0]));
+
+                AlphaX[j] = std::max(AlphaX[j], fabs((*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] +
+                                                     sqrt(pow((*CurrentData)[i][j][3] / (*CurrentData)[i][j][0], 2.0) +
+                                                     mGrav * (*CurrentData)[i][j][0])));
+                AlphaX[j] = std::max(AlphaX[j], fabs((*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] -
+                                                     sqrt(pow((*CurrentData)[i][j][3] / (*CurrentData)[i][j][0], 2.0) +
+                                                     mGrav * (*CurrentData)[i][j][0])));
+            }
+        }
+
+        for (int i = 0; i < mGridX; i++) {
+            AlphaY[i] = 0.0;
+
+            for (int j = 0; j < mGridY; j++) {
+                AlphaY[j] = std::max(AlphaY[j], fabs(((*CurrentData)[i][j][2] + (*CurrentData)[i][j][4]) / (*CurrentData)[i][j][0]));
+                AlphaY[j] = std::max(AlphaY[j], fabs(((*CurrentData)[i][j][2] - (*CurrentData)[i][j][4]) / (*CurrentData)[i][j][0]));
+
+                AlphaY[j] = std::max(AlphaY[j], fabs((*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] +
+                                                     sqrt(pow((*CurrentData)[i][j][4] / (*CurrentData)[i][j][0], 2.0) +
+                                                     mGrav * (*CurrentData)[i][j][0])));
+                AlphaY[j] = std::max(AlphaY[j], fabs((*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] -
+                                                     sqrt(pow((*CurrentData)[i][j][4] / (*CurrentData)[i][j][0], 2.0) +
+                                                     mGrav * (*CurrentData)[i][j][0])));
+            }
         }
 
         //----------//
