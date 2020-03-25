@@ -64,8 +64,8 @@ void TestSolver::solveCustom() {
 
                 auto Extra = mStepTime *
                         ((source(i - 1, j - 1)) +
-//                        artVisc(i, j, 5.0, 10.0) +
-                        artVisc(i, j, 7.5, 15.0) +
+                        artVisc(i, j, 5.0, 10.0) +
+                        artVisc(i, j, 2.5, 5.0) +
                         viscosity(i, j) * 1.0e-05);
 
                 (*TempData)[i][j] = solveZwas(
@@ -239,7 +239,8 @@ void TestSolver::initFields() {
     for (int i = 0; i < mGridY; i++) {
         mVertField[i] = 1.27e-05 + 1.46e-06 * i - 1.38e-08 * pow(i, 2.0);
 //        mHorizFieldY[i] = 3.5e-05 - 4.87e-07 * i;
-        mHorizFieldY[i] = 0.0;
+        mHorizFieldY[i] = 3.5e-02 - 4.87e-04 * i;
+//        mHorizFieldY[i] = 0.0;
     }
 }
 void TestSolver::initConditions() {
@@ -314,8 +315,8 @@ double TestSolver::getFullEnergy() {
                     mGrav * iVal[0] +
                     pow(iVal[1] / iVal[0], 2.0) +
                     pow(iVal[2] / iVal[0], 2.0) +
-                    pow(iVal[3] / iVal[0], 2.0) +
-                    pow(iVal[4] / iVal[0], 2.0));
+                    pow(iVal[3] / iVal[0], 2.0) / 1.0e-06 +
+                    pow(iVal[4] / iVal[0], 2.0) / 1.0e-06);
         }
     }
 
@@ -360,7 +361,8 @@ double TestSolver::getVelocity() {
     return sqrt(MaxSpeedSqr);
 }
 void TestSolver::adjustTimeStep() {
-    setTimeStep(mStepX / (getVelocity() + 300.0) / 4.0);
+//    setTimeStep(mStepX / (getVelocity() + 300.0) / 4.0);
+    setTimeStep(mStepX / getFullEnergy() * 1.0e+06);
 }
 
 dVector <double, 5> TestSolver::funcX(const dVector <double, 5>& tVec) {
@@ -380,9 +382,9 @@ dVector <double, 5> TestSolver::funcY(const dVector <double, 5>& tVec) {
             0.0);
 }
 dVector <double, 5> TestSolver::source(int tPosX, int tPosY) {
-//    double Bz = (((*CurrentData)[tPosX + 2][tPosY][4] - (*CurrentData)[tPosX][tPosY][3]) / mStepX / 2.0 +
-//            ((*CurrentData)[tPosX][tPosY + 2][4] - (*CurrentData)[tPosX][tPosY][4]) / mStepY / 2.0);
-    double Bz = 0.0;
+    double Bz = (((*CurrentData)[tPosX + 2][tPosY][3] - (*CurrentData)[tPosX][tPosY][3]) / mStepX / 2.0 +
+            ((*CurrentData)[tPosX][tPosY + 2][4] - (*CurrentData)[tPosX][tPosY][4]) / mStepY / 2.0);
+//    double Bz = 0.0;
 
     return dVector <double, 5> (
             0.0,
