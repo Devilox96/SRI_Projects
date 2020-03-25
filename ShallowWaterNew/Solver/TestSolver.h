@@ -42,8 +42,8 @@ private:
 
     uint8_t mGeographyType = 3;
 
-    int mDaysToCalc = 128;
-    int mSaveInterval = 24;  //---Hours---//
+    int mDaysToCalc = 16;
+    int mSaveInterval = 12;  //---Hours---//
 //    int mSaveInterval = 6;  //---Hours---//
 
     //----Initials----//
@@ -99,6 +99,14 @@ private:
     dVector <double, 5> source(int tPosX, int tPosY);
     dVector <double, 5> viscosity(int tPosX, int tPosY);
     dVector <double, 5> artVisc(int tPosX, int tPosY, double tFirstParam, double tSecondParam);
+
+    //----------//
+
+    dVector <double, 5> WENO_2(
+            const dVector <double, 5>& tVal_minus,
+            const dVector <double, 5>& tVal,
+            const dVector <double, 5>& tVal_plus,
+            bool tNegFlux);
 };
 //-----------------------------//
 #endif

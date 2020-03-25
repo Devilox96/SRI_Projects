@@ -562,3 +562,60 @@ dVector <double, 5> TestSolver::artVisc(int tPosX, int tPosY, double tFirstParam
     return  tFirstParam * SoundSpeed * (SmoothX / 2.0 / mStepX + SmoothY / 2.0 / mStepY) +
             tSecondParam * (SmoothQX / mStepX + SmoothQY / mStepY) * (*CurrentData)[tPosX][tPosY][0];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+dVector <double, 5> TestSolver::WENO_2(const dVector <double, 5>& tVal_minus, const dVector <double, 5>& tVal, const dVector <double, 5>& tVal_plus, bool tNegFlux) {
+    auto V0 = 0.5 * tVal + 0.5 * tVal_plus;       //---r = 0---//
+    auto V1 = -0.5 * tVal_minus + 1.5 * tVal;     //---r = 1---//
+
+    auto Beta0 = tVal_plus - tVal;
+    auto Beta1 = tVal - tVal_minus;
+
+    for (int i = 0; i < 5; i++) {
+        Beta0[i] *= Beta0[i];
+        Beta1[i] *= Beta1[i];
+    }
+
+    dVector <double, 5> Alpha0;
+    dVector <double, 5> Alpha1;
+
+    if (tNegFlux) {
+        for (int i = 0; i < 5; i++) {
+            Alpha0[i] = 1.0 / 3.0 / pow(1.0e-06 + Beta0[i], 2.0);
+            Alpha1[i] = 2.0 / 3.0 / pow(1.0e-06 + Beta1[i], 2.0);
+        }
+    } else {
+        for (int i = 0; i < 5; i++) {
+            Alpha0[i] = 2.0 / 3.0 / pow(1.0e-06 + Beta0[i], 2.0);
+            Alpha1[i] = 1.0 / 3.0 / pow(1.0e-06 + Beta1[i], 2.0);
+        }
+    }
+
+    dVector <double, 5> Omega0;
+    dVector <double, 5> Omega1;
+
+    for (int i = 0; i < 5; i++) {
+        Omega0[i] = Alpha0[i] / (Alpha0[i] + Alpha1[i]);
+        Omega1[i] = Alpha1[i] / (Alpha0[i] + Alpha1[i]);
+    }
+
+    dVector <double, 5> Res;
+
+    for (int i = 0; i < 5; i++) {
+        Res[i] = Omega0[i] * V0[i] + Omega1[i] * V1[i];
+    }
+
+    return Res;
+}
