@@ -174,56 +174,9 @@ void TestSolver::solveCustom() {
 //                        (funcY((*CurrentData)[i][j]) - AlphaY[i] * (*CurrentData)[i][j]) / 2.0, true);
 //            }
 //        }
-        
-        
-        
-        
-        //----------//
 
-        for (int i = 1; i < mGridY - 1; i++) {
-            (*TempData)[0][i][0] = (*TempData)[mGridX - 2][i][0];
-            (*TempData)[mGridX - 1][i][0] = (*TempData)[1][i][0];
-        }
 
-        for (int i = 1; i < mGridY - 1; i++) {
-            (*TempData)[0][i][1] = (*TempData)[mGridX - 2][i][1] / (*TempData)[mGridX - 2][i][0] * (*TempData)[0][i][0];
-            (*TempData)[mGridX - 1][i][1] = (*TempData)[1][i][1] / (*TempData)[1][i][0] * (*TempData)[mGridX - 1][i][0];
-
-            (*TempData)[0][i][2] = (*TempData)[mGridX - 2][i][2] / (*TempData)[mGridX - 2][i][0] * (*TempData)[0][i][0];
-            (*TempData)[mGridX - 1][i][2] = (*TempData)[1][i][2] / (*TempData)[1][i][0] * (*TempData)[mGridX - 1][i][0];
-
-            (*TempData)[0][i][3] = (*TempData)[mGridX - 2][i][3] / (*TempData)[mGridX - 2][i][0] * (*TempData)[0][i][0];
-            (*TempData)[mGridX - 1][i][3] = (*TempData)[3][i][3] / (*TempData)[3][i][0] * (*TempData)[mGridX - 1][i][0];
-
-            (*TempData)[0][i][4] = (*TempData)[mGridX - 2][i][4] / (*TempData)[mGridX - 2][i][0] * (*TempData)[0][i][0];
-            (*TempData)[mGridX - 1][i][4] = (*TempData)[1][i][4] / (*TempData)[1][i][0] * (*TempData)[mGridX - 1][i][0];
-        }
-
-        for (int i = 0; i < mGridX; i++) {
-            (*TempData)[i][0][1] = (*TempData)[i][1][1] / (*TempData)[i][1][0] * (*TempData)[i][0][0];
-            (*TempData)[i][mGridY - 1][1] = (*TempData)[i][mGridY - 2][1] / (*TempData)[i][mGridY - 2][0] * (*TempData)[i][mGridY - 1][0];
-
-            (*TempData)[i][0][2] = (*TempData)[i][1][2] / (*TempData)[i][1][0] * (*TempData)[i][0][0];
-            (*TempData)[i][mGridY - 1][2] = (*TempData)[i][mGridY - 2][2] / (*TempData)[i][mGridY - 2][0] * (*TempData)[i][mGridY - 1][0];
-
-            (*TempData)[i][0][3] = (*TempData)[i][3][3] / (*TempData)[i][3][0] * (*TempData)[i][0][0];
-            (*TempData)[i][mGridY - 1][3] = (*TempData)[i][mGridY - 2][3] / (*TempData)[i][mGridY - 2][0] * (*TempData)[i][mGridY - 1][0];
-
-            (*TempData)[i][0][4] = (*TempData)[i][1][4] / (*TempData)[i][1][0] * (*TempData)[i][0][0];
-            (*TempData)[i][mGridY - 1][4] = (*TempData)[i][mGridY - 2][4] / (*TempData)[i][mGridY - 2][0] * (*TempData)[i][mGridY - 1][0];
-        }
-
-        for (int i = 0; i < mGridX; i++) {
-            (*TempData)[i][0][2] = 0.0;
-            (*TempData)[i][mGridY - 1][2] = 0.0;
-
-//            (*TempData)[i][0][4] = 0.0;
-//            (*TempData)[i][mGridY - 1][4] = 0.0;
-            (*TempData)[i][0][4] = mHorizFieldY[0] * (*CurrentData)[i][0][0];
-            (*TempData)[i][mGridY - 1][4] = mHorizFieldY[mGridY - 1] * (*CurrentData)[i][mGridY - 1][0];
-        }
-
-        //----------//
+        updateBoundaries();
 
         std::swap(CurrentData, TempData);
 
@@ -337,10 +290,6 @@ void TestSolver::initConditions() {
 
     for (int i = 0; i < mGridX; i++) {
         for (int j = 0; j < mGridY; j++) {
-//            mDataFirst[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-//                                                  0.0, 0.0, 0.0, 0.0);
-//            mDataSecond[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-//                                                   0.0, 0.0, 0.0, 0.0);
             double TempHeight = 10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY);
 
             mDataFirst[i][j] = dVector<double, 5>(TempHeight, 0.0, 0.0, 0.0, mHorizFieldY[j] * TempHeight);
@@ -451,6 +400,33 @@ double TestSolver::getVelocity() {
 void TestSolver::adjustTimeStep() {
 //    setTimeStep(mStepX / (getVelocity() + 300.0) / 4.0);
     setTimeStep(mStepX / getFullEnergy() * 1.0e+06);
+}
+
+void TestSolver::updateBoundaries() {
+    for (int i = 1; i < mGridY - 1; i++) {
+        (*TempData)[0][i][0] = (*TempData)[mGridX - 2][i][0];
+        (*TempData)[mGridX - 1][i][0] = (*TempData)[1][i][0];
+    }
+
+    for (int iComp = 1; iComp < 5; iComp++) {
+        for (int i = 1; i < mGridY - 1; i++) {
+            (*TempData)[0][i][iComp] = (*TempData)[mGridX - 2][i][iComp] / (*TempData)[mGridX - 2][i][0] * (*TempData)[0][i][0];
+            (*TempData)[mGridX - 1][i][iComp] = (*TempData)[1][i][iComp] / (*TempData)[1][i][0] * (*TempData)[mGridX - 1][i][0];
+        }
+
+        for (int i = 0; i < mGridX; i++) {
+            (*TempData)[i][0][iComp] = (*TempData)[i][1][iComp] / (*TempData)[i][1][0] * (*TempData)[i][0][0];
+            (*TempData)[i][mGridY - 1][iComp] = (*TempData)[i][mGridY - 2][iComp] / (*TempData)[i][mGridY - 2][0] * (*TempData)[i][mGridY - 1][0];
+        }
+    }
+
+    for (int i = 0; i < mGridX; i++) {
+        (*TempData)[i][0][2] = 0.0;
+        (*TempData)[i][mGridY - 1][2] = 0.0;
+
+        (*TempData)[i][0][4] = mHorizFieldY[0] * (*CurrentData)[i][0][0];
+        (*TempData)[i][mGridY - 1][4] = mHorizFieldY[mGridY - 1] * (*CurrentData)[i][mGridY - 1][0];
+    }
 }
 
 dVector <double, 5> TestSolver::funcX(const dVector <double, 5>& tVec) {

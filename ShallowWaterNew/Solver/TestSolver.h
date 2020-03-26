@@ -27,9 +27,6 @@ private:
     const double mCorParam_0 = 1.0e-04;
     const double mBetaParam = 1.6e-11;
 //    const double mBetaParam = 0.0;
-//    const double mField_0 = 2.0e-05;
-    const double mField_0 = 0.0;
-//    const double mField_0 = 2.0e-02;
     //---Constants----//
 
     //----Initials----//
@@ -93,6 +90,8 @@ private:
     void saveData();
     double getVelocity();
     void adjustTimeStep();
+
+    void updateBoundaries();
 
     dVector <double, 5> funcX(const dVector <double, 5>& tVec) override;
     dVector <double, 5> funcY(const dVector <double, 5>& tVec) override;
