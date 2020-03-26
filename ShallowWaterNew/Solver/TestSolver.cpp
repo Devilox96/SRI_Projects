@@ -60,37 +60,37 @@ void TestSolver::solveCustom() {
 
         //----------//
 
-        for (int j = 0; j < mGridY; j++) {
-            AlphaX[j] = 0.0;
-
-            for (int i = 0; i < mGridX; i++) {
-                AlphaX[j] = std::max(AlphaX[j], fabs(((*CurrentData)[i][j][1] + (*CurrentData)[i][j][3]) / (*CurrentData)[i][j][0]));
-                AlphaX[j] = std::max(AlphaX[j], fabs(((*CurrentData)[i][j][1] - (*CurrentData)[i][j][3]) / (*CurrentData)[i][j][0]));
-
-                AlphaX[j] = std::max(AlphaX[j], fabs((*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] +
-                                                     sqrt(pow((*CurrentData)[i][j][3] / (*CurrentData)[i][j][0], 2.0) +
-                                                     mGrav * (*CurrentData)[i][j][0])));
-                AlphaX[j] = std::max(AlphaX[j], fabs((*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] -
-                                                     sqrt(pow((*CurrentData)[i][j][3] / (*CurrentData)[i][j][0], 2.0) +
-                                                     mGrav * (*CurrentData)[i][j][0])));
-            }
-        }
-
-        for (int i = 0; i < mGridX; i++) {
-            AlphaY[i] = 0.0;
-
-            for (int j = 0; j < mGridY; j++) {
-                AlphaY[j] = std::max(AlphaY[j], fabs(((*CurrentData)[i][j][2] + (*CurrentData)[i][j][4]) / (*CurrentData)[i][j][0]));
-                AlphaY[j] = std::max(AlphaY[j], fabs(((*CurrentData)[i][j][2] - (*CurrentData)[i][j][4]) / (*CurrentData)[i][j][0]));
-
-                AlphaY[j] = std::max(AlphaY[j], fabs((*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] +
-                                                     sqrt(pow((*CurrentData)[i][j][4] / (*CurrentData)[i][j][0], 2.0) +
-                                                     mGrav * (*CurrentData)[i][j][0])));
-                AlphaY[j] = std::max(AlphaY[j], fabs((*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] -
-                                                     sqrt(pow((*CurrentData)[i][j][4] / (*CurrentData)[i][j][0], 2.0) +
-                                                     mGrav * (*CurrentData)[i][j][0])));
-            }
-        }
+//        for (int j = 0; j < mGridY; j++) {
+//            AlphaX[j] = 0.0;
+//
+//            for (int i = 0; i < mGridX; i++) {
+//                AlphaX[j] = std::max(AlphaX[j], fabs(((*CurrentData)[i][j][1] + (*CurrentData)[i][j][3]) / (*CurrentData)[i][j][0]));
+//                AlphaX[j] = std::max(AlphaX[j], fabs(((*CurrentData)[i][j][1] - (*CurrentData)[i][j][3]) / (*CurrentData)[i][j][0]));
+//
+//                AlphaX[j] = std::max(AlphaX[j], fabs((*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] +
+//                                                     sqrt(pow((*CurrentData)[i][j][3] / (*CurrentData)[i][j][0], 2.0) +
+//                                                     mGrav * (*CurrentData)[i][j][0])));
+//                AlphaX[j] = std::max(AlphaX[j], fabs((*CurrentData)[i][j][1] / (*CurrentData)[i][j][0] -
+//                                                     sqrt(pow((*CurrentData)[i][j][3] / (*CurrentData)[i][j][0], 2.0) +
+//                                                     mGrav * (*CurrentData)[i][j][0])));
+//            }
+//        }
+//
+//        for (int i = 0; i < mGridX; i++) {
+//            AlphaY[i] = 0.0;
+//
+//            for (int j = 0; j < mGridY; j++) {
+//                AlphaY[j] = std::max(AlphaY[j], fabs(((*CurrentData)[i][j][2] + (*CurrentData)[i][j][4]) / (*CurrentData)[i][j][0]));
+//                AlphaY[j] = std::max(AlphaY[j], fabs(((*CurrentData)[i][j][2] - (*CurrentData)[i][j][4]) / (*CurrentData)[i][j][0]));
+//
+//                AlphaY[j] = std::max(AlphaY[j], fabs((*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] +
+//                                                     sqrt(pow((*CurrentData)[i][j][4] / (*CurrentData)[i][j][0], 2.0) +
+//                                                     mGrav * (*CurrentData)[i][j][0])));
+//                AlphaY[j] = std::max(AlphaY[j], fabs((*CurrentData)[i][j][2] / (*CurrentData)[i][j][0] -
+//                                                     sqrt(pow((*CurrentData)[i][j][4] / (*CurrentData)[i][j][0], 2.0) +
+//                                                     mGrav * (*CurrentData)[i][j][0])));
+//            }
+//        }
 
         //----------//
 
@@ -127,6 +127,57 @@ void TestSolver::solveCustom() {
             }
         }
 
+        //----------//
+
+
+
+
+
+//        for (int i = 2; i < mGridX - 1; i++) {
+//            for (int j = 2; j < mGridY - 1; j++) {
+//                auto PlusPlusX = WENO_2(
+//                        (funcX((*CurrentData)[i - 1][j]) + AlphaX[j] * (*CurrentData)[i - 1][j]) / 2.0,
+//                        (funcX((*CurrentData)[i][j]) + AlphaX[j] * (*CurrentData)[i][j]) / 2.0,
+//                        (funcX((*CurrentData)[i + 1][j]) + AlphaX[j] * (*CurrentData)[i + 1][j]) / 2.0, false);
+//                auto PlusMinusX = WENO_2(
+//                        (funcX((*CurrentData)[i - 1][j]) - AlphaX[j] * (*CurrentData)[i - 1][j]) / 2.0,
+//                        (funcX((*CurrentData)[i][j]) - AlphaX[j] * (*CurrentData)[i][j]) / 2.0,
+//                        (funcX((*CurrentData)[i + 1][j]) - AlphaX[j] * (*CurrentData)[i + 1][j]) / 2.0, true);
+//
+//                auto MinusPlusX = WENO_2(
+//                        (funcX((*CurrentData)[i - 2][j]) + AlphaX[j] * (*CurrentData)[i - 2][j]) / 2.0,
+//                        (funcX((*CurrentData)[i - 1][j]) + AlphaX[j] * (*CurrentData)[i - 1][j]) / 2.0,
+//                        (funcX((*CurrentData)[i][j]) + AlphaX[j] * (*CurrentData)[i][j]) / 2.0, false);
+//                auto MinusMinusX = WENO_2(
+//                        (funcX((*CurrentData)[i - 2][j]) - AlphaX[j] * (*CurrentData)[i - 2][j]) / 2.0,
+//                        (funcX((*CurrentData)[i - 1][j]) - AlphaX[j] * (*CurrentData)[i - 1][j]) / 2.0,
+//                        (funcX((*CurrentData)[i][j]) - AlphaX[j] * (*CurrentData)[i][j]) / 2.0, true);
+//
+//                //---//
+//
+//                auto PlusPlusY = WENO_2(
+//                        (funcY((*CurrentData)[i][j - 1]) + AlphaY[i] * (*CurrentData)[i][j - 1]) / 2.0,
+//                        (funcY((*CurrentData)[i][j]) + AlphaY[i] * (*CurrentData)[i][j]) / 2.0,
+//                        (funcY((*CurrentData)[i][j + 1]) + AlphaY[i] * (*CurrentData)[i][j + 1]) / 2.0, false);
+//                auto PlusMinusY = WENO_2(
+//                        (funcY((*CurrentData)[i][j - 1]) - AlphaY[i] * (*CurrentData)[i][j - 1]) / 2.0,
+//                        (funcY((*CurrentData)[i][j]) - AlphaY[i] * (*CurrentData)[i][j]) / 2.0,
+//                        (funcY((*CurrentData)[i][j + 1]) - AlphaY[i] * (*CurrentData)[i][j + 1]) / 2.0, true);
+//
+//                auto MinusPlusY = WENO_2(
+//                        (funcY((*CurrentData)[i][j - 2]) + AlphaY[i] * (*CurrentData)[i][j - 2]) / 2.0,
+//                        (funcY((*CurrentData)[i][j - 1]) + AlphaY[i] * (*CurrentData)[i][j - 1]) / 2.0,
+//                        (funcY((*CurrentData)[i][j]) + AlphaY[i] * (*CurrentData)[i][j]) / 2.0, false);
+//                auto MinusMinusY = WENO_2(
+//                        (funcY((*CurrentData)[i][j - 2]) - AlphaY[i] * (*CurrentData)[i][j - 2]) / 2.0,
+//                        (funcY((*CurrentData)[i][j - 1]) - AlphaY[i] * (*CurrentData)[i][j - 1]) / 2.0,
+//                        (funcY((*CurrentData)[i][j]) - AlphaY[i] * (*CurrentData)[i][j]) / 2.0, true);
+//            }
+//        }
+        
+        
+        
+        
         //----------//
 
         for (int i = 1; i < mGridY - 1; i++) {
@@ -168,8 +219,8 @@ void TestSolver::solveCustom() {
 
 //            (*TempData)[i][0][4] = 0.0;
 //            (*TempData)[i][mGridY - 1][4] = 0.0;
-            (*TempData)[i][0][4] = mHorizFieldY[0];
-            (*TempData)[i][mGridY - 1][4] = mHorizFieldY[mGridY - 1];
+            (*TempData)[i][0][4] = mHorizFieldY[0] * (*CurrentData)[i][0][0];
+            (*TempData)[i][mGridY - 1][4] = mHorizFieldY[mGridY - 1] * (*CurrentData)[i][mGridY - 1][0];
         }
 
         //----------//
@@ -290,10 +341,10 @@ void TestSolver::initConditions() {
 //                                                  0.0, 0.0, 0.0, 0.0);
 //            mDataSecond[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
 //                                                   0.0, 0.0, 0.0, 0.0);
-            mDataFirst[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-                                                  0.0, 0.0, 0.0, mHorizFieldY[j]);
-            mDataSecond[i][j] = dVector<double, 5>(10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY),
-                                                   0.0, 0.0, 0.0, mHorizFieldY[j]);
+            double TempHeight = 10000.0 - (MeanWind * mCorParam_0 / mGrav) * (j * mStepY - MeanY);
+
+            mDataFirst[i][j] = dVector<double, 5>(TempHeight, 0.0, 0.0, 0.0, mHorizFieldY[j] * TempHeight);
+            mDataSecond[i][j] = dVector<double, 5>(TempHeight, 0.0, 0.0, 0.0, mHorizFieldY[j] * TempHeight);
         }
     }
 
