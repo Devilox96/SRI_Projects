@@ -510,8 +510,8 @@ public:
         long yIndex_plus_1;
         long yIndex_minus_1;
 
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
+        for (size_t i = 0; i < xSize; i++) {
+            for (size_t  j = 0; j < ySize; j++) {
                 xIndex_plus_1 = (i + 1 == xSize ? 0 : i + 1);
                 xIndex_minus_1 = (i - 1 < 0 ? xSize - 1 : i - 1);
                 yIndex_plus_1 = (j + 1 == ySize ? 0 : j + 1);
