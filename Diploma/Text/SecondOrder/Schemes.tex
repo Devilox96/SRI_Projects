@@ -1,0 +1,42 @@
+Схемами второго порядка пользуются, когда необходима точность при решении уравнений, они требуют больше
+опорных узлов и затрачивают больше ресурсов CPU/GPU, нежели схемы первого порядка. Недостаток данной, а
+также схем высших порядков, в неустойчивости в областях разрыва производных, о чём будет сказано в разделе
+3.9. Распишем некоторые схемы второго порядка:
+
+\begin{equation}
+	\displaystyle
+	\frac{\partial u}{\partial t} + a \frac{\partial u}{\partial x} = 0
+\end{equation}
+
+\begin{itemize}
+	\item Схема Лакса-Вендроффа
+	\begin{equation*}
+		\displaystyle
+		u^{n + 1}_j = u^n_j - \frac{c \dt}{2 \dx} \left( u^n_{j + 1} - u^n_{j - 1} \right) -
+		\frac{c^2 \dt^2}{2 \dx^2} \left( u^n_{j + 1} - 2u^n_j + u^n_{j - 1} \right)
+	\end{equation*}
+	
+	\item Схема Leapfrog
+	\begin{equation*}
+		\displaystyle
+		u^{n + 1}_j = u^{n - 1}_j - \frac{c \dt}{\dx} \left( u^n_{j + 1} - u^n_{j - 1} \right)
+	\end{equation*}
+	
+	\item Схема Кранка-Николсона
+	\begin{equation*}
+		\displaystyle
+		u^{n + 1}_j = u^n_j - \frac{c \dt}{4 \dx} \left( u^n_{j + 1} - u^n_{j - 1} \right) -
+		\frac{c \dt}{4 \dx} \left( u^{n + 1}_{j + 1} - u^{n + 1}_{j - 1} \right)
+	\end{equation*}
+	
+	\item Схема Box
+	\begin{equation*}
+		\displaystyle
+		\left( 1 - \frac{c \dt}{\dx} \right) u^{n + 1}_j + \left( 1 - \frac{c \dt}{\dx} \right) u^{n + 1}_{j + 1} =
+		\left( 1 - \frac{c \dt}{\dx} \right) u^n_j + \left( 1 + \frac{c \dt}{\dx} \right) u^n_{j + 1}
+	\end{equation*}
+\end{itemize}
+
+Вышеперечисленные схемы вместе с уже упоминавшимися схемами первого порядка подробно расписаны и сравнены между 
+собой в \cite{SchemesComparison}. В данной работе нас будет интересовать метод Рихтмайера \cite{RichtmyerOriginal},
+являющийся методом класса схем Лакса-Вендроффа, и его разновидность, схема Рихтмайера-Цваса.

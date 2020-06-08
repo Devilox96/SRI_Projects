@@ -1,0 +1,68 @@
+\begin{figure}[htbp]
+	\centering
+	\includesvg[width=170px]{SVGs/Zwas}
+	\caption{Схема Рихтмайера-Цваса}
+\end{figure}
+
+Данная схема, как и предыдущая, использует 9 опорных узлов, однако более компактна с точки зрения
+расположения на расчётной области. Её главный недостаток в том, что приходится считать значения
+между узлами сетки, но это небольшая плата за б\'{о}льшую устойчивость, о чём будет сказано в следующем
+разделе. Для нашей системы схема примет вид
+
+\begin{equation}
+	\begin{cases}
+		\displaystyle
+		U^{n + \frac{1}{2}}_{i - \frac{1}{2}, j + \frac{1}{2}} = 
+		\frac{U^n_{i, j} + U^n_{i, j + 1} + U^n_{i - 1, j + 1} + U^n_{i - 1, j}}{4} - \frac{\dt}{2} \left(
+		\frac{\tilde{X}^n_{i, j + \frac{1}{2}} - \tilde{X}^n_{i - 1, j + \frac{1}{2}}}{\dx} + 
+		\frac{\tilde{Y}^n_{i - \frac{1}{2}, j + 1} - \tilde{Y}^n_{i - \frac{1}{2}, j}}{\dy} +
+		2 \tilde{S}^n_{i - \frac{1}{2}, j + \frac{1}{2}} \right)
+		\\[10pt]
+		\displaystyle
+		U^{n + \frac{1}{2}}_{i + \frac{1}{2}, j + \frac{1}{2}} = 
+		\frac{U^n_{i, j} + U^n_{i + 1, j} + U^n_{i + 1, j + 1} + U^n_{i, j + 1}}{4} - \frac{\dt}{2} \left(
+		\frac{\tilde{X}^n_{i + 1, j + \frac{1}{2}} - \tilde{X}^n_{i, j + \frac{1}{2}}}{\dx} + 
+		\frac{\tilde{Y}^n_{i + \frac{1}{2}, j + 1} - \tilde{Y}^n_{i + \frac{1}{2}, j}}{\dy} +
+		2 \tilde{S}^n_{i + \frac{1}{2}, j + \frac{1}{2}} \right)
+		\\[10pt]
+		\displaystyle
+		U^{n + \frac{1}{2}}_{i - \frac{1}{2}, j - \frac{1}{2}} = 
+		\frac{U^n_{i, j} + U^n_{i - 1, j} + U^n_{i - 1, j - 1} + U^n_{i, j - 1}}{4} - \frac{\dt}{2} \left(
+		\frac{\tilde{X}^n_{i, j - \frac{1}{2}} - \tilde{X}^n_{i - 1, j - \frac{1}{2}}}{\dx} + 
+		\frac{\tilde{Y}^n_{i - \frac{1}{2}, j} - \tilde{Y}^n_{i - \frac{1}{2}, j - 1}}{\dy} +
+		2 \tilde{S}^n_{i - \frac{1}{2}, j - \frac{1}{2}} \right)
+		\\[10pt]
+		\displaystyle
+		U^{n + \frac{1}{2}}_{i + \frac{1}{2}, j - \frac{1}{2}} = 
+		\frac{U^n_{i, j} + U^n_{i, j - 1} + U^n_{i + 1, j - 1} + U^n_{i + 1, j}}{4} - \frac{\dt}{2} \left(
+		\frac{\tilde{X}^n_{i + 1, j - \frac{1}{2}} - \tilde{X}^n_{i, j - \frac{1}{2}}}{\dx} + 
+		\frac{\tilde{Y}^n_{i + \frac{1}{2}, j} - \tilde{Y}^n_{i + \frac{1}{2}, j - 1}}{\dy} +
+		2 \tilde{S}^n_{i + \frac{1}{2}, j - \frac{1}{2}} \right)
+	\end{cases}
+\end{equation}
+\begin{equation}
+	\displaystyle
+	U^{n + 1}_{i, j} = U^n_{i, j} - \dt \left(
+	\frac{\tilde{X}^{n + \frac{1}{2}}_{i + \frac{1}{2}, j} - \tilde{X}^{n + \frac{1}{2}}_{i - \frac{1}{2}, j}}{\dx} + 
+	\frac{\tilde{Y}^{n + \frac{1}{2}}_{i, j + \frac{1}{2}} - \tilde{Y}^{n + \frac{1}{2}}_{i, j - \frac{1}{2}}}{\dy} +
+	2 S^n_{i, j} \right)
+\end{equation}
+\begin{equation*}
+	\displaystyle
+	\tilde{X}^n_{i, j + \frac{1}{2}} = X \left( \frac{U^n_{i, j + 1} - U^n_{i, j}}{2} \right),
+	\tilde{X}^{n + \frac{1}{2}}_{i + \frac{1}{2}, j} = X \left( 
+	\frac{U^{n + \frac{1}{2}}_{i + \frac{1}{2}, j + \frac{1}{2}} - 
+	      U^{n + \frac{1}{2}}_{i + \frac{1}{2}, j - \frac{1}{2}}}{2} \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\tilde{Y}^n_{i + \frac{1}{2}, j} = Y \left( \frac{U^n_{i + 1, j} - U^n_{i, j}}{2} \right),
+	\tilde{Y}^{n + \frac{1}{2}}_{i, j + \frac{1}{2}} = Н \left( 
+	\frac{U^{n + \frac{1}{2}}_{i + \frac{1}{2}, j + \frac{1}{2}} - 
+		  U^{n + \frac{1}{2}}_{i - \frac{1}{2}, j + \frac{1}{2}}}{2} \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\tilde{S}^n_{i + \frac{1}{2}, j + \frac{1}{2}} = 
+	\frac{S^n_{i, j} + S^n_{i + 1, j} + S^n_{i + 1, j + 1} + S^n_{i, j + 1}}{4}
+\end{equation*}

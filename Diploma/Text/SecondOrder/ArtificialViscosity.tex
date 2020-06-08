@@ -1,0 +1,58 @@
+Как было описано раннее, в разделе 3.1, схемы второго и выше порядков имеют очень серьёзный недостаток -
+колебания в областях разрывов производных, что может приводить к неконтролируемому увеличению модуля
+собственных значений матрицы усиления и последующей расходимости схемы. Для решения этой проблемы существуют
+несколько подходов: использование неосциллирующих схем, про которые будет идти речь в разделе 4, и введение 
+искусственной вязкости \cite{ArtifVisc, ShockViscosity, Oscillations}.
+
+Искусственную вязкость можно ввести в виде добавки к потоку \cite{Smoothing}:
+
+\begin{equation*}
+	\displaystyle
+	\frac{\partial u}{\partial t} + \frac{\partial X}{\partial x} = 0
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	X' = X - \nu \frac{\partial u}{\partial x}
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\nu = c_\nu \dx^2 \left| \frac{\partial u}{\partial x} \right|,
+\end{equation*}
+
+\noindent где $c_\nu$ - коэффициент вязкости. Тогда уравнение с вязкостью приобретает вид
+
+\begin{equation*}
+	\displaystyle
+	\frac{\partial u}{\partial t} + \frac{\partial X}{\partial x} = \frac{\partial}{\partial x} 
+	\left( c_\nu \dx^2 \left| \frac{\partial u}{\partial x} \right| \frac{\partial u}{\partial x} \right)
+\end{equation*}
+
+\noindent Аппроксимируем правую часть:
+
+\begin{equation*}
+	\begin{split}
+	\frac{\partial}{\partial x} 
+	\left( c_\nu \dx^2 \left| \frac{\partial u}{\partial x} \right| \frac{\partial u}{\partial x} \right) \approx
+	\\
+	\approx \frac{\dt}{\dx} \left(
+	\left( c_\nu \dx^2 \left| \frac{\partial u}{\partial x} \right| \frac{\partial u}{\partial x} \right)_
+	{j + \frac{1}{2}} -
+	\left( c_\nu \dx^2 \left| \frac{\partial u}{\partial x} \right| \frac{\partial u}{\partial x} \right)_
+	{j - \frac{1}{2}} \right) =
+	\\
+	= c_\nu \frac{\dt}{\dx} \left(
+	\left| u^n_{j + 1} - u^n_j \right| \left( u^n_{j + 1} - u^n_j \right) -
+	\left| u^n_j - u^n_{j - 1} \right| \left( u^n_j - u^n_{j - 1} \right)
+	\right)
+	\end{split}
+\end{equation*}
+
+\begin{figure}[htbp]
+	\centering
+	\includesvg[width=120px]{SVGs/Viscosity}
+	\caption{Искусственная вязкость фон Неймана - Рихтмайера}
+\end{figure}
+
+\noindent Из конечной формулы и рисунка видно, что выражение в скобках выступает в роли параметра сглаживания:
+чем меньше разброс подряд идущих значений, тем меньше сглаживание и, следовательно,  величина искусственной 
+вязкости.

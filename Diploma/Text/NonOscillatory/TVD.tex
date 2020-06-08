@@ -1,0 +1,162 @@
+TVD (Total Variation Diminishing) схемы \cite{TheoryTVD} - схемы, удовлетворяющие неравенству
+
+\begin{equation*}
+	\displaystyle
+	TV(u^{n + 1}) \le TV(u^n),
+\end{equation*}
+
+\noindent где
+
+\begin{equation*}
+	\displaystyle
+	TV(u(t)) = \int \left| \frac{\partial u}{\partial x} \right| dx
+\end{equation*}
+
+\noindent или в дискретном случае
+
+\begin{equation*}
+	\displaystyle
+	TV(u^n) = \sum_{j} \left| u^n_{j + 1} - u^n_j \right|
+\end{equation*}
+
+Рассмотрим явную схему:
+
+\begin{equation*}
+	\displaystyle
+	\frac{\partial u}{\partial t} + \frac{\partial X}{\partial x} = 0
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	u^{n + 1}_j = u^n_j - \frac{\dt}{\dx} \left( X^n_{j + \frac{1}{2}} - X^n_{j - \frac{1}{2}} \right)
+\end{equation*}
+
+\noindent В общем случае для схем первого порядка поток, например, $X^n_{j + \frac{1}{2}}$, можно записать в виде
+
+\begin{equation*}
+	\displaystyle
+	X^n_{j + \frac{1}{2}} = \frac{1}{2} \left( X^n_{j + 1} + X^n_j - \psi
+	\left( a^n_{j + \frac{1}{2}} \right) \left( u^n_{j + 1} - u^n_j \right) \right),
+\end{equation*}
+
+\noindent где $a^n_{j + \frac{1}{2}}$ - аргумент, зависящий от собственных значений оператора $X$, а $\psi$ - 
+функция, отвечающая за численную вязкость, вводится в статье \cite{Entropy} Хартеном как
+
+\begin{equation*}
+	\displaystyle
+	\psi(y) = 
+	\begin{cases}
+		\displaystyle
+		\frac{y^2}{4 \epsilon} + \epsilon, \: |y| < 2 \epsilon
+		\\[10px]
+		|y|, \qquad |y| \ge 2 \epsilon
+	\end{cases},
+\end{equation*}
+
+\noindent где величина $\epsilon$ лежит в пределах $\left(0, \frac{1}{2}\right]$
+
+Определив поток, для построения TVD схемы мы можем пойти двумя путями \cite{TVD}.
+
+\begin{itemize}
+	\item
+	Первый подход заключается в замене потока на его сумму с некоторой функцией $\tilde{X}$, чтобы
+	получившийся поток был второго порядка аппроксимации по отношению к $X$. Тогда получим
+	
+	\begin{equation*}
+		\displaystyle
+		X^n_{j + \frac{1}{2}} = \frac{1}{2} \left( X^n_{j + 1} + X^n_j + \tilde{X}^n_{j + 1} + \tilde{X}^n_j - 
+		\psi \left( a^n_{j + \frac{1}{2}} + \tilde{a}^n_{j + \frac{1}{2}} \right) \left( u^n_{j + 1} - u^n_j \right) \right),
+	\end{equation*}
+	
+	где $a^n_{j + \frac{1}{2}}$ и $\tilde{a}^n_{j + \frac{1}{2}}$ принимают значения
+	
+	\begin{equation*}
+		\displaystyle
+		a^n_{j + \frac{1}{2}} =
+		\begin{cases}
+			\displaystyle
+			\frac{X^n_{j + 1} - X^n_j}{u^n_{j + 1} - u^n_j}, \;\; u^n_{j + 1} \ne u^n_j
+			\\[10px]
+			\displaystyle
+			\left( \frac{dX}{du} \right)_j, \qquad u^n_{j + 1} = u^n_j
+		\end{cases}
+	\end{equation*}
+	\begin{equation*}
+		\displaystyle
+		\tilde{a}^n_{j + \frac{1}{2}} =
+		\begin{cases}
+			\displaystyle
+			\frac{\tilde{X}^n_{j + 1} - \tilde{X}^n_j}{u^n_{j + 1} - u^n_j}, \;\; u^n_{j + 1} \ne u^n_j
+			\\[10px]
+			\displaystyle
+			0, \qquad\qquad\quad\; u^n_{j + 1} = u^n_j
+		\end{cases}
+	\end{equation*}
+	
+	\item
+	Второй, наиболее распространённый, путь состоит в добавлении к выражению для потока антидиффузионного
+	члена, помноженного на некоторую функцию-ограничитель $\phi$, что позволяет контролировать область устойчивости
+	полученной схемы. Для простоты рассмотрим линейный поток:
+	
+	\begin{equation*}
+		\displaystyle
+		X(u) = au, \: a = const, \: a > 0
+	\end{equation*}
+	\begin{equation*}
+		\displaystyle
+		X^n_{j + \frac{1}{2}} = \frac{1}{2} \left( X^n_{j + 1} + X^n_j - a 
+		\left( u^n_{j + 1} - u^n_j \right) \right) + \frac{a}{2}
+		\left( u^n_{j} - u^n_{j - 1} \right) \phi_j
+	\end{equation*}
+	
+	\noindent Подставим полученный поток в исходную схему:
+	
+	\begin{equation*}
+		\displaystyle
+		\theta_j = \frac{u^n_{j} - u^n_{j - 1}}{u^n_{j + 1} - u^n_{j}}, \quad
+		\tilde{\theta}_j = \frac{u^n_{j + 1} - u^n_{j}}{u^n_{j} - u^n_{j - 1}}
+	\end{equation*}
+	\begin{equation*}
+		\displaystyle
+		u^{n + 1}_j = u^n_j - a \frac{\dt}{\dx} \left( 1 + \frac{1}{2} \phi_j -
+		\frac{1}{2} \theta_{j - 1} \phi_{j - 1} \right) \left( u^n_{j} - u^n_{j - 1} \right)
+	\end{equation*}
+	
+	\noindent Существует множество различных ограничителей, среди которых наиболее известные
+	
+	\noindent Minmod:
+	
+	\begin{equation*}
+		\displaystyle
+		\phi_j = minmod \left(1, \tilde{\theta}_j \right)
+	\end{equation*}
+	
+	\noindent Superbee:
+	
+	\begin{equation*}
+		\displaystyle
+		\phi_j = max \left( 0, min \left(1, 2 \tilde{\theta}_j \right), min \left(2, \tilde{\theta}_j \right) \right)
+	\end{equation*}
+	
+	\noindent Ван Лир:
+	
+	\begin{equation*}
+		\displaystyle
+		\phi_j = \frac{\tilde{\theta}_j + \left| \tilde{\theta}_j \right|}{1 + \tilde{\theta}_j}
+	\end{equation*}
+\end{itemize}
+
+В данной работе мы не будем заниматься построением TVD схем, а возьмём на вооружение готовые TVD варианты схем
+класса Рунге-Кутта, которые обычно используют для интегрирования по времени. Нас интересует второй порядок
+аппроксимации. Пусть $L(u)$ - "пространственная часть" \space уравнения, которую мы аппроксимируем тем или
+иным способом, тогда "временную часть" \space можно аппроксимировать следующим образом:
+
+\begin{equation*}
+	\begin{cases}
+		u^{(1)}_j = u^n_j - \dt L \left( u^n_j \right)
+		\\[10px]
+		u^{n + 1}_j = \frac{1}{2} u^n_j - \dt L \left( u^n_j \right) - \dt L \left( u^{(1)}_j \right)
+	\end{cases}
+\end{equation*}
+
+\noindent Построение Рунге-Кутта схем разных порядков, а также их TVD-вариантов можно найти в книге
+\cite{RungeKuttaSchemes}. Применение TVD схем к уравнениям мелкой воды описано в статье \cite{ShallowWaterTVD}.

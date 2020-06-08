@@ -1,0 +1,237 @@
+\begin{lstlisting}[language=C++, caption={Lax-Fiendrichs solver}]
+	class dLaxFriedrichsSolver2D : public dLaxFriedrichs2D <dVector <double, 5>> {
+	public:
+	dLaxFriedrichsSolver2D(double TimeStepP, double xStepP, double yStepP) {
+	mStepTime = TimeStepP;
+	mStepX = xStepP;
+	mStepY = yStepP;
+	
+	//        Homogeneous = false;
+	}
+	~dLaxFriedrichsSolver2D() = default;
+	
+	void SetInitialData(unsigned long xSizeP, unsigned long ySizeP) {
+	xSize = xSizeP;
+	ySize = ySizeP;
+	
+	DataFirst.resize(xSizeP);
+	DataSecond.resize(xSizeP);
+	
+	for (unsigned long i = 0; i < xSizeP; i++) {
+	for (unsigned long j = 0; j < ySizeP; j++) {
+	DataFirst[i].emplace\_back(dVector <double, 5> (10.0, 0.0, 0.0, 0.0, 0.0));
+	DataSecond[i].emplace\_back(dVector <double, 5> (10.0, 0.0, 0.0, 0.0, 0.0));
+	}
+	}
+	
+	SetExcitation();
+	
+	for (unsigned long i = 0; i < ySizeP; i++) {
+	Gradient.emplace\_back(0.1 / ySizeP * i);
+	}
+	
+	AmplitudeFile.open(SavePath + "Amplitude.dat");
+	xVelocityFile.open(SavePath + "xVelocity.dat");
+	yVelocityFile.open(SavePath + "yVelocity.dat");
+	xFieldFile.open(SavePath + "xField.dat");
+	yFieldFile.open(SavePath + "yField.dat");
+	}
+	void SetSavePath(const std::string\& PathP) {
+	SavePath = PathP;
+	}
+	void AppendData() {
+	for (int j = 0; j < ySize; j++) {
+	for (int i = 0; i < xSize; i++) {
+	AmplitudeFile << (*CurrentData)[i][j][0] << "\t";
+	xVelocityFile << (*CurrentData)[i][j][1] << "\t";
+	yVelocityFile << (*CurrentData)[i][j][2] << "\t";
+	xFieldFile << (*CurrentData)[i][j][3] << "\t";
+	yFieldFile << (*CurrentData)[i][j][4] << "\t";
+	}
+	
+	AmplitudeFile << std::endl;
+	xVelocityFile << std::endl;
+	yVelocityFile << std::endl;
+	xFieldFile << std::endl;
+	yFieldFile << std::endl;
+	}
+	}
+	
+	double GetFullEnergy() {
+	double EnergyL = 0.0;
+	
+	for (const auto\& LineI : (*CurrentData)) {
+	for (const auto\& ValueI : LineI) {
+	EnergyL += (g * (ValueI[0] - 10.0) +
+	pow(ValueI[1] / ValueI[0], 2.0) +
+	pow(ValueI[2] / ValueI[0], 2.0) +
+	pow(ValueI[3] / ValueI[0], 2.0) +
+	pow(ValueI[4] / ValueI[0], 2.0));
+	}
+	}
+	
+	return EnergyL;
+	}
+	double GetMaxAmplitude() {
+	double AbsMaxL = 0.0;
+	
+	for (unsigned long i = 0; i < xSize; i++) {
+	for (unsigned long j = 0; j < ySize; j++) {
+	double Value =  fabs((*CurrentData)[i][j][0]) +
+	fabs((*CurrentData)[i][j][1]) +
+	fabs((*CurrentData)[i][j][2]) +
+	fabs((*CurrentData)[i][j][3]) +
+	fabs((*CurrentData)[i][j][4]);
+	
+	if (AbsMaxL < Value) {
+	AbsMaxL = Value;
+	}
+	}
+	}
+	
+	return AbsMaxL;
+	}
+	
+	double getMaxSpeed() {
+	double VelMax = 0.0;
+	
+	for (unsigned long i = 0; i < xSize; i++) {
+	for (unsigned long j = 0; j < ySize; j++) {
+	double CurVal = 0.0;
+	
+	if ((*CurrentData)[i][j][0] != 0) {
+	CurVal = sqrt((*CurrentData)[i][j][1] * (*CurrentData)[i][j][1] +
+	(*CurrentData)[i][j][2] * (*CurrentData)[i][j][2]) / (*CurrentData)[i][j][0];
+	}
+	
+	if (VelMax < CurVal) {
+	VelMax = CurVal;
+	}
+	}
+	}
+	
+	return VelMax;
+	}
+	
+	void SaveData() {
+	AmplitudeFile.close();
+	xVelocityFile.close();
+	yVelocityFile.close();
+	xFieldFile.close();
+	yFieldFile.close();
+	}
+	
+	double getStepTime() {
+	return mStepTime;
+	}
+	
+	double getStepX() {
+	return mStepX;
+	}
+	double getStepY() {
+	return mStepY;
+	}
+	
+	//----------//
+	
+	void solveGrid() {
+	long xIndex\_plus\_1;
+	long xIndex\_minus\_1;
+	long yIndex\_plus\_1;
+	long yIndex\_minus\_1;
+	
+	for (size\_t i = 0; i < xSize; i++) {
+	for (size\_t  j = 0; j < ySize; j++) {
+	xIndex\_plus\_1 = (i + 1 == xSize ? 0 : i + 1);
+	xIndex\_minus\_1 = (i - 1 < 0 ? xSize - 1 : i - 1);
+	yIndex\_plus\_1 = (j + 1 == ySize ? 0 : j + 1);
+	yIndex\_minus\_1 = (j - 1 < 0 ? ySize - 1 : j - 1);
+	
+	(*TempData)[i][j] = solve((*CurrentData)[xIndex\_minus\_1][j],
+	(*CurrentData)[xIndex\_plus\_1][j],
+	(*CurrentData)[i][yIndex\_minus\_1],
+	(*CurrentData)[i][yIndex\_plus\_1]);
+	}
+	}
+	
+	std::swap(CurrentData, TempData);
+	}
+	private:
+	const double g = 9.81e-03;
+	const double B\_0 = 0.5;
+	const double f\_0 = 0.1;
+	
+	unsigned long xSize = 1;
+	unsigned long ySize = 1;
+	
+	std::vector <double> Gradient;
+	
+	std::vector <std::vector <dVector <double, 5>>> DataFirst;
+	std::vector <std::vector <dVector <double, 5>>> DataSecond;
+	
+	std::vector <std::vector <dVector <double, 5>>>* CurrentData = \&DataFirst;
+	std::vector <std::vector <dVector <double, 5>>>* TempData = \&DataSecond;
+	
+	//----------//
+	
+	dVector <double, 5> funcX(const dVector <double, 5>\& U) override {
+	return dVector <double, 5> (U[1],
+	(pow(U[1], 2.0) - pow(U[3], 2.0)) / U[0] + 0.5 * g * pow(U[0], 2.0),
+	(U[1] * U[2] - U[3] * U[4]) / U[0],
+	0,
+	(U[1] * U[4] - U[2] * U[3]) / U[0]);
+	}
+	dVector <double, 5> funcY(const dVector <double, 5>\& U) override {
+	return dVector <double, 5> (U[2],
+	(U[1] * U[2] - U[3] * U[4]) / U[0],
+	(pow(U[2], 2.0) - pow(U[4], 2.0)) / U[0] + 0.5 * g * pow(U[0], 2.0),
+	(U[2] * U[3] - U[1] * U[4]) / U[0],
+	0);
+	}
+
+	
+	//----------//
+	
+	std::ofstream AmplitudeFile;
+	std::ofstream xVelocityFile;
+	std::ofstream yVelocityFile;
+	std::ofstream xFieldFile;
+	std::ofstream yFieldFile;
+	
+	std::string SavePath = "./";
+	
+	//----------//
+	
+	void SetPlotParameters(long xMinP, long xMaxP, long yMinP, long yMaxP) {
+	AmplitudeFile   << xSize        << "\t"     << ySize    << "\t"
+	<< xMinP        << "\t"     << xMaxP    << "\t"
+	<< yMinP        << "\t"     << yMaxP    << "\t"
+	<< "\\n";
+	xVelocityFile   << xSize        << "\t"     << ySize    << "\t"
+	<< xMinP        << "\t"     << xMaxP    << "\t"
+	<< yMinP        << "\t"     << yMaxP    << "\t"
+	<< "\\n";
+	yVelocityFile   << xSize        << "\t"     << ySize    << "\t"
+	<< xMinP        << "\t"     << xMaxP    << "\t"
+	<< yMinP        << "\t"     << yMaxP    << "\t"
+	<< "\\n";
+	xFieldFile      << xSize        << "\t"     << ySize    << "\t"
+	<< xMinP        << "\t"     << xMaxP    << "\t"
+	<< yMinP        << "\t"     << yMaxP    << "\t"
+	<< "\\n";
+	yFieldFile      << xSize        << "\t"     << ySize    << "\t"
+	<< xMinP        << "\t"     << xMaxP    << "\t"
+	<< yMinP        << "\t"     << yMaxP    << "\t"
+	<< "\\n";
+	}
+	void SetExcitation() {
+	double Fraction = 1.0 / (2.0 * M\_PI * 20.0 * mStepX * 20.0 * mStepY);
+	
+	for (int i = -100; i < 100; i++) {
+	for (int j = -100; j < 100; j++) {
+	(*CurrentData)[xSize / 2 + i][ySize / 2 + j][0] = 10.0 + Fraction * exp(-0.5 * (pow(i / 20.0, 2.0) + pow(j / 20.0, 2.0)));
+	}
+	}
+	}
+	};
+\end{lstlisting}

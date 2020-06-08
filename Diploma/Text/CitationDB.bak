@@ -1,0 +1,150 @@
+% Encoding: UTF-8
+
+@Article{GeneralEq,
+  author       = {Д. А. Климачков, А. С. Петросян},
+  journaltitle = {ЖЭТФ},
+  title        = {Волны Россби в магнитной гидродинамике вращающейся плазмы в приближении мелкой воды},
+  doi          = {10.7868/S004445101710008X},
+  issue        = {4},
+  pages        = {705-721},
+  volume       = {том 152},
+  year         = {2017},
+}
+
+@Article{RossbyContruct,
+  author  = {Klimachkov, Dmitry and Petrosyan, Arakel},
+  title   = {Parametric Instabilities in Shallow Water Magnetohydrodynamics Of Astrophysical Plasma in External Magnetic Field},
+  doi     = {10.1016/j.physleta.2016.10.011},
+  volume  = {381},
+  journal = {Physics Letters A},
+  month   = {12},
+  year    = {2015},
+}
+
+@Article{ArtifVisc,
+  author       = {J. Von Neumann, R. D. Richtmyer},
+  journaltitle = {Journal of Applied Physics},
+  title        = {A Method for the Numerical Calculation of Hydrodynamic Shocks},
+  doi          = {10.1063/1.1699639},
+  issue        = {3},
+  pages        = {232-237},
+  volume       = {21},
+  month        = {03},
+  year         = {1950},
+}
+
+@Article{DivergenceFree,
+  author  = {Tóth, Gábor},
+  title   = {The ∇·B=0 Constraint in Shock-Capturing Magnetohydrodynamics Codes},
+  doi     = {10.1006/jcph.2000.6519},
+  pages   = {605-652},
+  volume  = {161},
+  journal = {Journal of Computational Physics},
+  month   = {07},
+  year    = {2000},
+}
+
+@Article{ENOWENO,
+  author = {Shu, Chi-Wang and Cockburn, Bernardo and Johnson, Claes and Tadmor, Eitan},
+  title  = {Essentially non-oscillatory and weighted essentially non-oscillatory schemes for hyperbolic conservation laws},
+  doi    = {10.1007/BFb0096355},
+  pages  = {325-432},
+  month  = {11},
+  year   = {2006},
+}
+
+@Article{MHD,
+  author  = {Heng, Kevin and Spitkovsky, Anatoly},
+  title   = {Magnetohydrodynamic Shallow Water Waves: Linear Analysis},
+  doi     = {10.1088/0004-637X/703/2/1819},
+  volume  = {703},
+  journal = {The Astrophysical Journal},
+  month   = {08},
+  year    = {2009},
+}
+
+@Article{FluxSplitting,
+  author  = {Wang, Zhenzhen and Li, Gang and Delestre, Olivier},
+  title   = {Well-balanced finite difference WENO schemes for the blood flow model},
+  doi     = {10.1002/fld.4232},
+  journal = {International Journal for Numerical Methods in Fluids},
+  month   = {03},
+  year    = {2016},
+}
+
+@Article{GLM,
+  author  = {Derigs, Dominik and Winters, Andrew and Gassner, Gregor and Walch, Stefanie and Bohm, Marvin},
+  title   = {Ideal GLM-MHD: About the entropy consistent nine-wave magnetic field divergence diminishing ideal magnetohydrodynamics equations},
+  doi     = {10.1016/j.jcp.2018.03.002},
+  volume  = {364},
+  journal = {Journal of Computational Physics},
+  month   = {11},
+  year    = {2017},
+}
+
+@Article{HyperbolicGLM,
+  author  = {Kemm, Friedemann},
+  title   = {Roe-type schemes for shallow water magnetohydrodynamics with hyperbolic divergence cleaning},
+  doi     = {10.1016/j.amc.2015.05.079},
+  volume  = {272},
+  journal = {Applied Mathematics and Computation},
+  month   = {09},
+  year    = {2014},
+}
+
+@Article{LaxTheorem,
+  author  = {Lax, P. and Richtmyer, R.},
+  title   = {Survey of the Stability of Linear Finite Difference Equations},
+  doi     = {10.1007/0-387-28148-7_11},
+  pages   = {267-293},
+  volume  = {9},
+  journal = {Communications on Pure and Applied Mathematics},
+  month   = {01},
+  year    = {1956},
+}
+
+@Article{Oscillations,
+  author  = {Li, Jiequan and Tang, Huazhong and Warnecke, Gerald and Zhang, Lumei},
+  title   = {Local oscillations in finite difference solutions of hyperbolic conservation laws},
+  doi     = {10.1090/S0025-5718-09-02219-4},
+  pages   = {1997-2018},
+  volume  = {78},
+  journal = {Math. Comput.},
+  month   = {10},
+  year    = {2009},
+}
+
+@Article{RichtmyerMult,
+  author  = {WILSON, J. C.},
+  title   = {Stability of Richtmyer Type Difference Schemes in any Finite Number of Space Variables and Their Comparison with Multistep Strang Schemes},
+  doi     = {10.1093/imamat/10.2.238},
+  number  = {2},
+  pages   = {238-257},
+  volume  = {10},
+  journal = {IMA Journal of Applied Mathematics},
+  month   = {10},
+  year    = {1972},
+}
+
+@Article{RichtmyerOriginal,
+  author  = {Richtmyer, Robert},
+  title   = {A Survey of Difference Methods for Non-Steady Fluid Dynamics},
+  doi     = {10.5065/D67P8WCQ},
+  issue   = {63},
+  journal = {NCAR Technical Notes},
+  month   = {01},
+  year    = {1962},
+}
+
+@Misc{RossbyWavesCalculations,
+  author      = {Jonsson, Eskil},
+  title       = {Modelling the Formation and Propagation of Orographic Rossby Waves},
+  institution = {Uppsala University, LUVAL},
+  number      = {2017:22},
+  pages       = {32},
+  school      = {Uppsala University, LUVAL},
+  series      = {Självständigt arbete vid Institutionen för geovetenskaper},
+  year        = {2017},
+}
+
+@Comment{jabref-meta: databaseType:biblatex;}

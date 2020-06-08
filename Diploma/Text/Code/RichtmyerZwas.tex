@@ -1,0 +1,30 @@
+\begin{lstlisting}[language=C++, caption={Richmyer-Zwas scheme 2D}]
+	template <class T>
+	T firstStepZwas(const T& tBottomRight,  const T& tTopRight,
+					const T& tTopLeft,      const T& tBottomLeft) {
+		return 	(tBottomRight + tTopRight + tTopLeft + tBottomLeft) / 4 -
+				((funcX((tBottomRight + tTopRight) / 2) - funcX((tBottomLeft + tTopLeft) / 2)) * 
+				mRatioX +
+				(funcY((tTopRight + tTopLeft) / 2) - funcY((tBottomRight + tBottomLeft) / 2)) * 
+				mRatioY) / 2;
+	}
+	
+	template <class T>
+	T solveZwas(const T& tOffsetZero,
+				const T& tX_min_1_Y,        const T& tX_pl_1_Y,
+				const T& tX_Y_min_1,        const T& tX_Y_pl_1,
+				const T& tX_pl_1_Y_pl_1,    const T& tX_min_1_Y_min_1,
+				const T& tX_pl_1_Y_min_1,   const T& tX_min_1_Y_pl_1) {
+		T Half_X_min_Y_min = firstStepZwas(tX_Y_min_1, tOffsetZero, tX_min_1_Y, tX_min_1_Y_min_1);
+		T Half_X_pl_Y_min = firstStepZwas(tX_pl_1_Y_min_1, tX_pl_1_Y, tOffsetZero, tX_Y_min_1);
+		T Half_X_min_Y_pl = firstStepZwas(tOffsetZero, tX_Y_pl_1, tX_min_1_Y_pl_1, tX_min_1_Y);
+		T Half_X_pl_Y_pl = firstStepZwas(tX_pl_1_Y, tX_pl_1_Y_pl_1, tX_Y_pl_1, tOffsetZero);
+		
+		T GradX =   (funcX(Half_X_pl_Y_pl) - funcX(Half_X_min_Y_pl) +
+					funcX(Half_X_pl_Y_min) - funcX(Half_X_min_Y_min)) / 2;
+		T GradY =   (funcY(Half_X_pl_Y_pl) - funcY(Half_X_pl_Y_min) +
+					funcY(Half_X_min_Y_pl) - funcY(Half_X_min_Y_min)) / 2;
+		
+		return tOffsetZero - GradX * mRatioX - GradY * mRatioY;
+	}
+\end{lstlisting}

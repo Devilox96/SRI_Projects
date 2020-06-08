@@ -1,0 +1,27 @@
+\begin{lstlisting}[language=C++, caption={Richmyer scheme 2D}]
+	template <class T>
+	T firstStep(const T& tOffsetMinusX, const T& tOffsetPlusX,
+				const T& tOffsetMinusY, const T& tOffsetPlusY) {
+		return (tOffsetPlusX + tOffsetMinusX + tOffsetPlusY + tOffsetMinusY) / 4 -
+				((funcX(tOffsetPlusX) - funcX(tOffsetMinusX)) * mRatioX +
+				(funcY(tOffsetPlusY) - funcY(tOffsetMinusY)) * mRatioY) / 2;
+	}
+		
+	template <class T>
+	T solve(const T& tOffsetZero,
+			const T& tX_min_2_Y,        const T& tX_pl_2_Y,
+			const T& tX_Y_min_2,        const T& tX_Y_pl_2,
+			const T& tX_pl_1_Y_pl_1,    const T& tX_min_1_Y_min_1,
+			const T& tX_pl_1_Y_min_1,   const T& tX_min_1_Y_pl_1) {			
+		T HalfMinusX = firstStep(tX_min_2_Y, tOffsetZero, tX_min_1_Y_min_1, tX_min_1_Y_pl_1);
+		T HalfPlusX = firstStep(tOffsetZero, tX_pl_2_Y, tX_pl_1_Y_min_1, tX_pl_1_Y_pl_1);
+		T HalfMinusY = firstStep(tX_min_1_Y_min_1, tX_pl_1_Y_min_1, tX_Y_min_2, tOffsetZero);
+		T HalfPlusY = firstStep(tX_min_1_Y_pl_1, tX_pl_1_Y_pl_1, tOffsetZero, tX_Y_pl_2);
+		
+		T Solution = 	tOffsetZero -
+						(funcX(HalfPlusX) - funcX(HalfMinusX)) * mRatioX -
+						(funcY(HalfPlusY) - funcY(HalfMinusY)) * mRatioY;
+		
+		return Solution;
+	}
+\end{lstlisting}

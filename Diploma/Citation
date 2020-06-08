@@ -1,0 +1,163 @@
+Волны Россби в магнитной гидродинамике вращающейся плазмы в приближении мелкой воды
+Д.А. Климачков, А.С. Петросян
+ЖЭТФ, 2017, том 152, вып. 4 (10), стр. 705–721
+DOI: 10.7868/S004445101710008X
+
+Parametric instabilities in shallow water magnetohydrodynamics of
+astrophysical plasma in external magnetic field
+Klimachkov D.A., Petrosyan A.S.
+Physics Letters A 381 (2017) 106–113
+
+A Method for the Numerical Calculation of Hydrodynamic Shocks
+J. VON NEUMANN, R.D. RICHTMYER
+Journal of Applied Physics 21, 232 (1950)
+https://doi.org/10.1063/1.1699639
+
+
+
+!!!!!!!!!!!!!!!!!
+Definition and Construction of Entropy Satisfying Multiresolution Analysis (MRA)
+Ju Y. Yi
+(2016). All Graduate Theses and Dissertations. 5057.
+!!!!!!!!!!!!!!!!!
+
+
+
+
+The ∇·B = 0 Constraint in Shock-Capturing Magnetohydrodynamics Codes
+Gábor Tóth
+Journal of Computational Physics 161, 605–652 (2000)
+doi:10.1006/jcph.2000.6519
+
+Essentially Non-oscillatory and Weighted Essentially Non-oscillatory Schemes for Hyperbolic Conservation Laws
+Chi-Wang Shu
+
+Magnetohydrodynamic shallow water waves: linear analisys
+Kevin Heng, Anatoly Spitkovsky
+2009
+
+
+
+
+
+
+!!!!!!!!!!!!!!!!!
+Finite-difference Methods for the Solution of Partial Differential Equations
+Luciano Rezzolla
+2018
+!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+Well-balanced finite difference WENO schemes for the blood flow model
+Zhenzhen Wang, Gang Li, Olivier Delestre
+International Journal for Numerical Methods in Fluids, Wiley, 2016
+10.1002/fld.4232
+
+
+
+
+
+
+!!!!!!!!!!!!!!!!!
+Методы конечных разностей и конечных объемов для решения задач математической физики
+В.М. Ковеня Д.В. Чирков
+2013
+!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
+
+
+
+Ideal GLM-MHD: About the entropy consistent nine-wave magnetic field
+divergence diminishing ideal magnetohydrodynamics equations
+Dominik Derigs, Andrew R. Winters, Gregor J. Gassner, Stefanie Walch, Marvin Bohm
+Journal of Computational Physics 
+November 2017
+DOI: 10.1016/j.jcp.2018.03.002
+
+Roe-type schemes for shallow water magnetohydrodynamics with hyperbolic divergence cleaning
+Friedemann Kemm
+2018
+
+Survey of the Stability of Linear Finite Difference Equations
+P.D. Lax, R.D. Richtmyer
+COMMUNICATIONS ON PURE AND APPLIED MATHEMATICS, \'OL. IX, 267-293 
+(1956)
+
+Understanding of Numerical Oscillations in terms of Modified Equation
+Jiequan Li
+IAPCM, Sept. 12–15, 2011
+
+A Survey of Difference Methods for Non-Steady Fluid Dynamics
+Robert D. Richtmyer
+NCAR Technical Notes 63-2
+1962
+
+Stability of Richtmyer Type Difference Schemes in
+any Finite Number of Space Variables and
+Their Comparison with Mnltistep Strang Schemes
+J. C. WILSON
+J. Inst. Maths Applics (1972) 10, 238-257
+
+Modelling the Formation and Propagation of Orographic Rossby Waves
+Eskil Jonsson
+2017
+
+Efficient Implementation of Essentially Non-oscillatory Shock-Capturing Schemes
+Chi-Wang Shu, STANLEY OSHER
+JOURNAL OF COMPUTATIONAL PHYSICS 77, 439-471 
+(1988)
+
+Louaked & L. Hanich (1998) TVD scheme for the shallow water equations,
+Journal of Hydraulic Research, 36:3, 363-378, DOI: 10.1080/00221689809498624
+
+
+
+
+!!!!!!!!!!!!!!!!!
+Partial Differential Equations
+Joseph E. Flaherty
+!!!!!!!!!!!!!!!!!
+
+
+
+
+
+Artificial Viscosity Methods forModelling Shock Wave Propagation
+Article · June 2009
+DOI: 10.1007/978-1-4419-0727-1_19
+James Campbell, Rade Vignjevic
+
+
+
+
+
+!!!!!!!!!!!!!!!!!
+РАЗНОСТНЫЕ СХЕМЫ ВВЕДЕНИЕ В ТЕОРИЮ
+С. К. Годунов, В. С. Рябенький
+1977
+
+ПРАКТИЧЕСКИЕ ЗАНЯТИЯ ПО ВЫЧИСЛИТЕЛЬНОЙ МАТЕМАТИКЕ В МФТИ ЧАСТЬ II
+Е. Н. Аристова, А. И. Лобанов
+2015
+!!!!!!!!!!!!!!!!!
+
+
+
+
+СРАВНЕНИЕ ТОЧНОСТИ И СХОДИМОСТИ НЕКОТОРЫХ TVD-СХЕМ
+Д. В. Чирков С. Г. Черный
+Вычислительные технологии Том 5, No 5, 2000
+
+On Two Step Lax-Wendroff Methods in Several Dimensions
+Gideon Zwas
+Numer. Math. 20, 350-355 (1973)

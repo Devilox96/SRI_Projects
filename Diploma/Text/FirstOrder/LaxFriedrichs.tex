@@ -1,0 +1,33 @@
+\begin{figure}[htbp]
+	\centering
+	\includesvg[width=170px]{SVGs/LaxFriedrichs}
+	\caption{Схема Лакса-Фридрихса}
+\end{figure}
+
+Для нашей системы в двумерном случае данная схема имеет вид
+	
+\begin{equation}
+	\displaystyle U_{i, j}^{n + 1} = \frac{1}{4} \left(
+	U_{i - 1, j}^{n} + U_{i + 1, j}^{n} + U_{i, j - 1}^{n} + U_{i, j + 1}^{n} \right) - 		
+	\frac{\dt}{2} \left( \frac{X_{i + 1, j}^{n} - X_{i - 1, j}^{n}}{\dx} +
+	\frac{Y_{i, j + 1}^{n} - Y_{i, j - 1}^{n}}{\dy} +
+	2 S_{i, j}^{n} \right)
+\end{equation}
+
+\begin{equation*}
+	\displaystyle
+	X_{i, j}^{n} = X(U_{i, j}^{n})
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	Y_{i, j}^{n} = Y(U_{i, j}^{n})
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	S_{i, j}^{n} = S(U_{i, j}^{n})
+\end{equation*}
+
+\noindent На рисунке красным кружком отмечен искомый узел на следующем временном слое, синие кружки - опорные
+узлы схемы. Поскольку для получения искомого узла требуются ближайшие узлы, то для расчёта граничных условий
+вокруг сетки расчётной области необходимо создать "рамку"\space одинарной толщины из дополнительных узлов (ghost
+points). В случае outlet условия дополнительный узел будет равен предпоследнему на данном направлении.

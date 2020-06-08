@@ -1,0 +1,79 @@
+Рассмотрим схему Рихтмайера для линейного одномерного дифференциального уравнения:
+
+\begin{equation*}
+	\displaystyle
+	\frac{\partial u}{\partial t} + a \frac{\partial u}{\partial x} = 0
+\end{equation*}
+\begin{equation*}
+	\begin{cases}
+		\displaystyle
+		u^{n + \frac{1}{2}}_{j + 1} = \frac{1}{2} (u^n_{j + 2} + u^n_j) -
+		\frac{a\dt}{2\dx} (u^n_{j + 2} - u^n_j)
+		\\[10pt]
+		\displaystyle
+		u^{n + \frac{1}{2}}_{j - 1} = \frac{1}{2} (u^n_j + u^n_{j - 2}) -
+		\frac{a\dt}{2\dx} (u^n_j - u^n_{j - 2})
+	\end{cases}
+\end{equation*}
+\begin{equation*}
+		\displaystyle
+	u^{n + 1}_j = u^n_j - \frac{a\dt}{\dx}(u^{n + \frac{1}{2}}_{j + 1} - u^{n + \frac{1}{2}}_{j - 1})
+\end{equation*}
+
+\noindent Соберём обе ступени в одно уравнение:
+
+\begin{equation*}
+	\displaystyle
+	u^{n + 1}_j = u^n_j - \frac{a\dt}{\dx} \left( \frac{1}{2} (u^n_{j + 2} - u^n_{j - 2}) - 
+	\frac{a\dt}{2\dx}(u^n_{j + 2} - 2u^n_j + u^n_{j - 2}) \right)
+\end{equation*}
+
+\noindent Произведём преобразования Фурье величины $u^n_j$ во всех узлах и разделим уравнение на
+$e^{at}e^{ik_mx}$:
+
+\begin{equation*}
+	\displaystyle
+	e^{a\dt} = 1 - \frac{a\dt}{\dx} \left( \frac{1}{2} (e^{2ik_m\dx} - e^{-2ik_m\dx}) - 
+	\frac{a\dt}{2\dx}(e^{2ik_m\dx} - 2 + e^{-2ik_m\dx}) \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	e^{a\dt} = 1 - \frac{a\dt}{\dx} \left( i \cdot sin(2k_m\dx) +
+	\frac{2a\dt}{\dx}sin^2(k_m\dx) \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	|e^{a\dt}| = \sqrt{ \left( 1 - \frac{2a^2\dt^2}{\dx^2}sin^2(k_m\dx) \right)^2 +
+	\frac{a^2\dt^2}{\dx^2} sin^2(2k_m\dx) } \le 1
+\end{equation*}
+
+\noindent Снимем корень и избавимся от единицы:
+
+\begin{equation*}
+	\displaystyle
+	\frac{4a^2\dt^2}{\dx^2}sin^4(k_m\dx) - 4sin^2(k_m\dx) + sin^2(2k_m\dx) \le 0
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{4a^2\dt^2}{\dx^2}sin^4(k_m\dx) - 4sin^2(k_m\dx) + 4sin^2(k_m\dx)(1 - sin^2(k_m\dx)) \le 0
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{4a^2\dt^2}{\dx^2}sin^4(k_m\dx) \le 4sin^4(k_m\dx)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{a^2\dt^2}{\dx^2} \le 1
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\dt \le \frac{\dx}{|a|}
+\end{equation*}
+
+Однако такая вязкость соблюдается только в одномерном случае \cite{RichtmyerScheme, RichtmyerMult}. С ростом 
+размерности пространства $p$ значение максимального шага по времени падает как
+
+\begin{equation*}
+\displaystyle
+\dt \le \frac{\dx}{|a|} \frac{1}{\sqrt{p}}
+\end{equation*}

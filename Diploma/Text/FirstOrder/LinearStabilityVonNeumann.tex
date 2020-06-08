@@ -1,0 +1,95 @@
+Рассмотрим линейное уравнение гиперболического типа первого порядка и представим его в виде разностного по
+схема Лакса-Фридрихса:
+
+\begin{equation*}
+	\displaystyle
+	\frac{\partial u}{\partial t} + a \frac{\partial u}{\partial x} = 0
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{u_i^{n + 1} - \frac{1}{2}(u_{i + 1}^n + u_{i + 1}^n)}{\dt} + 
+	\frac{a}{2} \frac{(u_{i + 1}^n - u_{i + 1}^n)}{\dx} = 0
+\end{equation*}
+
+\noindent Выразим решение через сумму точного решения разностного уравнения и погрешность округления и запишем
+уравнение для ошибки:
+
+\begin{equation*}
+	\displaystyle
+	u_i^n = U_i^n + \epsilon_i^n
+\end{equation*}
+\begin{equation}\label{eq:5}
+	\displaystyle
+	\frac{\epsilon_i^{n + 1} - \frac{1}{2}(\epsilon_{i + 1}^n + \epsilon_{i + 1}^n)}{\dt} + 
+	\frac{a}{2} \frac{(\epsilon_{i + 1}^n - \epsilon_{i + 1}^n)}{\dx} = 0
+\end{equation}
+
+\noindent Разложим погрешность в ряд Фурье \textbf{(Поправить!!!!!!!!!)}:
+
+\begin{equation*}
+	\displaystyle
+	\epsilon(x) = \sum_{m = 1}^{M} A_m e^{ik_mx}, k_m = \frac{\pi m}{L}
+\end{equation*}
+
+\noindent Полагается, что амплитуда ошибки $A_m$ является функцией времени, а поскольку изменение ошибки имеет
+экспоненциальный характер с течением времени, то функция погрешности будет иметь вид
+
+\begin{equation*}
+	\displaystyle
+	\epsilon(x, t) = \sum_{m = 1}^{M} e^{bt} e^{ik_mx}, k_m = \frac{\pi m}{L}
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\epsilon_j^n = e^{bt_n} e^{ik_mx_j}
+\end{equation*}
+
+\noindent Тогда мы можем преобразовать уравнение \ref{eq:5}:
+
+\begin{equation*}
+	\begin{split}
+	\displaystyle
+	\frac{e^{b(t_n + \dt)} e^{ik_mx_j} - \frac{1}{2}(e^{bt_n} e^{ik_m(x_j + \dx)} + e^{bt_n} e^{ik_m(x_j - \dx)})}{\dt} + 
+	\frac{a}{2} \frac{(e^{bt_n} e^{ik_m(x_j + \dx)} - e^{bt_n} e^{ik_m(x_j - \dx)})}{\dx} 
+	=
+	\\
+	=
+	\displaystyle
+	\frac{e^{b\dt} - \frac{1}{2}(e^{ik_m\dx} + e^{-ik_m\dx})}{\dt} + 
+	\frac{a}{2} \frac{(e^{ik_m\dx} - e^{-ik_m\dx})}{\dx}
+	=
+	\\
+	=
+	\displaystyle
+	\frac{e^{b\dt} - cos(k_m\dx)}{\dt} + 
+	ia \frac{sin(k_m\dx)}{\dx} = 0
+	\end{split}
+\end{equation*}
+
+\noindent Введём коэффициент усиления (amplification factor), модуль которого должен быть меньше либо равен единице для выполнения
+условия устойчивости:
+
+\begin{equation*}
+	\displaystyle
+	|G| = 
+	\left|\frac{\epsilon_j^{n + 1}}{\epsilon_j^n}\right| = |e^{b\dt}| \le 1
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	|e^b\dt| = \left| cos(k_m\dx) - i \frac{a\dt}{\dx} sin(k_m\dx) \right| \le 1
+\end{equation*}
+\begin{equation*}
+\displaystyle
+	cos^2(k_m\dx) + \frac{a^2\dt^2}{\dx^2} sin^2(k_m\dx) \le 1
+\end{equation*}
+\begin{equation*}
+\displaystyle
+	\frac{a^2\dt^2}{\dx^2} sin^2(k_m\dx) \le sin^2(k_m\dx)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{a^2\dt^2}{\dx^2} \le 1
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	 \dt \le \frac{\dx}{|a|}
+\end{equation*}

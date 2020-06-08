@@ -1,0 +1,277 @@
+В случае, когда система является нелинейной, метод фон Неймана не может быть напрямую применён,
+и требуется линеаризация. Для простоты рассмотрим одномерную систему уравнений мелкой воды:
+	
+\begin{equation}
+	\label{LaxExample}
+	\begin{cases}
+		\displaystyle 
+		\frac{\partial h}{\partial t} + 
+		\frac{\partial (hv_x)}{\partial x} = 0 
+		\\[10pt]
+		\displaystyle 
+		\frac{\partial (hv_x)}{\partial t} + 
+		\frac{\partial \left( hv_x^2 + \frac{1}{2}gh^2 \right)}{\partial x} = 0
+	\end{cases}
+\end{equation}
+	
+\noindent Преобразуем нелинейные слагаемые с помощью введения матрицы Якоби:
+
+\begin{equation*}
+	\begin{pmatrix}
+		\displaystyle
+		\frac{\partial (hv_x)}{\partial x}
+		\\[10pt]
+		\displaystyle			
+		\frac{\partial \left( hv_x^2 + \frac{1}{2}gh^2 \right)}{\partial x}
+	\end{pmatrix}
+	=
+	\begin{pmatrix}
+		\displaystyle
+		\frac{\partial F_1 (h, hv_x)}{\partial x}
+		\\[10pt]
+		\displaystyle			
+		\frac{\partial F_2(h, hv_x)}{\partial x}
+	\end{pmatrix}
+	= A \cdot
+	\begin{pmatrix}
+		\displaystyle
+		\frac{\partial h}{\partial x}
+		\\[10pt]
+		\displaystyle			
+		\frac{\partial (hv_x)}{\partial x}
+	\end{pmatrix}
+\end{equation*}
+
+\noindent Поскольку $h$ и $hv_x$ неортогональны, сделаем замену переменных $q_1 = h, q_2 = hv_x$, тогда
+
+\begin{equation*}
+	\begin{pmatrix}
+		\displaystyle
+		F_1(q_1, q_2)
+		\\[10pt]
+		\displaystyle			
+		F_2(q_1, q_2)
+	\end{pmatrix}
+	=
+	\begin{pmatrix}
+		\displaystyle
+		q_2
+		\\[10pt]
+		\displaystyle			
+		\frac{q_2^2}{q_1} + \frac{1}{2}gq_1^2
+	\end{pmatrix},
+	A =
+	\begin{pmatrix}
+		\displaystyle
+		\frac{\partial F_1}{\partial q_1}
+		&
+		\displaystyle
+		\frac{\partial F_1}{\partial q_2}
+		\\[10pt]
+		\displaystyle			
+		\frac{\partial F_2}{\partial q_1}
+		&
+		\displaystyle
+		\frac{\partial F_2}{\partial q_2}
+	\end{pmatrix}
+	=
+	\begin{pmatrix}
+		\displaystyle
+		0
+		&
+		\displaystyle
+		1
+		\\[10pt]
+		\displaystyle			
+		-\frac{q_2^2}{q_1^2} + gq_1
+		&
+		\displaystyle
+		\frac{2q_2}{q_1}
+	\end{pmatrix}
+\end{equation*}
+
+\noindent После обратной замены получим систему:
+
+\begin{equation}\label{eq:6}
+	\begin{pmatrix}
+		\displaystyle
+		\partial_t h
+		\\[10pt]
+		\displaystyle
+		\partial_t (hv_x)
+	\end{pmatrix}
+	+
+	\begin{pmatrix}
+		\displaystyle
+		0
+		&
+		\displaystyle
+		1
+		\\[10pt]
+		\displaystyle			
+		-v_x^2 + gh
+		&
+		\displaystyle
+		2v_x
+	\end{pmatrix}
+	\begin{pmatrix}
+		\displaystyle
+		\partial_x h
+		\\[10pt]
+		\displaystyle
+		\partial_x (hv_x)
+	\end{pmatrix}
+	= 0
+\end{equation}
+
+\noindent Для линеаризации необходимо зафиксировать значения матрицы Якоби для данного шага по времени.
+Каждое уравнение системы имеет свою ошибку, поэтому, ориентируясь на подход к линейному уравнению, запишем:
+
+\begin{equation*}
+	\begin{split}
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt + \dt}
+		\\[10pt]
+		\displaystyle
+		D^{nt + \dt}
+	\end{pmatrix}
+	= \frac{1}{2}
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt}(e^{ik\dx} + e^{-ik\dx})
+		\\[10pt]
+		\displaystyle
+		V^{nt}(e^{ik\dx} + e^{-ik\dx})
+	\end{pmatrix}
+	- \frac{\dt}{2\dx}
+	\begin{pmatrix}
+		\displaystyle
+		0
+		&
+		\displaystyle
+		1
+		\\[10pt]
+		\displaystyle			
+		-v_x^2 + gh
+		&
+		\displaystyle
+		2v_x
+	\end{pmatrix}
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt}(e^{ik\dx} - e^{-ik\dx})
+		\\[10pt]
+		\displaystyle
+		V^{nt}(e^{ik\dx} - e^{-ik\dx})
+	\end{pmatrix}
+	=
+	\\
+	=
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt}cos(k\dx)
+		\\[10pt]
+		\displaystyle
+		V^{nt}cos(k\dx)
+		\end{pmatrix}
+		- i \frac{\dt}{\dx}
+	\begin{pmatrix}
+		\displaystyle
+		0
+		&
+		\displaystyle
+		1
+		\\[10pt]
+		\displaystyle			
+		-v_x^2 + gh
+		&
+		\displaystyle
+		2v_x
+	\end{pmatrix}
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt}sin(k\dx)
+		\\[10pt]
+		\displaystyle
+		V^{nt}sin(k\dx)
+	\end{pmatrix}
+	=
+	\\
+	=
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt}cos(k\dx) -i V^{nt} \frac{\dt}{\dx} sin(k\dx)
+		\\[10pt]
+		\displaystyle			
+		-i E^{nt} \frac{\dt}{\dx} (-v_x^2 + gh) sin(k\dx) + V^{nt} (cos(k\dx) - 2iv_x \frac{\dt}{\dx}sin(k\dx)))
+	\end{pmatrix}
+	\end{split}
+\end{equation*}
+\begin{equation}
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt + \dt}
+		\\[10pt]
+		\displaystyle
+		D^{nt + \dt}
+	\end{pmatrix}
+	= G
+	\begin{pmatrix}
+		\displaystyle
+		E^{nt}
+		\\[10pt]
+		\displaystyle
+		D^{nt}
+	\end{pmatrix}
+\end{equation}
+\begin{equation}\label{eq:8}
+	G =
+	\begin{pmatrix}
+		\displaystyle
+		cos(k\dx)
+		&
+		\displaystyle
+		-i \frac{\dt}{\dx} sin(k\dx)
+		\\[10pt]
+		\displaystyle			
+		-i \frac{\dt}{\dx} (-v_x^2 + gh) sin(k\dx)
+		&
+		\displaystyle
+		-2iv_x \frac{\dt}{\dx} sin(k\dx) + cos(k\dx)
+	\end{pmatrix}
+\end{equation}
+
+\noindent Матрица (\ref{eq:8}) называется матрицей усиления (amplification matrix). Модули её собственных
+значений должны быть меньше либо равны единице для всех узлов расчётной сетки на данном временном слое, что
+обеспечивает устойчивость схемы. В силу того, что мы решаем систему уравнений, собственные значения матрицы $G$
+будут зависеть от собственных значений матрицы $A$ из уравнения \ref{eq:6}.
+
+\begin{equation*}
+	\begin{split}
+		\lambda_j = cos(k\dx) - iv_x \frac{\dt}{\dx} sin(k\dx) \pm i |sin(k\dx)|\sqrt{gh} \frac{\dt}{\dx} = \\
+		cos(k\dx) - i \frac{\dt}{\dx} sin(k\dx) (v_x \mp sgn(sin(k\dx)) \sqrt{gh}) = \\
+		cos(k\dx) - i \frac{\dt}{\dx} sin(k\dx) (v_x \pm \sqrt{gh})
+	\end{split}
+\end{equation*}
+\begin{equation*}
+	|\lambda_j| = \sqrt{cos^2(k\dx) + \frac{\dt^2}{\dx^2} sin^2(k\dx) (v_x \pm \sqrt{gh})^2} \le 1
+\end{equation*}
+\begin{equation*}
+	|\lambda_j| = \sqrt{1 + sin^2(k\dx) \left( \frac{\dt^2}{\dx^2} (v_x \pm \sqrt{gh})^2 - 1 \right)} \le 1
+\end{equation*}
+\begin{equation*}
+	sin^2(k\dx) \left( \frac{\dt^2}{\dx^2} (v_x \pm \sqrt{gh})^2 - 1 \right) \le 0
+\end{equation*}
+\begin{equation*}
+	\frac{\dt}{\dx} |v_x \pm \sqrt{gh}| \le 1
+\end{equation*}
+\begin{equation}
+	\dt \le \frac{\dx}{|v_x \pm \sqrt{gh}|}
+\end{equation}
+
+\noindent Обратим внимание на то, что собственные значения матрицы $A$ равны
+
+\begin{equation}
+	\lambda_{12} = v_x \pm \sqrt{gh}
+\end{equation}

@@ -1,0 +1,59 @@
+\begin{figure}[htbp]
+	\centering
+	\includesvg[width=170px]{SVGs/Richtmyer}
+	\caption{Схема Рихтмайера}
+\end{figure}
+
+Применимо к нашей системе, в двумерном случае схема Рихтмайера в виде четырёх расчётов промежуточной
+ступени и финального расчёта второй ступени. Такие схемы называют двухшаговыми:
+
+\begin{equation}		
+	\begin{cases}
+		\displaystyle U_{i - 1, j}^{n + \frac{1}{2}} = \frac{1}{4} \left(
+		U_{i, j}^{n} + U_{i - 2, j}^{n} + U_{i - 1, j + 1}^{n} + U_{i - 1, j - 1}^{n} \right) -
+		\frac{\dt}{2} \left( \frac{X_{i, j}^{n} - X_{i - 2, j}^{n}}{\dx} +
+		\frac{Y_{i - 1, j + 1}^{n} - Y_{i - 1, j - 1}^{n}}{\dy} +
+		2 S_{i - 1, j}^{n} \right)
+		\\[10pt]
+		\displaystyle U_{i + 1, j}^{n + \frac{1}{2}} = \frac{1}{4} \left(
+		U_{i + 2, j}^{n} + U_{i, j}^{n} + U_{i + 1, j + 1}^{n} + U_{i + 1, j - 1}^{n} \right) -
+		\frac{\dt}{2} \left( \frac{X_{i + 2, j}^{n} - X_{i, j}^{n}}{\dx} +
+		\frac{Y_{i + 1, j + 1}^{n} - Y_{i + 1, j - 1}^{n}}{\dy} +
+		2 S_{i + 1, j}^{n} \right)
+		\\[10pt]
+		\displaystyle U_{i, j - 1}^{n + \frac{1}{2}} = \frac{1}{4} \left(
+		U_{i + 1, j - 1}^{n} + U_{i - 1, j - 1}^{n} + U_{i, j}^{n} + U_{i, j - 2}^{n} \right) -
+		\frac{\dt}{2} \left( \frac{X_{i + 1, j - 1}^{n} - X_{i - 1, j - 1}^{n}}{\dx} +
+		\frac{Y_{i, j}^{n} - Y_{i, j - 2}^{n}}{\dy} +
+		2 S_{i, j - 1}^{n} \right)
+		\\[10pt]
+		\displaystyle U_{i, j + 1}^{n + \frac{1}{2}} = \frac{1}{4} \left(
+		U_{i + 1, j + 1}^{n} + U_{i - 1, j + 1}^{n} + U_{i, j + 2}^{n} + U_{i, j}^{n} \right) -
+		\frac{\dt}{2} \left( \frac{X_{i + 1, j + 1}^{n} - X_{i - 1, j + 1}^{n}}{\dx} +
+		\frac{Y_{i, j + 2}^{n} - Y_{i, j}^{n}}{\dy} +
+		2 S_{i, j + 1}^{n} \right)
+	\end{cases}
+\end{equation}	
+\begin{equation}
+	\displaystyle U_{i, j}^{n + 1} = U_{i, j}^{n} - 
+	\dt \left( \frac{X_{i + 1, j}^{n + \frac{1}{2}} - X_{i - 1, j}^{n + \frac{1}{2}}}{\dx} +
+	\frac{Y_{i, j + 1}^{n + \frac{1}{2}} - Y_{i, j - 1}^{n + \frac{1}{2}}}{\dy} +
+	S_{i, j}^{n} \right)
+\end{equation}
+\begin{equation*}
+	\displaystyle
+	X_{i, j}^{n} = X(U_{i, j}^{n}), X_{i, j}^{n + \frac{1}{2}} = X(U_{i, j}^{n + \frac{1}{2}})
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	Y_{i, j}^{n} = Y(U_{i, j}^{n}), Y_{i, j}^{n + \frac{1}{2}} = Y(U_{i, j}^{n + \frac{1}{2}})
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	S_{i, j}^{n} = S(U_{i, j}^{n})
+\end{equation*}
+
+\noindent На рисунке красным кружком является не только искомым узлом на следующем временном шаге, но и опорным 
+для промежуточных расчётом первой ступени, синие кружки выступают опорными узлами для той же ступени. Серые 
+кружки - опорные для финального шага. Заметим, что для данной схемы толщина "рамки"\space дополнительных
+узлов (ghost points) вокруг сетки расчётной области составляет уже два значения.

@@ -1,0 +1,110 @@
+Для решения уравнений гидродинамики придумано множество численных методов с различными степенью
+аппроксимации, областью устойчивости и подходам к граничным условиям. Однако каждая задача уникальна
+и требует особого исследования для подбора соответствующей схемы. Незначительная модификация
+уравнений способна сделать работающий для исходной системы метод абсолютно непригодным для решения
+новой.
+
+В данной работе будет рассматриваться система уравнений мелкой воды, описывающая волны Россби в
+постоянном вертикальном магнитном поле в приближении $\beta$-плоскости \cite{GeneralEq}. Кроме того будет показано, 
+какие сложности могут создавать даже незначительные значения (относительно остальных величин в системе) 
+магнитного поля при решении данной задачи.
+
+Запишем уравнения:
+
+\begin{equation}
+	\label{SystemToSolve}
+	\begin{cases}
+		\displaystyle \frac{\partial h}{\partial t} + 
+		\frac{\partial (hv_x)}{\partial x} + 
+		\frac{\partial (hv_y)}{\partial y} = 0 
+		\\[10pt]
+		\displaystyle \frac{\partial (hv_x)}{\partial t} + 
+		\frac{\partial \left(h \left(v_x^2 - B_x^2\right) + \frac{1}{2}gh^2\right)}{\partial x} +
+		\frac{\partial \left(h(v_x v_y - B_x B_y)\right)}{\partial y} +
+		\left( B_0 B_x - h v_y \left( f_0 + \frac{\partial f}{\partial y} y \right) \right) = 0
+		\\[10pt]
+		\displaystyle \frac{\partial (hv_y)}{\partial t} + 
+		\frac{\partial \left(h(v_x v_y - B_x B_y)\right)}{\partial x} +
+		\frac{\partial \left(h \left(v_y^2 - B_y^2\right) + \frac{1}{2}gh^2\right)}{\partial y} +
+		\left( B_0 B_y + h v_x \left( f_0 + \frac{\partial f}{\partial y} y \right) \right) = 0  
+		\\[10pt]			
+		\displaystyle \frac{\partial (hB_x)}{\partial t} +
+		\frac{\partial \left(h(v_y B_x - v_x B_y)\right)}{\partial y} +
+		B_0 v_x = 0
+		\\[10pt]
+		\displaystyle \frac{\partial (hB_y)}{\partial t} +
+		\frac{\partial \left(h(v_x B_y - v_y B_x)\right)}{\partial x} +
+		B_0 v_y = 0
+	\end{cases}
+\end{equation}
+	
+\noindent Вывод данной системы производится посредством выбора тонкого слоя, внутри которого
+значения скорости и поля вдоль вертикали изменяются незначительно, и последующего интегрирования 
+уравнений мелкой воды по его толщине. Подробности можно найти в статье \cite{RossbyContruct}.
+
+Численные эксперименты показали, что для наблюдения волн Росбби необходимо учитывать рельеф поверхности
+планеты либо динамику более плотных слоёв атмосферы, в противном случае даже значительные возмущения
+начальных условий не приводят к появлению волн и в конечном счёте затухают \cite{HoganCalc}. В связи с этим 
+добавим в слагаемое $S$ компоненты градиента поверхности, в качестве которой будет выступать двумерная
+функция Гаусса с одинаковой дисперсией по обеим осям:
+
+\begin{equation}
+	\displaystyle
+	H(x, y) = 4000 \cdot \frac{1}{2 \pi \sigma^2} e^{-\frac{(x - \mu_1)^2 + (y - \mu_2)^2}{2 \sigma^2}}
+\end{equation}
+
+\noindent Тогда система примет вид
+	
+\begin{equation}
+	\frac{\partial U}{\partial t} +
+	\frac{\partial X}{\partial x} +
+	\frac{\partial Y}{\partial y} +
+	S = 0
+\end{equation}
+\begin{equation}
+	\begin{cases}
+		U =
+		\begin{pmatrix}
+			h & h v_x & h v_y & B_x & B_y
+		\end{pmatrix}^T
+		\\
+		X =
+		\begin{pmatrix}
+			\displaystyle h v_x 
+			& 
+			\displaystyle h \left( v_x^2 - B_x^2 \right) + \frac{1}{2} g h^2
+			& 
+			\displaystyle h \left( v_x v_y - B_x B_y \right)
+			& 
+			\displaystyle 0
+			& 
+			\displaystyle h \left( v_x B_y - v_y B_x \right)
+		\end{pmatrix}^T
+		\\
+		Y =
+		\begin{pmatrix}
+			\displaystyle h v_y 
+			& 
+			\displaystyle h \left( v_x v_y - B_x B_y \right)
+			& 
+			\displaystyle h \left( v_y^2 - B_y^2 \right) + \frac{1}{2} g h^2
+			& 
+			\displaystyle h \left( v_y B_x - v_x B_y \right)
+			& 
+			\displaystyle 0
+		\end{pmatrix}^T
+		\\
+		S =
+		\begin{pmatrix}
+			\displaystyle 0
+			& 
+			\displaystyle B_0 B_x - h v_y \left( f_0 + \frac{\partial f}{\partial y} y \right) + g \frac{\partial H}{\partial x}
+			& 
+			\displaystyle B_0 B_y + h v_x \left( f_0 + \frac{\partial f}{\partial y} y \right) + g \frac{\partial H}{\partial y}
+			& 
+			\displaystyle B_0 v_x
+			& 
+			\displaystyle B_0 v_y
+		\end{pmatrix}^T
+	\end{cases}
+\end{equation}

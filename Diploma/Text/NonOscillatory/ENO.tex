@@ -1,0 +1,190 @@
+Essentially Non-oscillatory (ENO) схема, наряду с TVD схемами, используется для предотвращения колебаний 
+решения вблизи разрывов производных. В основе данной схемы лежит выбор серии опорных узлов, минимально
+отличающихся между собой по значениям, то есть поиск максимально гладкого участка.
+
+Определим ячейки на расчётной сетке:
+
+\begin{equation*}
+	\displaystyle
+	I_i = \left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}} \right]
+\end{equation*}
+
+\noindent Пусть $p_i(x)$ - степенная функция, аппроксимирующая искомую в ячейке $I_i$, тогда на границах
+ячейки 
+
+\begin{equation*}
+	\displaystyle
+	v^{-}_{i + \frac{1}{2}} = p_i \left( x_{i + \frac{1}{2}} \right),
+	\qquad
+	v^{+}_{i - \frac{1}{2}} = p_i \left( x_{i - \frac{1}{2}} \right)
+\end{equation*}
+
+\noindent Если $k$ - выбранный нами порядок схемы, тогда значение в узле $i$ на следующем временном шаге будет 
+аппроксимироваться узлом $i$ на данном шаге, $r$ узлами слева от $i$ и $s$ узлами справа, причём
+должно быть выполнено соотношение
+
+\begin{equation*}
+	r + s + 1 = k,
+\end{equation*}
+
+\noindent тогда на границах аппроксимации приобретают вид
+
+\begin{equation*}
+	\displaystyle
+	v^{-}_{i + \frac{1}{2}} = \sum_{j = 0}^{k - 1} c_{rj} v_{i - r + j},
+	\qquad
+	v^{+}_{i - \frac{1}{2}} = \sum_{j = 0}^{k - 1} c_{r - 1, j} v_{i - r + j}
+\end{equation*}
+
+\begin{equation*}
+	\displaystyle
+	c_{rj} = \sum_{m = j + 1}^{k} \frac{\displaystyle\sum_{\substack{l = 0 \\ l \ne m}}^{k} 
+		\displaystyle\prod_{\substack{q = 0 \\ q \ne m, l}}^{k}(r -q + 1)}
+	{\displaystyle\prod_{\substack{l = 0 \\ l \ne m}}^{k}(m - l)}
+\end{equation*}
+
+\noindent Стоит отметить, что в общем случае под знаком суммы стоит усреднённое по ячейке значение функции на 
+данном временном шаге $\overline{v}_{i - r + j}$, однако в случае равномерной сетки средние значения
+совпадают со значениями в узлах. Выражение для коэффициентов $c_{rj}$ также записано специально для нашей задачи.
+Более общий подход и значения коэффициентов для разных порядков можно найти в статье \cite{ENOWENO}.
+
+Рассмотрим схему ENO 3-го порядка. Запишем все возможные коэффициенты $c_{rj}$ для допустимых серий опорных
+узлов:
+
+\begin{table}[htbp]
+	\centering
+	\begin{tabular}{|c||c|c|c|}
+		\hline
+		r  & j = 0 & j = 1 & j = 2 \\ \hline\hline
+		-1 & 11/6  & -7/6  & 1/3   \\ \hline
+		0  & 1/3   & 5/6   & -1/6  \\ \hline
+		1  & -1/6  & 5/6   & 1/3   \\ \hline
+		2  & 1/3   & -7/6  & 11/6  \\ \hline
+	\end{tabular}
+\end{table}
+
+\noindent Теперь предположим, что мы решаем задачу с разрывом производной между узлами $u_j$ и $u_{j + 1}$:
+
+\begin{figure}[htbp]
+	\centering
+	\includesvg[width=250px]{SVGs/ENO}
+	\caption{Схема ENO}
+\end{figure}
+
+\noindent Подбор подходящей серии при расчёте узлов $u^{n + 1}_j$ и $u^{n + 1}_{j + 1}$ заключается в том, чтобы 
+из этой серии убрать разрыв, то есть синие узлы и $u^n_j$ используются для расчёта $u^{n + 1}_j$, а красные и 
+$u^n_{j + 1}$ - для $u^{n + 1}_{j + 1}$. Чтобы автоматизировать данный процесс выбора, вводится разделённая
+разность Ньютона
+
+\begin{equation*}
+	\displaystyle
+	V(x) = \int_{-\infty}^{x} v(\xi) d \xi
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	V \left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}} \right] = 
+	\frac{V \left( x_{i + \frac{1}{2}} \right) - V \left( x_{i - \frac{1}{2}} \right)}
+	{x_{i + \frac{1}{2}} - x_{i - \frac{1}{2}}} = v_i,
+\end{equation*}
+
+\noindent обладающая на однородной сетке следующим свойством:
+
+\begin{equation*}
+	\displaystyle
+	V \left[ x_{i - \frac{1}{2}}, ..., x_{i + j + \frac{1}{2}} \right] =
+	V \left[ x_{i + \frac{1}{2}}, ..., x_{i + j + \frac{1}{2}} \right] -
+	V \left[ x_{i - \frac{1}{2}}, ..., x_{i + j - \frac{1}{2}} \right], \: j \ge 1
+\end{equation*}
+
+\noindent Например, для интересующего нас случая схемы 3-го порядка возможны три разные серии из трёх узлов,
+поэтому запишем
+
+\begin{equation*}
+	\begin{cases}
+		\displaystyle
+		V \left[ x_{i - \frac{3}{2}}, x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}} \right] = v_{i} - v_{i - 1}
+		\\[10px]		
+		\displaystyle
+		V \left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}}, x_{i + \frac{3}{2}} \right] = v_{i + 1} - v_{i}
+		\\[10px]
+		\displaystyle
+		V \left[ x_{i + \frac{1}{2}}, x_{i + \frac{3}{2}}, x_{i + \frac{5}{2}} \right] = v_{i + 2} - v_{i + 1}
+	\end{cases}
+\end{equation*}
+
+Теперь опишем алгоритм выбора серии:
+
+\begin{itemize}
+	\item
+	Выберем ячейку, содержащую $v_i$, то есть $\left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}} \right]$.
+	\item
+	Произведём сравнение $\left| V \left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}} \right] \right|$ и
+	$\left| V \left[ x_{i + \frac{1}{2}}, x_{i + \frac{3}{2}} \right] \right|$.
+	\item 
+	Если
+	$\left| V \left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}} \right] \right| \le 
+	\left| V \left[ x_{i + \frac{1}{2}}, x_{i + \frac{3}{2}} \right] \right|$, то добавим точку слева и будем 
+	сравнивать $\left| V \left[ x_{i - \frac{3}{2}}, x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}} \right] \right|$ и
+	$\left| V \left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}}, x_{i + \frac{3}{2}} \right] \right|$. В противном 
+	случае добавляем точку справа и сравниваем 
+	$\left| V \left[ x_{i - \frac{1}{2}}, x_{i + \frac{1}{2}}, x_{i + \frac{3}{2}} \right] \right|$ и
+	$\left| V \left[ x_{i + \frac{1}{2}}, x_{i + \frac{3}{2}}, x_{i + \frac{5}{2}} \right] \right|$.
+	\item 
+	В итоге выбираем серию, для которой модуль функции $V$ меньше.
+\end{itemize}
+
+Поскольку для неосциллирующих схем необходима монотонность потока, производят его разделение
+
+\begin{equation*}
+	\displaystyle
+	X(u) = X^{+}(u)  + X^{-}(u)
+\end{equation*}
+
+\noindent таким образом, чтобы выполнялись условия
+
+\begin{equation*}
+	\displaystyle
+	\frac{dX^{+}(u)}{du} \ge 0, \: \frac{dX^{-}(u)}{du} \le 0
+\end{equation*}
+
+\noindent Наиболее распространённым является разделение Лакса-Фридрихса:
+
+\begin{equation*}
+	\displaystyle
+	X^{\pm}(u) = \frac{1}{2} (X(u) \pm \alpha u),
+\end{equation*}
+
+\begin{equation*}
+	\displaystyle
+	\alpha = \max_u \max_{1 \le j \le m} \left| \lambda_j (u) \right|
+\end{equation*}
+
+\noindent где $\lambda(u)$ - собственные значения оператора $X$. Тогда для аппроксимации потока примем
+
+\begin{equation*}
+	\displaystyle
+	v_i = X^{+}(u_i), \qquad X^{+}_{i + \frac{1}{2}} = v^{-}_{i + \frac{1}{2}}
+\end{equation*}
+
+\noindent и посчитаем $X^{+}_{i + \frac{1}{2}}$, затем аналогично примем
+
+\begin{equation*}
+	\displaystyle
+	v_i = X^{-}(u_i), \qquad X^{-}_{i + \frac{1}{2}} = v^{+}_{i + \frac{1}{2}}.
+\end{equation*}
+
+\noindent Посчитав $X^{-}_{i + \frac{1}{2}}$, окончательно запишем
+
+\begin{equation*}
+	\displaystyle
+	X_{i + \frac{1}{2}} = X^{+}_{i + \frac{1}{2}} + X^{-}_{i + \frac{1}{2}}
+\end{equation*}
+
+\noindent Чтобы получить аппроксимацию производной по пространству, повторим действия для $X_{i + \frac{1}{2}}$
+и возьмём разность
+
+\begin{equation*}
+	\displaystyle
+	\frac{\partial X}{\partial x} \approx 
+	\frac{X_{i + \frac{1}{2}} - X_{i - \frac{1}{2}}}{\dx}
+\end{equation*}

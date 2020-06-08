@@ -1,0 +1,72 @@
+Запишем схему Рихтмайера-Цваса для для уравнения
+
+\begin{equation*}
+	\displaystyle
+	\frac{\partial u}{\partial t} + a \frac{\partial u}{\partial x} = 0
+\end{equation*}
+
+\begin{equation*}
+	\begin{cases}
+		\displaystyle
+		u^{n + \frac{1}{2}}_{j + \frac{1}{2}} = \frac{1}{2} (u^n_{j + 1} + u^n_j) -
+		\frac{a\dt}{2\dx} (u^n_{j + 1} - u^n_j)
+		\\[10pt]
+		\displaystyle
+		u^{n + \frac{1}{2}}_{j - \frac{1}{2}} = \frac{1}{2} (u^n_j + u^n_{j - 1}) -
+		\frac{a\dt}{2\dx} (u^n_j - u^n_{j - 1})
+	\end{cases}
+\end{equation*}
+\begin{equation*}
+		\displaystyle
+	u^{n + 1}_j = u^n_j - \frac{a\dt}{\dx}(u^{n + \frac{1}{2}}_{j + \frac{1}{2}} - u^{n + \frac{1}{2}}_{j - \frac{1}{2}})
+\end{equation*}
+
+\noindent Как можно заметить, в одномерном случае данная схема отличается от схемы Рихтмайера только
+"размахом"\space опорных узлов, поэтому исследование на устойчивость становится очевидным:
+
+\begin{equation*}
+	\displaystyle
+	u^{n + 1}_j = u^n_j - \frac{a\dt}{\dx} \left( \frac{1}{2} (u^n_{j + 1} - u^n_{j - 1}) - 
+	\frac{a\dt}{2\dx}(u^n_{j + 1} - 2u^n_j + u^n_{j - 1}) \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	e^{a\dt} = 1 - \frac{a\dt}{\dx} \left( \frac{1}{2} (e^{ik_m\dx} - e^{-ik_m\dx}) - 
+	\frac{a\dt}{2\dx}(e^{ik_m\dx} - 2 + e^{-ik_m\dx}) \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	e^{a\dt} = 1 - \frac{a\dt}{\dx} \left( i \cdot sin(k_m\dx) +
+	\frac{2a\dt}{\dx}sin^2 \left( \frac{k_m\dx}{2} \right) \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	|e^{a\dt}| = \sqrt{ \left( 1 - \frac{2a^2\dt^2}{\dx^2}sin^2\left( \frac{k_m\dx}{2} \right) \right)^2 +
+	\frac{a^2\dt^2}{\dx^2} sin^2(k_m\dx) } \le 1
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{4a^2\dt^2}{\dx^2}sin^4 \left( \frac{k_m\dx}{2} \right) - 4sin^2 \left( \frac{k_m\dx}{2} \right) + 
+	sin^2(k_m\dx) \le 0
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{4a^2\dt^2}{\dx^2}sin^4 \left( \frac{k_m\dx}{2} \right) - 4sin^2 \left( \frac{k_m\dx}{2} \right) + 
+	4sin^2 \left( \frac{k_m\dx}{2} \right) \left(1 - sin^2 \left( \frac{k_m\dx}{2} \right) \right) \le 0
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{4a^2\dt^2}{\dx^2}sin^4\left( \frac{k_m\dx}{2} \right) \le 4sin^4\left( \frac{k_m\dx}{2} \right)
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\frac{a^2\dt^2}{\dx^2} \le 1
+\end{equation*}
+\begin{equation*}
+	\displaystyle
+	\dt \le \frac{\dx}{|a|}
+\end{equation*}
+
+Отличие этой схемы от предыдущей не только в "размахе"\space опорных узлов, но и в отсутствии зависимости
+необходимого условия устойчивости от размерности пространства $p$, то есть данный вариант схемы допускает
+максимальный шаг по времени в $\sqrt{p}$ больше, чем предыдущий \cite{RichtmyerScheme, ZwasScheme}.

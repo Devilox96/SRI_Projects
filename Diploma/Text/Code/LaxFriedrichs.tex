@@ -1,0 +1,9 @@
+\begin{lstlisting}[language=C++, caption={Lax-Friedrichs scheme 2D}]
+	template <class T>
+	T solve(const T& tOffsetMinusX, const T& tOffsetPlusX,
+			const T& tOffsetMinusY, const T& tOffsetPlusY) {		
+		return 	(tOffsetMinusX + tOffsetPlusX + tOffsetMinusY + tOffsetPlusY) / 4.0 -
+				((funcX(tOffsetPlusX) - funcX(tOffsetMinusX)) * mRatioX +
+				(funcY(tOffsetPlusY) - funcY(tOffsetMinusY)) * mRatioY) / 2.0;
+	}
+\end{lstlisting}

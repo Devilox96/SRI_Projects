@@ -1,0 +1,683 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.9 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{GeneralEq}{article}{}
+      \name{author}{1}{}{%
+        {{hash=a970d28df7fdafc4ec949e94a79ee0f0}{%
+           family={Д.\bibnamedelimi А.\bibnamedelimi Климачков},
+           familyi={Д\bibinitperiod\bibinitdelim А\bibinitperiod\bibinitdelim К\bibinitperiod},
+           given={А.\bibnamedelimi С.\bibnamedelimi Петросян},
+           giveni={А\bibinitperiod\bibinitdelim С\bibinitperiod\bibinitdelim П\bibinitperiod}}}%
+      }
+      \strng{namehash}{a970d28df7fdafc4ec949e94a79ee0f0}
+      \strng{fullhash}{a970d28df7fdafc4ec949e94a79ee0f0}
+      \strng{bibnamehash}{a970d28df7fdafc4ec949e94a79ee0f0}
+      \strng{authorbibnamehash}{a970d28df7fdafc4ec949e94a79ee0f0}
+      \strng{authornamehash}{a970d28df7fdafc4ec949e94a79ee0f0}
+      \strng{authorfullhash}{a970d28df7fdafc4ec949e94a79ee0f0}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issue}{4}
+      \field{journaltitle}{ЖЭТФ}
+      \field{title}{Волны Россби в магнитной гидродинамике вращающейся плазмы в приближении мелкой воды}
+      \field{volume}{том 152}
+      \field{year}{2017}
+      \field{pages}{705\bibrangedash 721}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.7868/S004445101710008X
+      \endverb
+    \endentry
+    \entry{RossbyContruct}{article}{}
+      \name{author}{2}{}{%
+        {{hash=b0869b0fa5afb8e74726493d3db7f0a6}{%
+           family={Klimachkov},
+           familyi={K\bibinitperiod},
+           given={D.A.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=6c4695ee28f16daab1a29500f8f1e501}{%
+           family={Petrosyan},
+           familyi={P\bibinitperiod},
+           given={A.S.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{7c0aeac77082df5507107b4fe16c3e73}
+      \strng{fullhash}{7c0aeac77082df5507107b4fe16c3e73}
+      \strng{bibnamehash}{7c0aeac77082df5507107b4fe16c3e73}
+      \strng{authorbibnamehash}{7c0aeac77082df5507107b4fe16c3e73}
+      \strng{authornamehash}{7c0aeac77082df5507107b4fe16c3e73}
+      \strng{authorfullhash}{7c0aeac77082df5507107b4fe16c3e73}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0375-9601}
+      \field{journaltitle}{Physics Letters A}
+      \field{number}{2}
+      \field{title}{Parametric instabilities in shallow water magnetohydrodynamics of astrophysical plasma in external magnetic field}
+      \field{volume}{381}
+      \field{year}{2017}
+      \field{pages}{106\bibrangedash 113}
+      \range{pages}{8}
+      \verb{doi}
+      \verb https://doi.org/10.1016/j.physleta.2016.10.011
+      \endverb
+    \endentry
+    \entry{HoganCalc}{online}{}
+      \name{author}{1}{}{%
+        {{hash=b5a8d8cdcce7d1cd1a88af890c6be37a}{%
+           family={Hogan},
+           familyi={H\bibinitperiod},
+           given={Robin},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{b5a8d8cdcce7d1cd1a88af890c6be37a}
+      \strng{fullhash}{b5a8d8cdcce7d1cd1a88af890c6be37a}
+      \strng{bibnamehash}{b5a8d8cdcce7d1cd1a88af890c6be37a}
+      \strng{authorbibnamehash}{b5a8d8cdcce7d1cd1a88af890c6be37a}
+      \strng{authornamehash}{b5a8d8cdcce7d1cd1a88af890c6be37a}
+      \strng{authorfullhash}{b5a8d8cdcce7d1cd1a88af890c6be37a}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{2}
+      \field{title}{Computer Practical: Shallow Water Model}
+      \field{year}{2014}
+      \verb{urlraw}
+      \verb http://www.met.reading.ac.uk/~swrhgnrj/shallow_water_model/swe_notes.pdf
+      \endverb
+      \verb{url}
+      \verb http://www.met.reading.ac.uk/~swrhgnrj/shallow_water_model/swe_notes.pdf
+      \endverb
+    \endentry
+    \entry{FDM}{book}{}
+      \name{author}{1}{}{%
+        {{hash=72c35344cecfdbbeebc71d2ca292436a}{%
+           family={Rezzolla},
+           familyi={R\bibinitperiod},
+           given={Luciano},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Institute for Theoretical Physics, Frankfurt, Germany}%
+      }
+      \strng{namehash}{72c35344cecfdbbeebc71d2ca292436a}
+      \strng{fullhash}{72c35344cecfdbbeebc71d2ca292436a}
+      \strng{bibnamehash}{72c35344cecfdbbeebc71d2ca292436a}
+      \strng{authorbibnamehash}{72c35344cecfdbbeebc71d2ca292436a}
+      \strng{authornamehash}{72c35344cecfdbbeebc71d2ca292436a}
+      \strng{authorfullhash}{72c35344cecfdbbeebc71d2ca292436a}
+      \field{sortinit}{4}
+      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{10}
+      \field{title}{Finite-difference Methods for the Solution of Partial Differential Equations}
+      \field{year}{2018}
+    \endentry
+    \entry{FVM}{book}{}
+      \name{author}{2}{}{%
+        {{hash=361622970d1f3ef8bb9a1ab183d54c29}{%
+           family={Ковеня},
+           familyi={К\bibinitperiod},
+           given={В.\bibnamedelimi М.},
+           giveni={В\bibinitperiod\bibinitdelim М\bibinitperiod}}}%
+        {{hash=2b3e95912cd9d6eb2e78eaa366cc6492}{%
+           family={Чирков},
+           familyi={Ч\bibinitperiod},
+           given={Д.\bibnamedelimi В.},
+           giveni={Д\bibinitperiod\bibinitdelim В\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {НГУ}%
+      }
+      \strng{namehash}{c23182a76e776febd69b4688fc9acfcc}
+      \strng{fullhash}{c23182a76e776febd69b4688fc9acfcc}
+      \strng{bibnamehash}{c23182a76e776febd69b4688fc9acfcc}
+      \strng{authorbibnamehash}{c23182a76e776febd69b4688fc9acfcc}
+      \strng{authornamehash}{c23182a76e776febd69b4688fc9acfcc}
+      \strng{authorfullhash}{c23182a76e776febd69b4688fc9acfcc}
+      \field{sortinit}{5}
+      \field{sortinithash}{3c19c3776b658b3558e9e2e4840c01e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{Введение в теорию}
+      \field{title}{Методы конечных разностей и конечных объёмов для решения задач математической физики}
+      \field{year}{2013}
+    \endentry
+    \entry{FEM}{inbook}{}
+      \name{author}{2}{}{%
+        {{hash=8e39127b69a7fa42b7ae9935028ef4e1}{%
+           family={Hesthaven},
+           familyi={H\bibinitperiod},
+           given={Jan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=21cc194d44bff2dc873217ef656ec050}{%
+           family={Warburton},
+           familyi={W\bibinitperiod},
+           given={Tim},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{294e3a3b927fd742d7b30009fd281e8d}
+      \strng{fullhash}{294e3a3b927fd742d7b30009fd281e8d}
+      \strng{bibnamehash}{294e3a3b927fd742d7b30009fd281e8d}
+      \strng{authorbibnamehash}{294e3a3b927fd742d7b30009fd281e8d}
+      \strng{authornamehash}{294e3a3b927fd742d7b30009fd281e8d}
+      \strng{authorfullhash}{294e3a3b927fd742d7b30009fd281e8d}
+      \field{sortinit}{6}
+      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{01}
+      \field{title}{Nodal Discontinuous Galerkin Methods: Algorithms, Analysis, and Applications}
+      \field{volume}{54}
+      \field{year}{2007}
+    \endentry
+    \entry{MagneticCalc}{online}{}
+      \list{organization}{2}{%
+        {National Oceanic}%
+        {Atmospheric Administration}%
+      }
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
+      \field{labeltitlesource}{title}
+      \field{title}{Magnetic Field Calculators}
+      \verb{urlraw}
+      \verb https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#igrfgrid
+      \endverb
+      \verb{url}
+      \verb https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#igrfgrid
+      \endverb
+    \endentry
+    \entry{SchemesComparison}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=df3405b1feaf95bd3cea715ab1f59e09}{%
+           family={Dong},
+           familyi={D\bibinitperiod},
+           given={Shuonan},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Princeton Plasma Physics Laboratory}%
+      }
+      \strng{namehash}{df3405b1feaf95bd3cea715ab1f59e09}
+      \strng{fullhash}{df3405b1feaf95bd3cea715ab1f59e09}
+      \strng{bibnamehash}{df3405b1feaf95bd3cea715ab1f59e09}
+      \strng{authorbibnamehash}{df3405b1feaf95bd3cea715ab1f59e09}
+      \strng{authornamehash}{df3405b1feaf95bd3cea715ab1f59e09}
+      \strng{authorfullhash}{df3405b1feaf95bd3cea715ab1f59e09}
+      \field{sortinit}{8}
+      \field{sortinithash}{07edf88d4ea82509b9c4b4d13f41c452}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Finite Difference Methods for the Hyperbolic Wave Partial Differential Equations}
+      \field{year}{2006}
+    \endentry
+    \entry{RichtmyerOriginal}{article}{}
+      \name{author}{1}{}{%
+        {{hash=4cd8c7d01a5be98965333f91b79264b5}{%
+           family={Richtmyer},
+           familyi={R\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{4cd8c7d01a5be98965333f91b79264b5}
+      \strng{fullhash}{4cd8c7d01a5be98965333f91b79264b5}
+      \strng{bibnamehash}{4cd8c7d01a5be98965333f91b79264b5}
+      \strng{authorbibnamehash}{4cd8c7d01a5be98965333f91b79264b5}
+      \strng{authornamehash}{4cd8c7d01a5be98965333f91b79264b5}
+      \strng{authorfullhash}{4cd8c7d01a5be98965333f91b79264b5}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issue}{63}
+      \field{journaltitle}{NCAR Technical Notes}
+      \field{month}{01}
+      \field{title}{A Survey of Difference Methods for Non-Steady Fluid Dynamics}
+      \field{year}{1962}
+      \verb{doi}
+      \verb 10.5065/D67P8WCQ
+      \endverb
+    \endentry
+    \entry{RichtmyerScheme}{book}{}
+      \name{author}{1}{}{%
+        {{hash=4e6e54c68adc0a0d5f99e28e6fbbab8e}{%
+           family={Flaherty},
+           familyi={F\bibinitperiod},
+           given={Joseph\bibnamedelima E.},
+           giveni={J\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Rensselaer Polytechnic Institute, United States}%
+      }
+      \strng{namehash}{4e6e54c68adc0a0d5f99e28e6fbbab8e}
+      \strng{fullhash}{4e6e54c68adc0a0d5f99e28e6fbbab8e}
+      \strng{bibnamehash}{4e6e54c68adc0a0d5f99e28e6fbbab8e}
+      \strng{authorbibnamehash}{4e6e54c68adc0a0d5f99e28e6fbbab8e}
+      \strng{authornamehash}{4e6e54c68adc0a0d5f99e28e6fbbab8e}
+      \strng{authorfullhash}{4e6e54c68adc0a0d5f99e28e6fbbab8e}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Partial Differential Equations}
+    \endentry
+    \entry{RichtmyerMult}{article}{}
+      \name{author}{1}{}{%
+        {{hash=eddf2e91acffd94d9b493b81e89855df}{%
+           family={WILSON},
+           familyi={W\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{eddf2e91acffd94d9b493b81e89855df}
+      \strng{fullhash}{eddf2e91acffd94d9b493b81e89855df}
+      \strng{bibnamehash}{eddf2e91acffd94d9b493b81e89855df}
+      \strng{authorbibnamehash}{eddf2e91acffd94d9b493b81e89855df}
+      \strng{authornamehash}{eddf2e91acffd94d9b493b81e89855df}
+      \strng{authorfullhash}{eddf2e91acffd94d9b493b81e89855df}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IMA Journal of Applied Mathematics}
+      \field{month}{10}
+      \field{number}{2}
+      \field{title}{Stability of Richtmyer Type Difference Schemes in any Finite Number of Space Variables and Their Comparison with Multistep Strang Schemes}
+      \field{volume}{10}
+      \field{year}{1972}
+      \field{pages}{238\bibrangedash 257}
+      \range{pages}{20}
+      \verb{doi}
+      \verb 10.1093/imamat/10.2.238
+      \endverb
+    \endentry
+    \entry{ZwasScheme}{article}{}
+      \name{author}{1}{}{%
+        {{hash=54740efdd0851efc312e4070e0c2e1be}{%
+           family={Zwas},
+           familyi={Z\bibinitperiod},
+           given={Gideon},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{54740efdd0851efc312e4070e0c2e1be}
+      \strng{fullhash}{54740efdd0851efc312e4070e0c2e1be}
+      \strng{bibnamehash}{54740efdd0851efc312e4070e0c2e1be}
+      \strng{authorbibnamehash}{54740efdd0851efc312e4070e0c2e1be}
+      \strng{authornamehash}{54740efdd0851efc312e4070e0c2e1be}
+      \strng{authorfullhash}{54740efdd0851efc312e4070e0c2e1be}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Numer. Math.}
+      \field{month}{10}
+      \field{number}{5}
+      \field{title}{On Two Step Lax-Wendroff Methods in Several Dimensions}
+      \field{volume}{20}
+      \field{year}{1972}
+      \field{pages}{350\bibrangedash 355}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1007/BF01402557
+      \endverb
+    \endentry
+    \entry{ArtifVisc}{article}{}
+      \name{author}{1}{}{%
+        {{hash=2f9aa1034a00ebfe32d6325d1b9ecdc1}{%
+           family={J.\bibnamedelimi Von\bibnamedelima Neumann},
+           familyi={J\bibinitperiod\bibinitdelim V\bibinitperiod\bibinitdelim N\bibinitperiod},
+           given={R.\bibnamedelimi D.\bibnamedelimi Richtmyer},
+           giveni={R\bibinitperiod\bibinitdelim D\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{2f9aa1034a00ebfe32d6325d1b9ecdc1}
+      \strng{fullhash}{2f9aa1034a00ebfe32d6325d1b9ecdc1}
+      \strng{bibnamehash}{2f9aa1034a00ebfe32d6325d1b9ecdc1}
+      \strng{authorbibnamehash}{2f9aa1034a00ebfe32d6325d1b9ecdc1}
+      \strng{authornamehash}{2f9aa1034a00ebfe32d6325d1b9ecdc1}
+      \strng{authorfullhash}{2f9aa1034a00ebfe32d6325d1b9ecdc1}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issue}{3}
+      \field{journaltitle}{Journal of Applied Physics}
+      \field{month}{03}
+      \field{title}{A Method for the Numerical Calculation of Hydrodynamic Shocks}
+      \field{volume}{21}
+      \field{year}{1950}
+      \field{pages}{232\bibrangedash 237}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1063/1.1699639
+      \endverb
+    \endentry
+    \entry{ShockViscosity}{article}{}
+      \name{author}{2}{}{%
+        {{hash=ba76c1d885433b291165ab7155880518}{%
+           family={Campbell},
+           familyi={C\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod}}}%
+        {{hash=329f91a38fb6c6cffff34ac578e145c7}{%
+           family={Vignjevic},
+           familyi={V\bibinitperiod},
+           given={Rade},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{d192bc3bb2ed3378cbd132b91f78dc17}
+      \strng{fullhash}{d192bc3bb2ed3378cbd132b91f78dc17}
+      \strng{bibnamehash}{d192bc3bb2ed3378cbd132b91f78dc17}
+      \strng{authorbibnamehash}{d192bc3bb2ed3378cbd132b91f78dc17}
+      \strng{authornamehash}{d192bc3bb2ed3378cbd132b91f78dc17}
+      \strng{authorfullhash}{d192bc3bb2ed3378cbd132b91f78dc17}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Predictive Modeling of Dynamic Processes: A Tribute to Professor Klaus Thoma}
+      \field{month}{06}
+      \field{title}{Artificial Viscosity Methods forModelling Shock Wave Propagation}
+      \field{year}{2009}
+      \field{pages}{349\bibrangedash 365}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.1007/978-1-4419-0727-1_19
+      \endverb
+    \endentry
+    \entry{Oscillations}{article}{}
+      \name{author}{4}{}{%
+        {{hash=102c6ad49eb8d37d03c2d1ca0934d452}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Jiequan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=8f6b674c82976f8fefc7c041a2eda08b}{%
+           family={Tang},
+           familyi={T\bibinitperiod},
+           given={Huazhong},
+           giveni={H\bibinitperiod}}}%
+        {{hash=8fa1507b8822da70ffd6f4ee27879f21}{%
+           family={Warnecke},
+           familyi={W\bibinitperiod},
+           given={Gerald},
+           giveni={G\bibinitperiod}}}%
+        {{hash=9eb3191fa5e858fc83b79615dbdcbe64}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Lumei},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{7fd0c5aa680e3109ff6c1edded1e085c}
+      \strng{fullhash}{ea170e062ccc561704b5f02cbd624e80}
+      \strng{bibnamehash}{7fd0c5aa680e3109ff6c1edded1e085c}
+      \strng{authorbibnamehash}{7fd0c5aa680e3109ff6c1edded1e085c}
+      \strng{authornamehash}{7fd0c5aa680e3109ff6c1edded1e085c}
+      \strng{authorfullhash}{ea170e062ccc561704b5f02cbd624e80}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Math. Comput.}
+      \field{month}{10}
+      \field{title}{Local oscillations in finite difference solutions of hyperbolic conservation laws}
+      \field{volume}{78}
+      \field{year}{2009}
+      \field{pages}{1997\bibrangedash 2018}
+      \range{pages}{22}
+      \verb{doi}
+      \verb 10.1090/S0025-5718-09-02219-4
+      \endverb
+    \endentry
+    \entry{Smoothing}{online}{}
+      \name{author}{1}{}{%
+        {{hash=e0b5ddd69379d55aa106f4de6615edcf}{%
+           family={Tryggvason},
+           familyi={T\bibinitperiod},
+           given={Gretar},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {The University of Notre Dame}%
+      }
+      \strng{namehash}{e0b5ddd69379d55aa106f4de6615edcf}
+      \strng{fullhash}{e0b5ddd69379d55aa106f4de6615edcf}
+      \strng{bibnamehash}{e0b5ddd69379d55aa106f4de6615edcf}
+      \strng{authorbibnamehash}{e0b5ddd69379d55aa106f4de6615edcf}
+      \strng{authornamehash}{e0b5ddd69379d55aa106f4de6615edcf}
+      \strng{authorfullhash}{e0b5ddd69379d55aa106f4de6615edcf}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{2}
+      \field{subtitle}{Advection}
+      \field{title}{Computational Fluid Dynamics}
+      \field{year}{2011}
+      \verb{urlraw}
+      \verb https://www3.nd.edu/~gtryggva/CFD-Course/
+      \endverb
+      \verb{url}
+      \verb https://www3.nd.edu/~gtryggva/CFD-Course/
+      \endverb
+    \endentry
+    \entry{TheoryTVD}{thesis}{}
+      \name{author}{1}{}{%
+        {{hash=3588657f3367000dc7177afc37a96f95}{%
+           family={Yi},
+           familyi={Y\bibinitperiod},
+           given={Ju\bibnamedelima Y.},
+           giveni={J\bibinitperiod\bibinitdelim Y\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Utah State University}%
+      }
+      \strng{namehash}{3588657f3367000dc7177afc37a96f95}
+      \strng{fullhash}{3588657f3367000dc7177afc37a96f95}
+      \strng{bibnamehash}{3588657f3367000dc7177afc37a96f95}
+      \strng{authorbibnamehash}{3588657f3367000dc7177afc37a96f95}
+      \strng{authornamehash}{3588657f3367000dc7177afc37a96f95}
+      \strng{authorfullhash}{3588657f3367000dc7177afc37a96f95}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Definition and Construction of Entropy Satisfying Multiresolution Analysis (MRA)}
+      \field{type}{phdthesis}
+      \field{year}{2016}
+      \verb{eprint}
+      \verb All Graduate Theses and Dissertations
+      \endverb
+      \verb{urlraw}
+      \verb https://digitalcommons.usu.edu/etd/5057
+      \endverb
+      \verb{url}
+      \verb https://digitalcommons.usu.edu/etd/5057
+      \endverb
+    \endentry
+    \entry{Entropy}{article}{}
+      \name{author}{1}{}{%
+        {{hash=2b63438904574a967c62c6f652673c40}{%
+           family={Harten},
+           familyi={H\bibinitperiod},
+           given={Ami},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{2b63438904574a967c62c6f652673c40}
+      \strng{fullhash}{2b63438904574a967c62c6f652673c40}
+      \strng{bibnamehash}{2b63438904574a967c62c6f652673c40}
+      \strng{authorbibnamehash}{2b63438904574a967c62c6f652673c40}
+      \strng{authornamehash}{2b63438904574a967c62c6f652673c40}
+      \strng{authorfullhash}{2b63438904574a967c62c6f652673c40}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0021-9991}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{number}{3}
+      \field{title}{High resolution schemes for hyperbolic conservation laws}
+      \field{volume}{49}
+      \field{year}{1983}
+      \field{pages}{357\bibrangedash 393}
+      \range{pages}{37}
+      \verb{doi}
+      \verb https://doi.org/10.1016/0021-9991(83)90136-5
+      \endverb
+      \verb{urlraw}
+      \verb http://www.sciencedirect.com/science/article/pii/0021999183901365
+      \endverb
+      \verb{url}
+      \verb http://www.sciencedirect.com/science/article/pii/0021999183901365
+      \endverb
+    \endentry
+    \entry{TVD}{article}{}
+      \name{author}{2}{}{%
+        {{hash=8c6796137d9ae2ee1fc43d19d9ad92c2}{%
+           family={Чирков},
+           familyi={Ч\bibinitperiod},
+           given={Д.В.},
+           giveni={Д\bibinitperiod}}}%
+        {{hash=0111952123aca30b35b9c72ecd191cf7}{%
+           family={Черный},
+           familyi={Ч\bibinitperiod},
+           given={С.Г.},
+           giveni={С\bibinitperiod}}}%
+      }
+      \strng{namehash}{b00e266b010612f4f640ee6c1173d8a3}
+      \strng{fullhash}{b00e266b010612f4f640ee6c1173d8a3}
+      \strng{bibnamehash}{b00e266b010612f4f640ee6c1173d8a3}
+      \strng{authorbibnamehash}{b00e266b010612f4f640ee6c1173d8a3}
+      \strng{authornamehash}{b00e266b010612f4f640ee6c1173d8a3}
+      \strng{authorfullhash}{b00e266b010612f4f640ee6c1173d8a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Вычислительные технологии}
+      \field{number}{5}
+      \field{title}{Сравнение точности и сходимости некоторых TVD-схем}
+      \field{volume}{5}
+      \field{year}{2000}
+      \field{pages}{86\bibrangedash 107}
+      \range{pages}{22}
+    \endentry
+    \entry{RungeKuttaSchemes}{inbook}{}
+      \list{publisher}{1}{%
+        {Springer Berlin Heidelberg}%
+      }
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{High-Resolution Methods for Incompressible and Low-Speed Flows}
+      \field{isbn}{978-3-540-26454-5}
+      \field{title}{Time Integration Methods}
+      \field{year}{2005}
+      \field{pages}{99\bibrangedash 119}
+      \range{pages}{21}
+      \verb{doi}
+      \verb 10.1007/3-540-26454-X_7
+      \endverb
+    \endentry
+    \entry{ShallowWaterTVD}{article}{}
+      \name{author}{2}{}{%
+        {{hash=cf4532b79c448138130cdc5136ebec5c}{%
+           family={Louaked},
+           familyi={L\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=052b6497643e309fd7eb61bc3b9b31ce}{%
+           family={Hanich},
+           familyi={H\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{542632818deceac84e6b8bafc7e61dbb}
+      \strng{fullhash}{542632818deceac84e6b8bafc7e61dbb}
+      \strng{bibnamehash}{542632818deceac84e6b8bafc7e61dbb}
+      \strng{authorbibnamehash}{542632818deceac84e6b8bafc7e61dbb}
+      \strng{authornamehash}{542632818deceac84e6b8bafc7e61dbb}
+      \strng{authorfullhash}{542632818deceac84e6b8bafc7e61dbb}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Hydraulic Research}
+      \field{number}{3}
+      \field{title}{TVD scheme for the shallow water equations}
+      \field{volume}{36}
+      \field{year}{1998}
+      \field{pages}{363\bibrangedash 378}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1080/00221689809498624
+      \endverb
+    \endentry
+    \entry{ENOWENO}{article}{}
+      \name{author}{4}{}{%
+        {{hash=0316cefd59f32815e356c1128b2ef3c0}{%
+           family={Shu},
+           familyi={S\bibinitperiod},
+           given={Chi-Wang},
+           giveni={C\bibinithyphendelim W\bibinitperiod}}}%
+        {{hash=a862e1da6d04641d986b5d3eace69664}{%
+           family={Cockburn},
+           familyi={C\bibinitperiod},
+           given={Bernardo},
+           giveni={B\bibinitperiod}}}%
+        {{hash=0d857e952a2e71f9f39daf4f81be82e7}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={Claes},
+           giveni={C\bibinitperiod}}}%
+        {{hash=0ab49305453ae95941b35e853c687f99}{%
+           family={Tadmor},
+           familyi={T\bibinitperiod},
+           given={Eitan},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{10b580593795637ba53a3674daed3a16}
+      \strng{fullhash}{511bf858e43259eee559a2a639bdb7d3}
+      \strng{bibnamehash}{10b580593795637ba53a3674daed3a16}
+      \strng{authorbibnamehash}{10b580593795637ba53a3674daed3a16}
+      \strng{authornamehash}{10b580593795637ba53a3674daed3a16}
+      \strng{authorfullhash}{511bf858e43259eee559a2a639bdb7d3}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{title}{Essentially non-oscillatory and weighted essentially non-oscillatory schemes for hyperbolic conservation laws}
+      \field{year}{2006}
+      \field{pages}{325\bibrangedash 432}
+      \range{pages}{108}
+      \verb{doi}
+      \verb 10.1007/BFb0096355
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

@@ -1,0 +1,38 @@
+Схемы первого порядка имеют самую низкую точность, однако крайне просты в реализации и требуют достаточно
+мало ресурсов CPU/GPU. В силу склонности к сглаживанию подобные схемы будут оптимальны в случае, когда 
+решение не имеет больших перепадов производных. Распишем некоторые варианты этих схем:
+
+\begin{equation}
+	\displaystyle
+	\frac{\partial u}{\partial t} + a \frac{\partial u}{\partial x} = 0
+\end{equation}
+
+\begin{itemize}
+	\item Прямая схема Эйлера
+	\begin{equation}
+		\displaystyle
+		u^{n + 1}_j = u^n_j - \frac{a \dt}{2 \dx} \left( u^n_{j + 1} - u^n_{j - 1} \right)
+	\end{equation}
+	
+	\item Обратная схема Эйлера
+		\begin{equation}
+		\displaystyle
+		u^{n + 1}_j = u^n_j - \frac{a \dt}{2 \dx} \left( u^{n + 1}_{j + 1} - u^{n + 1}_{j - 1} \right)
+	\end{equation}
+	
+	\item Схема Upwind ("Уголок")
+	\begin{equation}
+		\displaystyle
+		u^{n + 1}_j = u^n_j - \frac{a \dt}{\dx} \left( u^n_{j + 1} - u^n_j \right)
+	\end{equation}
+	
+	\item Прямая схема Лакса-Фридрихса
+	\begin{equation}
+		\displaystyle
+		u^{n + 1}_j = \frac{1}{2} \left( u^n_{j + 1} + u^n_{j - 1} \right) - 
+		\frac{a \dt}{2 \dx} \left( u^n_{j + 1} - u^n_{j - 1} \right)
+	\end{equation}
+\end{itemize}
+
+Вышеперечисленные схемы подробно расписаны и сравнены между собой в \cite{SchemesComparison}, мы же в данной
+работе будем рассматривать только последнюю из них.

@@ -1,0 +1,15 @@
+[0] Config.pm:302> INFO - This is Biber 2.9
+[0] Config.pm:305> INFO - Logfile is 'main.blg'
+[24] biber:313> INFO - === Sun Jun  7, 2020, 21:00:41
+[42] Biber.pm:371> INFO - Reading 'main.bcf'
+[91] Biber.pm:857> INFO - Found 22 citekeys in bib section 0
+[101] Biber.pm:3981> INFO - Processing section 0
+[110] Biber.pm:4154> INFO - Looking for bibtex format file 'CitationDB.bib' for section 0
+[111] bibtex.pm:1468> INFO - LaTeX decoding ...
+[142] bibtex.pm:1294> INFO - Found BibTeX data source 'CitationDB.bib'
+[237] UCollate.pm:68> INFO - Overriding locale 'ru-RU' defaults 'variable = shifted' with 'variable = non-ignorable'
+[237] UCollate.pm:68> INFO - Overriding locale 'ru-RU' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[237] Biber.pm:3809> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'ru-RU'
+[237] Biber.pm:3815> INFO - No sort tailoring available for locale 'ru-RU'
+[250] bbl.pm:617> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[256] bbl.pm:720> INFO - Output to main.bbl
