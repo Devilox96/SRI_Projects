@@ -1,0 +1,6 @@
+[submodule "RossbyWaves/MagneticWaves/lib/dPlot"]
+	path = RossbyWaves/MagneticWaves/lib/dPlot
+	url = https://github.com/Devilox96/dPlot.git
+[submodule "RossbyWaves/MagneticWaves/lib/dMath"]
+	path = RossbyWaves/MagneticWaves/lib/dMath
+	url = https://github.com/Devilox96/dMath.git
